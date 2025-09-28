@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import ChatWindow from "@/components/ChatWindow";
 
 function CoursesList() {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedCourse, setSelectedCourse] = useState(null);
 
   useEffect(() => {
     fetch("http://localhost:8000/courses")
@@ -34,7 +36,7 @@ function CoursesList() {
         {courses.map((course, index) => (
           <li
             key={course.id || index}
-            onClick={() => console.log("Selected course:", course)}
+            onClick={() => setSelectedCourse(course)}
             className="
               p-4 rounded-2xl shadow 
               bg-white border border-gray-200 
@@ -49,6 +51,7 @@ function CoursesList() {
           </li>
         ))}
       </ul>
+        {selectedCourse && <ChatWindow course={selectedCourse} />}
     </div>
   );
 }
