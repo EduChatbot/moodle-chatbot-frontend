@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import ChatWindow from "@/components/ChatWindow";
-import RotatingText from "@/components/RotatingText";
+import Link from "next/link";
+import CircularText from "@/components/CircularText";
 
 export default function Home() {
   const [healthData, setHealthData] = useState<any>(null);
@@ -30,39 +30,21 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100 font-sans">
-      {/* Hero Section */}
-      <section className="flex flex-col items-center justify-center py-20 text-center">
-        <div className="flex items-center gap-3 mb-6">
-          <span className="text-4xl md:text-5xl font-bold text-white">
-            Ask
-          </span>
-          <RotatingText
-            texts={["anything!", "anytime!", "anywhere!"]}
-            mainClassName="px-3 md:px-5 overflow-hidden py-1.5 md:py-2.5 justify-center rounded-lg text-4xl md:text-5xl font-bold"
-            staggerFrom={"last"}
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "-120%" }}
-            staggerDuration={0.045}
-            splitLevelClassName="overflow-hidden pb-1"
-            transition={{ type: "spring", damping: 60, stiffness: 400, ease: "easeInOut" }}
-            rotationInterval={3000}
-            // inline style for OKLCH background
-            style={{ backgroundColor: "oklch(29.1% 0.149 302.717)", color: "white" }}
-          />
+    <>
+      <section className="max-w-2xl mx-auto px-4 py-10 -mt-12" style={{ textAlign: 'center' }}>
+        <div className="mt-6" >
+          <Link href="/login" className="button">
+            Login
+          </Link>
         </div>
-        <p className="text-lg md:text-xl text-gray-300 max-w-2xl">
-          Your AI-powered study assistant. Get answers, explanations and
-          guidance whenever you need it.
-        </p>
+        <div className="mt-6">
+          <Link href="/about" className="button">
+            About us
+          </Link>
+        </div>
       </section>
 
-      {/* Chat Window */}
-      <section className="max-w-4xl mx-auto px-4 py-8 -mt-25">
-        <ChatWindow />
-      </section>
-
+    
       {/* Backend Health Check */}
       <section className="max-w-2xl mx-auto px-4 py-10 -mt-15">
         <div className="bg-gray-800 rounded-2xl shadow-md p-6">
@@ -98,6 +80,6 @@ export default function Home() {
           )}
         </div>
       </section>
-    </div>
+    </>
   );
 }

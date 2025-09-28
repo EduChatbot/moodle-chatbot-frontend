@@ -49,29 +49,7 @@ function CoursesList() {
   if (!courses || courses.length === 0) return <p className="text-gray-400 text-lg text-center mt-20">No available courses.</p>;
 
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100 font-sans py-12 px-4">
-      {/* Hero Section */}
-      <section className="flex flex-col items-center justify-center text-center mb-12">
-        <div className="flex flex-col md:flex-row items-center gap-4">
-          <span className="text-5xl md:text-6xl font-bold text-white">
-            Ask
-          </span>
-          <RotatingText
-            texts={["anything!", "anytime!", "anywhere!"]}
-            mainClassName="px-4 md:px-6 py-2 rounded-lg text-4xl md:text-5xl font-bold overflow-hidden justify-center"
-            staggerFrom={"last"}
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "-120%" }}
-            staggerDuration={0.045}
-            splitLevelClassName="overflow-hidden pb-1"
-            transition={{ type: "spring", damping: 60, stiffness: 400, ease: "easeInOut" }}
-            rotationInterval={3000}
-            style={{ backgroundColor: "oklch(29.1% 0.149 302.717)", color: "white" }}
-          />
-        </div>
-      </section>
-
+    <>
       {/* Courses Section */}
       <section className="max-w-xl mx-auto">
         <h3 className="text-2xl font-serif font-semibold mb-6 text-gray-200 text-center">
@@ -103,7 +81,7 @@ function CoursesList() {
           </div>
         )}
       </section>
-    </div>
+    </>
   );
 }
 

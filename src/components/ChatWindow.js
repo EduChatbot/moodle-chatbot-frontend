@@ -18,7 +18,7 @@ export default function ChatWindow({ course = { name: "Default Course" } }) {
     setLoading(true);
     
     try {
-      console.log("Sending message to backend:", text);
+  console.log("Sending message to backend:", text);
       
       const response = await fetch("http://127.0.0.1:8000/chat", {
         method: "POST",
@@ -33,11 +33,23 @@ export default function ChatWindow({ course = { name: "Default Course" } }) {
       }
 
       const data = await response.json();
-      console.log("Backend response:", data);
-      
+      // Log structured JSON to make debugging clearer
+      try { console.log("Backend response (parsed):", JSON.parse(JSON.stringify(data))); } catch (e) { console.log("Backend response (raw):", data); }
+
+      // Normalize a few possible shapes from backend
+      let botText = "No server response";
+      if (typeof data === "string") {
+        botText = data;
+      } else if (Array.isArray(data)) {
+        // join array entries into a readable sentence
+        botText = data.map(item => (typeof item === 'string' ? item : JSON.stringify(item))).join(" \n");
+      } else if (data && typeof data === 'object') {
+        botText = data.response || data.message || data.text || JSON.stringify(data);
+      }
+
       // Add bot response to UI
       const botMessage = { 
-        text: data.response || data.message || "No server response", 
+        text: botText,
         fromUser: false 
       };
       setMessages(prev => [...prev, botMessage]);

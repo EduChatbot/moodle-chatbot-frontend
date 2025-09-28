@@ -1,16 +1,7 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import CircularText from "@/components/CircularText";
+import VisualHero from "@/components/VisualHero";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -24,10 +15,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
+      <body className={`antialiased`}>
+        {/* Site-wide visual + hero (client-only) */}
+        <VisualHero />
+
+        {/* Circular rotating logo top-right on every page */}
+        <div style={{ position: 'fixed', right: 12, top: 12, pointerEvents: 'auto', zIndex: 40, transform: 'scale(0.7)', transformOrigin: 'top right' }}>
+          <CircularText text="ASK*EXPLORE*MASTER*" spinDuration={60} className="string" />
+        </div>
+
+        {/* Main content wrapper — positioned above the background visual */}
+        <div style={{ position: 'relative', zIndex: 20 }}>
+          {children}
+        </div>
       </body>
     </html>
   );
