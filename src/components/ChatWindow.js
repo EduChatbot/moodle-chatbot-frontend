@@ -4,7 +4,7 @@ import { useState } from "react";
 import Message from "@/components/Message";
 import MessageInput from "@/components/MessageInput";
 
-export default function ChatWindow() {
+export default function ChatWindow({ course = { name: "Default Course" } }) {
   const [messages, setMessages] = useState([
     { text: "Hello! I am your chatbot.", fromUser: false }
   ]);
@@ -58,7 +58,7 @@ export default function ChatWindow() {
 
   return (
     <div style={{ maxWidth: "900px", width: "100%", margin: "20px auto", border: "1px solid #ddd", borderRadius: "8px", padding: "20px", boxShadow: "0 2px 10px rgba(0,0,0,0.1)" }}>
-      <h2>Chat Window</h2>
+      <h2>Chat Window - {course.name || course.title || "Unnamed Course"}</h2>
       <div style={{ height: "400px", marginBottom: "15px", backgroundColor: "#f9f9f9", padding: "15px", borderRadius: "8px", overflowY: "auto", border: "1px solid #e0e0e0" }}>
         {messages.map((msg, i) => (
           <Message key={i} text={msg.text} fromUser={msg.fromUser} />
