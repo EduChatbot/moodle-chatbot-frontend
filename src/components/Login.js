@@ -1,7 +1,24 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
+  const usernameInputRef = useRef(null);
+  const passwordInputRef = useRef(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [showToast, setShowToast] = useState(false);
+
+  // Show toast whenever an error is set
+  useEffect(() => {
+    if (error) setShowToast(true);
+  }, [error]);
+
+  // Auto-dismiss toast after 4 seconds
+  useEffect(() => {
+    if (!showToast) return;
+    const t = setTimeout(() => setShowToast(false), 4000);
+    return () => clearTimeout(t);
+  }, [showToast]);
 
   const styles = {
     wrapper: {
@@ -90,10 +107,11 @@ export default function Login() {
       <div style={styles.card} className="auth-card">
         <h1 style={styles.title}>Welcome Back</h1>
 
-        <input type="text" placeholder="Username" style={styles.input} />
+  <input ref={usernameInputRef} type="text" placeholder="Username" style={styles.input} />
 
         <div style={styles.inputWithButtonWrap} className="password-wrap">
           <input
+            ref={passwordInputRef}
             type={showPassword ? "text" : "password"}
             placeholder="Password"
             style={styles.input}
@@ -113,8 +131,59 @@ export default function Login() {
           </button>
         </div>
 
-        <div style={{ display: "flex", justifyContent: "center", marginTop: "8px" }}>
-          <button style={styles.button} type="button">Sign in</button>
+  <div style={{ display: "flex", justifyContent: "center", marginTop: "8px" }}>
+          <button
+            style={styles.button}
+            type="button"
+            onClick={async () => {
+              setError(null);
+              setLoading(true);
+              try {
+                const username = usernameInputRef.current?.value || "";
+                const password = passwordInputRef.current?.value || "";
+                const res = await fetch("http://127.0.0.1:8000/api/login", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  credentials: "include",
+                  body: JSON.stringify({ username, password }),
+                });
+                // Parse response body once
+                const body = await res.json().catch(() => ({}));
+
+                // If server returned non-2xx, use body info for the error message
+                if (!res.ok) {
+                  const message = (body && (body.detail || body.error || body.message)) || "Login failed";
+                  throw new Error(message);
+                }
+
+                // Expect backend to return a status field (e.g., { status: "success" })
+                const status = (body && (body.status || body.Status || body.statusCode || body.result)) || null;
+                const okStatus = typeof status === 'string' ? status.toLowerCase() === 'success' : status === true;
+
+                if (!okStatus) {
+                  // Prefer human message from the body when available
+                  const message = (body && (body.detail || body.error || body.message || body.msg)) || "Wrong username or password";
+                  throw new Error(message);
+                }
+
+                console.log("Login successful:", body);
+                // Store user data (if any token/user fields are returned)
+                try { localStorage.setItem("user", JSON.stringify(body)); } catch (e) { /* ignore storage errors */ }
+                // redirect to courses
+                window.location.href = "/courses";
+              } catch (err) {
+                console.error(err);
+                setError(err.message || "Login failed");
+              } finally {
+                setLoading(false);
+              }
+            }}
+            disabled={loading}
+          >
+            {loading ? "Signing in..." : "Sign in"}
+          </button>
+          {/* inline fallback removed; use toast instead */}
+          {/* toast is handled by effects above */}
         </div>
 
         <div style={styles.meta}>Need an account? Contact your administrator.</div>
@@ -135,6 +204,28 @@ export default function Login() {
             .auth-card button { width: 100%; }
           }
         `}</style>
+        {/* Toast */}
+        <div
+          aria-live="assertive"
+          style={{
+            position: 'fixed',
+            right: 20,
+            top: 20,
+            zIndex: 9999,
+            transition: 'transform 260ms ease, opacity 260ms ease',
+            transform: showToast ? 'translateX(0)' : 'translateX(20px)',
+            opacity: showToast ? 1 : 0,
+            pointerEvents: showToast ? 'auto' : 'none',
+          }}
+        >
+          <div style={{ background: '#301212', color: '#ffdede', padding: '12px 16px', borderRadius: 8, boxShadow: '0 10px 30px rgba(0,0,0,0.4)', minWidth: 260 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+              <div style={{ fontWeight: 700 }}>Login error</div>
+              <button onClick={() => { setShowToast(false); setError(null); }} style={{ background: 'transparent', border: 'none', color: '#ffdede', cursor: 'pointer' }}>✕</button>
+            </div>
+            <div style={{ marginTop: 8, color: '#ffdede' }}>{error}</div>
+          </div>
+        </div>
       </div>
     </div>
   );
