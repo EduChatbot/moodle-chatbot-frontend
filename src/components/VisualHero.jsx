@@ -15,9 +15,9 @@ const DarkVeil = ({ animationsEnabled = true }) => {
     <Component 
       speed={animationsEnabled ? 0.5 : 0}
       hueShift={0}
-      noiseIntensity={animationsEnabled ? 0.05 : 0}
-      scanlineIntensity={animationsEnabled ? 0.1 : 0}
-      scanlineFrequency={animationsEnabled ? 0.5 : 0}
+      noiseIntensity={0}
+      scanlineIntensity={0}
+      scanlineFrequency={0}
       warpAmount={0}
       resolutionScale={1}
     />
