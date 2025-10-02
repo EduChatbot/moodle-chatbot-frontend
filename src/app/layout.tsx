@@ -1,12 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import VisualHero from "@/components/VisualHero";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { AnimationProvider } from "@/contexts/AnimationContext";
-import ThemeToggle from "@/components/ThemeToggle";
-import AnimationToggle from "@/components/AnimationToggle";
-import SettingsToggle from "@/components/SettingsToggle";
-import CircularTextWrapper from "@/components/CircularTextWrapper";
+import ConditionalLayout from "@/components/ConditionalLayout";
+
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -23,14 +20,9 @@ export default function RootLayout({
       <body className={`antialiased`}>
         <ThemeProvider>
           <AnimationProvider>
-            <VisualHero />
-            <ThemeToggle />
-            <AnimationToggle />
-            <SettingsToggle />
-            <CircularTextWrapper />
-            <div style={{ position: 'relative', zIndex: 20 }}>
+            <ConditionalLayout>
               {children}
-            </div>
+            </ConditionalLayout>
           </AnimationProvider>
         </ThemeProvider>
       </body>

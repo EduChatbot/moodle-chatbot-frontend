@@ -20,11 +20,15 @@ export default function AboutPage() {
             </button>
             
             <div className="flex flex-col items-center px-4 pt-2 pb-12">
-                <div className={`max-w-4xl mx-auto p-6 rounded-2xl backdrop-blur-sm shadow-lg ${
+                <div className={`max-w-4xl mx-auto p-8 rounded-2xl backdrop-blur-sm ${
                     theme === 'light' 
-                        ? 'bg-white/80 border border-gray-200 text-gray-800' 
-                        : 'bg-gray-800/80 border border-gray-700 text-gray-100'
-                }`}>
+                        ? 'bg-white/90 border border-gray-200 text-gray-800 shadow-2xl' 
+                        : 'bg-gray-800/90 border border-gray-700 text-gray-100 shadow-2xl'
+                }`} style={{
+                    boxShadow: theme === 'light' 
+                        ? '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.05)'
+                        : '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1)'
+                }}>
                 
                 <h1 className={`text-4xl font-bold mb-4 text-center ${
                     theme === 'light' ? 'text-gray-900' : 'text-white'

@@ -3,12 +3,14 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useAnimation } from "@/contexts/AnimationContext";
 
 export default function Home() {
   const [healthData, setHealthData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { theme } = useTheme();
+  const { backgroundColor } = useAnimation();
 
   const fetchHealthCheck = async () => {
     setLoading(true);

@@ -41,7 +41,30 @@ export function AnimationProvider({ children }: { children: ReactNode }) {
     if (savedColor) {
       setBackgroundColorState(savedColor as BackgroundColor);
     }
+
+    // Listen for theme background changes
+    const handleThemeBackgroundChange = (event: CustomEvent) => {
+      const newColor = event.detail.color as BackgroundColor;
+      setBackgroundColorState(newColor);
+    };
+
+    window.addEventListener('themeBackgroundChange', handleThemeBackgroundChange as EventListener);
+    
+    return () => {
+      window.removeEventListener('themeBackgroundChange', handleThemeBackgroundChange as EventListener);
+    };
   }, []);
+
+  // Add body class for cream background
+  useEffect(() => {
+    if (mounted) {
+      if (backgroundColor === 'cream') {
+        document.body.classList.add('cream-bg');
+      } else {
+        document.body.classList.remove('cream-bg');
+      }
+    }
+  }, [backgroundColor, mounted]);
 
   const toggleAnimations = () => {
     const newValue = !animationsEnabled;
@@ -52,21 +75,43 @@ export function AnimationProvider({ children }: { children: ReactNode }) {
   const setBackgroundType = (type: BackgroundType) => {
     setBackgroundTypeState(type);
     localStorage.setItem('backgroundType', type);
+    
+    // For DarkVeil, restrict to dark colors only and force dark theme
+    if (type === 'darkveil') {
+      const allowedColors: BackgroundColor[] = ['black', 'gray', 'darkblue'];
+      if (!allowedColors.includes(backgroundColor)) {
+        setBackgroundColorState('black');
+        localStorage.setItem('backgroundColor', 'black');
+      }
+      // Force dark theme for DarkVeil
+      if (theme === 'light') {
+        toggleTheme();
+      }
+    }
   };
 
   const setBackgroundColor = (color: BackgroundColor) => {
+    // For DarkVeil, only allow dark colors
+    if (backgroundType === 'darkveil') {
+      const allowedColors: BackgroundColor[] = ['black', 'gray', 'darkblue'];
+      if (!allowedColors.includes(color)) {
+        return; // Don't allow light colors for DarkVeil
+      }
+    }
+    
     setBackgroundColorState(color);
     localStorage.setItem('backgroundColor', color);
     
-
-    const lightColors: BackgroundColor[] = ['cream', 'white'];
-    const shouldBeLight = lightColors.includes(color);
-    
-    if (shouldBeLight && theme === 'dark') {
-      toggleTheme();
-    } else if (!shouldBeLight && theme === 'light' && color !== 'gray') {
-
-      toggleTheme();
+    // Auto switch theme based on color selection (but not for DarkVeil which stays dark)
+    if (backgroundType !== 'darkveil') {
+      const lightColors: BackgroundColor[] = ['cream', 'white'];
+      const darkColors: BackgroundColor[] = ['black', 'gray', 'darkblue'];
+      
+      if (lightColors.includes(color) && theme === 'dark') {
+        toggleTheme();
+      } else if (darkColors.includes(color) && theme === 'light') {
+        toggleTheme();
+      }
     }
   };
 

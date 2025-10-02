@@ -1,6 +1,7 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useAnimation } from "@/contexts/AnimationContext";
 import { useRouter } from "next/navigation";
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -10,6 +11,7 @@ export default function Login() {
   const [error, setError] = useState(null);
   const [showToast, setShowToast] = useState(false);
   const { theme } = useTheme();
+  const { backgroundColor } = useAnimation();
   const router = useRouter();
 
 
@@ -95,13 +97,17 @@ export default function Login() {
       padding: "14px 18px",
       borderRadius: "10px",
       border: "none",
-      background: theme === 'light' 
+      background: backgroundColor === 'cream' && theme === 'light'
+        ? "linear-gradient(90deg, #D2B48C, #CD853F)"
+        : theme === 'light' 
         ? "linear-gradient(90deg, #3b82f6, #6366f1)" 
         : "linear-gradient(90deg, #3b82f6, #6366f1)",
-      color: "#fff",
+      color: backgroundColor === 'cream' && theme === 'light' ? "#422919" : "#fff",
       fontWeight: 700,
       cursor: "pointer",
-      boxShadow: theme === 'light' 
+      boxShadow: backgroundColor === 'cream' && theme === 'light'
+        ? "0 8px 20px rgba(210,180,140,0.4)"
+        : theme === 'light' 
         ? "0 8px 20px rgba(59,130,246,0.4)" 
         : "0 8px 20px rgba(99,102,241,0.3)",
       fontSize: "16px",

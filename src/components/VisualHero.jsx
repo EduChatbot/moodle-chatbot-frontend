@@ -11,18 +11,41 @@ const DarkVeil = ({ animationsEnabled = true }) => {
   useEffect(() => {
     import('./DarkVeil').then(mod => setComponent(() => mod.default)).catch(() => {});
   }, []);
-  return Component ? <Component animationsEnabled={animationsEnabled} /> : null;
+  return Component ? (
+    <Component 
+      speed={animationsEnabled ? 0.5 : 0}
+      hueShift={0}
+      noiseIntensity={animationsEnabled ? 0.05 : 0}
+      scanlineIntensity={animationsEnabled ? 0.1 : 0}
+      scanlineFrequency={animationsEnabled ? 0.5 : 0}
+      warpAmount={0}
+      resolutionScale={1}
+    />
+  ) : null;
 };
 
-const LightRays = ({ animationsEnabled = true }) => {
+const LightRays = ({ animationsEnabled = true, backgroundColor, theme }) => {
   const [Component, setComponent] = useState(null);
   useEffect(() => {
     import('./LightRays').then(mod => setComponent(() => mod.default)).catch(() => {});
   }, []);
+  
+  const getRayColor = () => {
+    if (backgroundColor === 'black' || backgroundColor === 'white') {
+      return theme === 'light' ? '#8b5cf6' : '#a855f7';
+    }
+    switch (backgroundColor) {
+      case 'gray': return '#6B7280';
+      case 'darkblue': return '#6366f1';
+      case 'cream': return '#D2B48C';
+      default: return '#8b5cf6';
+    }
+  };
+  
   return Component ? (
     <Component
       raysOrigin="top-center"
-      raysColor="#00ffff"
+      raysColor={getRayColor()}
       raysSpeed={animationsEnabled ? 1.5 : 0}
       lightSpread={0.8}
       rayLength={1.2}
@@ -43,7 +66,7 @@ const Prism = ({ animationsEnabled = true }) => {
   return Component ? (
     <Component
       animationType={animationsEnabled ? "rotate" : "none"}
-      timeScale={animationsEnabled ? 0.5 : 0.000001}
+      timeScale={animationsEnabled ? 0.15 : 0.000001}
       height={3.5}
       baseWidth={5.5}
       scale={3.6}
@@ -62,7 +85,7 @@ const Threads = ({ animationsEnabled = true }) => {
   }, []);
   return Component ? (
     <Component
-      amplitude={1}
+      amplitude={0.6}
       distance={0}
       enableMouseInteraction={animationsEnabled}
       animationsEnabled={animationsEnabled}
@@ -101,11 +124,11 @@ export default function VisualHero({ logoSrc = "/favicon.ico" }) {
       return theme === 'light' ? '#f8fafc' : '#0a0b0f';
     }
     const colorMap = {
-      black: '#000000',
-      gray: '#6B7280',
-      darkblue: '#1E3A8A',
-      cream: '#F5F5DC',
-      white: '#FFFFFF'
+      black: theme === 'light' ? '#ffffff' : '#0a0b0f',
+      gray: '#1F2937', 
+      darkblue: '#334155',
+      cream: theme === 'light' ? '#FDF5E6' : '#A0845C',
+      white: theme === 'light' ? '#FFFFFF' : '#1F2937'
     };
     return colorMap[backgroundColor] || (theme === 'light' ? '#f8fafc' : '#0a0b0f');
   };
@@ -151,27 +174,54 @@ export default function VisualHero({ logoSrc = "/favicon.ico" }) {
             return LiquidEther ? (
               <div style={{ ...backgroundStyle, background: getBackgroundColor() }}>
                 <LiquidEther
-                  colors={theme === 'light' 
-                    ? ["#3b82f6", "#8b5cf6", "#06b6d4"]
-                    : ["#5227FF", "#FF9FFC", "#B19EEF"]
+                  colors={backgroundColor === 'black'
+                    ? (theme === 'light' 
+                        ? ["#3b82f6", "#8b5cf6", "#06b6d4"]
+                        : ["#5227FF", "#FF9FFC", "#B19EEF"]
+                      )
+                    : backgroundColor === 'white'
+                    ? (theme === 'light'
+                        ? ["#8b5cf6", "#a855f7", "#c084fc"]
+                        : ["#6B5B73", "#8B7E8B", "#A855F7"]
+                      )
+                    : backgroundColor === 'cream'
+                    ? (theme === 'light'
+                        ? ["#D2B48C", "#E6C2A6", "#DEB887"]
+                        : ["#8B7355", "#A0845C", "#D2B48C"]
+                      )
+                    : backgroundColor === 'gray'
+                    ? ["#6B7280", "#9CA3AF", "#D1D5DB"]
+                    : backgroundColor === 'darkblue'
+                    ? ["#6366f1", "#8b5cf6", "#a855f7"]
+                    : (theme === 'light' 
+                        ? ["#8b5cf6", "#a855f7", "#9333ea"]
+                        : ["#5227FF", "#FF9FFC", "#B19EEF"]
+                      )
                   }
-                  mouseForce={animationsEnabled ? 10 : 0}
-                  cursorSize={120}
-                  isViscous={false}
-                  viscous={30}
-                  iterationsViscous={32}
-                  iterationsPoisson={32}
-                  resolution={0.5}
+                  mouseForce={animationsEnabled ? 12 : 0}
+                  cursorSize={60}
+                  isViscous={true}
+                  viscous={60}
+                  iterationsViscous={48}
+                  iterationsPoisson={48}
+                  resolution={0.3}
                   isBounce={false}
-                  autoDemo={animationsEnabled}
-                  autoSpeed={animationsEnabled ? 0.1 : 0}
-                  autoIntensity={animationsEnabled ? 2.2 : 0}
-                  takeoverDuration={0.25}
-                  autoResumeDelay={3000}
-                  autoRampDuration={0.6}
+                  autoDemo={true}
+                  autoSpeed={animationsEnabled ? 0.2 : 3}
+                  autoIntensity={animationsEnabled ? 1.8 : 30}
+                  takeoverDuration={0.8}
+                  autoResumeDelay={animationsEnabled ? 4000 : 500}
+                  autoRampDuration={1.2}
                 />
               </div>
-            ) : null;
+            ) : (
+              <div style={{ 
+                ...backgroundStyle, 
+                background: theme === 'light' 
+                  ? `linear-gradient(135deg, #1E40AF 0%, #3B82F6 50%, #1F2937 100%)`
+                  : `linear-gradient(135deg, #1F2937 0%, #4B5563 50%, #374151 100%)`
+              }} />
+            );
           
           case 'darkveil':
             return (
@@ -183,7 +233,11 @@ export default function VisualHero({ logoSrc = "/favicon.ico" }) {
           case 'lightrays':
             return (
               <div style={{ ...backgroundStyle, background: getBackgroundColor() }}>
-                <LightRays animationsEnabled={animationsEnabled} />
+                <LightRays 
+                  animationsEnabled={animationsEnabled} 
+                  backgroundColor={backgroundColor}
+                  theme={theme}
+                />
               </div>
             );
           
@@ -223,18 +277,30 @@ export default function VisualHero({ logoSrc = "/favicon.ico" }) {
               transition={{ type: "spring", damping: 60, stiffness: 400, ease: "easeInOut" }}
               rotationInterval={3000}
               style={{ 
-                background: theme === 'light' 
-                  ? '#8b5cf6' 
-                  : '#6e036eff',
+                background: (backgroundColor === 'black' || backgroundColor === 'white')
+                  ? (theme === 'light' ? '#8b5cf6' : '#6e036eff')
+                  : backgroundColor === 'cream'
+                  ? (theme === 'light' ? '#D2B48C' : '#8B7355')
+                  : backgroundColor === 'gray'
+                  ? '#6B7280'
+                  : backgroundColor === 'darkblue'
+                  ? '#6366f1'
+                  : (theme === 'light' ? '#8b5cf6' : '#6e036eff'),
                 color: "white" 
               }}
             />
           ) : (
             <span className="px-3 md:px-5 py-1.5 md:py-2.5 rounded-lg text-4xl md:text-5xl font-bold text-white"
               style={{ 
-                background: theme === 'light' 
-                  ? '#8b5cf6' 
-                  : '#6e036eff'
+                background: (backgroundColor === 'black' || backgroundColor === 'white')
+                  ? (theme === 'light' ? '#8b5cf6' : '#6e036eff')
+                  : backgroundColor === 'cream'
+                  ? (theme === 'light' ? '#D2B48C' : '#8B7355')
+                  : backgroundColor === 'gray'
+                  ? '#6B7280'
+                  : backgroundColor === 'darkblue'
+                  ? '#6366f1'
+                  : (theme === 'light' ? '#8b5cf6' : '#6e036eff')
               }}
             >
               anything!

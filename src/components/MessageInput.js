@@ -1,4 +1,9 @@
+import { useTheme } from '@/contexts/ThemeContext';
+import { useAnimation } from '@/contexts/AnimationContext';
+
 export default function MessageInput({ onSend, disabled = false }) {
+  const { theme } = useTheme();
+  const { backgroundColor } = useAnimation();
   let inputRef;
 
   const handleSend = () => {
@@ -45,16 +50,16 @@ export default function MessageInput({ onSend, disabled = false }) {
           padding: "12px 20px",
           border: "none",
           borderRadius: "8px",
-          background: disabled ? "#ccc" : "#0070f3",
-          color: "white",
+          background: disabled ? "#ccc" : (backgroundColor === 'cream' && theme === 'light' ? "#D2B48C" : "#0070f3"),
+          color: backgroundColor === 'cream' && theme === 'light' && !disabled ? "#422919" : "white",
           cursor: disabled ? "not-allowed" : "pointer",
           fontSize: "16px",
           fontWeight: "600",
           transition: "background-color 0.2s ease",
           minWidth: "80px"
         }}
-        onMouseOver={(e) => !disabled && (e.target.style.backgroundColor = "#005bb5")}
-        onMouseOut={(e) => !disabled && (e.target.style.backgroundColor = "#0070f3")}
+        onMouseOver={(e) => !disabled && (e.target.style.backgroundColor = backgroundColor === 'cream' && theme === 'light' ? "#CD853F" : "#005bb5")}
+        onMouseOut={(e) => !disabled && (e.target.style.backgroundColor = backgroundColor === 'cream' && theme === 'light' ? "#D2B48C" : "#0070f3")}
       >
         {disabled ? "Sending..." : "Send"}
       </button>

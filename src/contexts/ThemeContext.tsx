@@ -45,7 +45,17 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, [theme, mounted]);
 
   const toggleTheme = () => {
-    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    
+    // Auto-change background color based on theme
+    const targetColor = newTheme === 'light' ? 'white' : 'black';
+    localStorage.setItem('backgroundColor', targetColor);
+    
+    // Dispatch custom event to notify AnimationContext
+    window.dispatchEvent(new CustomEvent('themeBackgroundChange', { 
+      detail: { color: targetColor } 
+    }));
   };
 
 

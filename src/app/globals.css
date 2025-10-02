@@ -58,11 +58,10 @@
 	position: relative;
 	overflow: hidden;
 	
-	/* Dark mode styles */
-	background: linear-gradient(135deg, #6e036e 0%, #a855f7 100%);
+	background: linear-gradient(135deg, #374151 0%, #4B5563 100%);
 	color: #ffffff;
 	box-shadow: 
-		0 4px 15px rgba(168, 85, 247, 0.25),
+		0 4px 15px rgba(75, 85, 99, 0.25),
 		0 1px 3px rgba(0, 0, 0, 0.1),
 		inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
@@ -80,9 +79,9 @@
 }
 
 .button:hover {
-	background: linear-gradient(135deg, #5b0361 0%, #9333ea 100%);
+	background: linear-gradient(135deg, #1F2937 0%, #374151 100%);
 	box-shadow: 
-		0 8px 25px rgba(168, 85, 247, 0.35),
+		0 8px 25px rgba(75, 85, 99, 0.35),
 		0 4px 12px rgba(0, 0, 0, 0.15),
 		inset 0 1px 0 rgba(255, 255, 255, 0.15);
 	transform: translateY(-1px);
@@ -95,41 +94,48 @@
 .button:active {
 	transform: translateY(0);
 	box-shadow: 
-		0 2px 8px rgba(168, 85, 247, 0.3),
+		0 2px 8px rgba(75, 85, 99, 0.3),
 		0 1px 3px rgba(0, 0, 0, 0.1),
 		inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-/* Light mode button styles */
 .light .button {
-	background: linear-gradient(135deg, #a855f7 0%, #8b5cf6 100%);
-	color: #ffffff;
-	box-shadow: 
-		0 4px 15px rgba(139, 92, 246, 0.25),
-		0 1px 3px rgba(0, 0, 0, 0.1),
-		inset 0 1px 0 rgba(255, 255, 255, 0.15);
+	background: var(--button-bg);
+	color: var(--button-color);
+	box-shadow: var(--button-shadow);
 }
 
 .light .button:hover {
-	background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%);
-	box-shadow: 
-		0 8px 25px rgba(139, 92, 246, 0.35),
-		0 4px 12px rgba(0, 0, 0, 0.15),
-		inset 0 1px 0 rgba(255, 255, 255, 0.2);
+	background: var(--button-bg-hover);
+	box-shadow: var(--button-shadow-hover);
 	transform: translateY(-1px);
 }
 
 .light .button:active {
 	transform: translateY(0);
-	box-shadow: 
-		0 2px 8px rgba(139, 92, 246, 0.3),
-		0 1px 3px rgba(0, 0, 0, 0.1),
-		inset 0 1px 0 rgba(255, 255, 255, 0.15);
+	box-shadow: var(--button-shadow-active);
+}
+
+:root {
+  --button-bg: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+  --button-bg-hover: linear-gradient(135deg, #7c3aed 0%, #9333ea 100%);
+  --button-color: #ffffff;
+  --button-shadow: 0 4px 15px rgba(139, 92, 246, 0.25), 0 1px 3px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  --button-shadow-hover: 0 8px 25px rgba(139, 92, 246, 0.35), 0 4px 12px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  --button-shadow-active: 0 2px 8px rgba(139, 92, 246, 0.3), 0 1px 3px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.cream-bg {
+  --button-bg: linear-gradient(135deg, #D2B48C 0%, #CD853F 100%);
+  --button-bg-hover: linear-gradient(135deg, #CD853F 0%, #A0845C 100%);
+  --button-color: #422919;
+  --button-shadow: 0 4px 15px rgba(210, 180, 140, 0.25), 0 1px 3px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  --button-shadow-hover: 0 8px 25px rgba(210, 180, 140, 0.35), 0 4px 12px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  --button-shadow-active: 0 2px 8px rgba(210, 180, 140, 0.3), 0 1px 3px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 :root {
   --radius: 0.625rem;
-  /* Light mode defaults */
   --background: #ffffff;
   --foreground: #0f172a;
   --card: oklch(1 0 0);
@@ -207,13 +213,11 @@
   }
 }
 
-/* Dark mode overrides */
 .dark {
   --background: #0b1220;
   --foreground: #e6eef8;
 }
 
-/* Light mode overrides */
 .light {
   --background: #ffffff;
   --foreground: #0f172a;

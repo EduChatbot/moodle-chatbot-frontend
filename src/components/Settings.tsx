@@ -15,13 +15,20 @@ const Settings = () => {
   } = useAnimation();
 
   const backgroundTypes: BackgroundType[] = ['liquidether', 'darkveil', 'lightrays', 'prism', 'threads'];
-  const backgroundColors: BackgroundColor[] = ['black', 'gray', 'darkblue', 'cream', 'white'];
+  
+  // Restrict color options for DarkVeil
+  const getAvailableColors = (): BackgroundColor[] => {
+    if (backgroundType === 'darkveil') {
+      return ['black', 'gray', 'darkblue'];
+    }
+    return ['black', 'gray', 'darkblue', 'cream', 'white'];
+  };
 
   const getColorDisplay = (color: BackgroundColor) => {
     const colorMap = {
-      black: '#000000',
-      gray: '#6B7280',
-      darkblue: '#1E3A8A',
+      black: '#1F2937',
+      gray: '#1F2937', 
+      darkblue: '#334155',
       cream: '#F5F5DC',
       white: '#FFFFFF'
     };
@@ -30,11 +37,11 @@ const Settings = () => {
 
   const getColorName = (color: BackgroundColor) => {
     const nameMap = {
-      black: 'Black',
-      gray: 'Gray',
-      darkblue: 'Dark Blue',
-      cream: 'Cream',
-      white: 'White'
+      black: 'Dark Slate',
+      gray: 'Neutral Gray',
+      darkblue: 'Gray-Blue',
+      cream: 'Warm Cream',
+      white: 'Pure White'
     };
     return nameMap[color];
   };
@@ -74,26 +81,24 @@ const Settings = () => {
         <h4 className="text-md font-medium text-gray-800 dark:text-gray-200 mb-3">
           Background Color for {backgroundType}:
         </h4>
-        <div className="grid grid-cols-3 gap-2">
-          {backgroundColors.map((color) => (
+        <div className="grid grid-cols-1 gap-2">
+          {getAvailableColors().map((color) => (
             <button
               key={color}
               onClick={() => setBackgroundColor(color)}
-              className={`p-3 rounded-lg border-2 transition-all duration-200 flex items-center justify-center ${
+              className={`p-3 rounded-lg border-2 transition-all duration-200 flex items-center space-x-3 ${
                 backgroundColor === color
-                  ? 'border-blue-500 shadow-lg'
-                  : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
+                  ? 'border-blue-500 shadow-lg bg-blue-50 dark:bg-blue-900/20'
+                  : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 hover:bg-white/10 dark:hover:bg-gray-800/20'
               }`}
             >
-              <div className="flex items-center space-x-2">
-                <div 
-                  className="w-6 h-6 rounded-full border border-gray-400"
-                  style={{ backgroundColor: getColorDisplay(color) }}
-                />
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  {getColorName(color)}
-                </span>
-              </div>
+              <div 
+                className="w-8 h-8 rounded-full border border-gray-400 flex-shrink-0"
+                style={{ backgroundColor: getColorDisplay(color) }}
+              />
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300 flex-1 text-left">
+                {getColorName(color)}
+              </span>
             </button>
           ))}
         </div>
