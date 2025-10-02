@@ -46,7 +46,6 @@ export default function Home() {
       </section>
 
 
-      {/* Backend Health Check */}
       <section className="max-w-2xl mx-auto px-4 py-10 -mt-15">
         <div className={`rounded-2xl shadow-md p-6 backdrop-blur-sm ${
           theme === 'light' 

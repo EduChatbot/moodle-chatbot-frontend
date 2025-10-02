@@ -12,12 +12,12 @@ export default function Login() {
   const { theme } = useTheme();
   const router = useRouter();
 
-  // Show toast whenever an error is set
+
   useEffect(() => {
     if (error) setShowToast(true);
   }, [error]);
 
-  // Auto-dismiss toast after 4 seconds
+
   useEffect(() => {
     if (!showToast) return;
     const t = setTimeout(() => setShowToast(false), 4000);
@@ -170,29 +170,27 @@ export default function Login() {
                   credentials: "include",
                   body: JSON.stringify({ username, password }),
                 });
-                // Parse response body once
+
                 const body = await res.json().catch(() => ({}));
 
-                // If server returned non-2xx, use body info for the error message
+
                 if (!res.ok) {
                   const message = (body && (body.detail || body.error || body.message)) || "Login failed";
                   throw new Error(message);
                 }
 
-                // Expect backend to return a status field (e.g., { status: "success" })
+
                 const status = (body && (body.status || body.Status || body.statusCode || body.result)) || null;
                 const okStatus = typeof status === 'string' ? status.toLowerCase() === 'success' : status === true;
 
                 if (!okStatus) {
-                  // Prefer human message from the body when available
+
                   const message = (body && (body.detail || body.error || body.message || body.msg)) || "Wrong username or password";
                   throw new Error(message);
                 }
 
                 console.log("Login successful:", body);
-                // Store user data (if any token/user fields are returned)
                 try { localStorage.setItem("user", JSON.stringify(body)); } catch (e) { /* ignore storage errors */ }
-                // redirect to courses
                 window.location.href = "/courses";
               } catch (err) {
                 console.error(err);
@@ -205,8 +203,7 @@ export default function Login() {
           >
             {loading ? "Signing in..." : "Sign in"}
           </button>
-          {/* inline fallback removed; use toast instead */}
-          {/* toast is handled by effects above */}
+
         </div>
 
         <div style={styles.meta}>Need an account? Contact your administrator.</div>
@@ -231,7 +228,7 @@ export default function Login() {
             .auth-card button { width: 100%; }
           }
         `}</style>
-        {/* Toast */}
+
         <div
           aria-live="assertive"
           style={{

@@ -35,7 +35,7 @@ export default function AnimationToggle() {
       }}
       title={animationsEnabled ? 'Disable animations' : 'Enable animations'}
     >
-      {animationsEnabled ? '🎬' : '⏸️'}
+      {animationsEnabled ? '⏸️' : '▶️'}
     </button>
   );
 }

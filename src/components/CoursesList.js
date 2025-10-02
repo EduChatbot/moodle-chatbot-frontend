@@ -24,7 +24,6 @@ function CoursesList() {
         }
       })
       .catch(() => {
-        // optional: ignore if the library isn't available in some environments
       });
 
     fetch("http://localhost:8000/courses", {credentials: 'include'})
@@ -99,7 +98,6 @@ function CoursesList() {
           ← Go Back
         </button>
         
-        {/* Courses Section */}
         <section className="max-w-xl mx-auto">
           <h3 className={`text-2xl font-serif font-semibold mb-6 text-center ${theme === 'light' ? 'text-gray-800' : 'text-gray-200'}`}>
             Available Courses

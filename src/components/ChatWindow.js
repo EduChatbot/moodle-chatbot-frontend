@@ -11,7 +11,7 @@ export default function ChatWindow({ course = { name: "Default Course" } }) {
   const [loading, setLoading] = useState(false);
 
   const handleSend = async (text) => {
-    // Add user message to UI
+
     const userMessage = { text, fromUser: true };
     setMessages(prev => [...prev, userMessage]);
     
@@ -33,21 +33,21 @@ export default function ChatWindow({ course = { name: "Default Course" } }) {
       }
 
       const data = await response.json();
-      // Log structured JSON to make debugging clearer
+
       try { console.log("Backend response (parsed):", JSON.parse(JSON.stringify(data))); } catch (e) { console.log("Backend response (raw):", data); }
 
-      // Normalize a few possible shapes from backend
+
       let botText = "No server response";
       if (typeof data === "string") {
         botText = data;
       } else if (Array.isArray(data)) {
-        // join array entries into a readable sentence
+
         botText = data.map(item => (typeof item === 'string' ? item : JSON.stringify(item))).join(" \n");
       } else if (data && typeof data === 'object') {
         botText = data.response || data.message || data.text || JSON.stringify(data);
       }
 
-      // Add bot response to UI
+
       const botMessage = { 
         text: botText,
         fromUser: false 
@@ -57,7 +57,7 @@ export default function ChatWindow({ course = { name: "Default Course" } }) {
     } catch (error) {
       console.error("Error communicating with backend:", error);
 
-      // Add error message to UI
+
       const errorMessage = { 
         text: `Error: ${error.message}. Check if backend is running on http://127.0.0.1:8000`, 
         fromUser: false 
