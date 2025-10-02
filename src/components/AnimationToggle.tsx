@@ -1,18 +1,20 @@
 "use client";
 
+import { useAnimation } from '@/contexts/AnimationContext';
 import { useTheme } from '@/contexts/ThemeContext';
 
-export default function ThemeToggle() {
-  const { theme, toggleTheme } = useTheme();
+export default function AnimationToggle() {
+  const { animationsEnabled, toggleAnimations } = useAnimation();
+  const { theme } = useTheme();
 
   return (
     <button
-      onClick={toggleTheme}
-      className="theme-toggle"
+      onClick={toggleAnimations}
+      className="animation-toggle"
       style={{
         position: 'fixed',
         top: 12,
-        right: 20,
+        right: 80,
         zIndex: 50,
         width: 48,
         height: 48,
@@ -31,9 +33,9 @@ export default function ThemeToggle() {
         transform: 'scale(0.8)',
         transformOrigin: 'center'
       }}
-      title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+      title={animationsEnabled ? 'Disable animations' : 'Enable animations'}
     >
-      {theme === 'dark' ? '☀️' : '🌙'}
+      {animationsEnabled ? '🎬' : '⏸️'}
     </button>
   );
 }

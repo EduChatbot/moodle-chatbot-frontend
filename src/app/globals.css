@@ -44,41 +44,87 @@
 }
 
 .button {
-  box-shadow: 0px 1px 0px 0px #1c1b18;
-	background:linear-gradient(126deg, #000000 5%, #a607d6 100%);
-	background-color:#ede9dc;
-	border-radius:20px;
-	border:2px solid #783f8f;
-	display:inline-block;
-	cursor:pointer;
-	color:#e8caeefa;
-	font-family:Arial, Helvetica, sans-serif;
-	font-size:17px;
-	font-weight:800;
-	padding:14px 22px;
-	text-decoration:none;
-	box-shadow: 0 6px 18px rgba(221, 95, 211, 0.445);
-	transition: all 0.3s ease;
+	display: inline-block;
+	cursor: pointer;
+	font-family: system-ui, -apple-system, sans-serif;
+	font-size: 16px;
+	font-weight: 600;
+	padding: 12px 24px;
+	text-decoration: none;
+	border-radius: 12px;
+	border: 1px solid transparent;
+	transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+	backdrop-filter: blur(8px);
+	position: relative;
+	overflow: hidden;
+	
+	/* Dark mode styles */
+	background: linear-gradient(135deg, #6e036e 0%, #a855f7 100%);
+	color: #ffffff;
+	box-shadow: 
+		0 4px 15px rgba(168, 85, 247, 0.25),
+		0 1px 3px rgba(0, 0, 0, 0.1),
+		inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
+
+.button::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+	opacity: 0;
+	transition: opacity 0.2s ease;
+}
+
 .button:hover {
-	background:linear-gradient(126deg, #0e0711 2%, #a607d6 100%);
-	background-color:#e9e7e4;
+	background: linear-gradient(135deg, #5b0361 0%, #9333ea 100%);
+	box-shadow: 
+		0 8px 25px rgba(168, 85, 247, 0.35),
+		0 4px 12px rgba(0, 0, 0, 0.15),
+		inset 0 1px 0 rgba(255, 255, 255, 0.15);
+	transform: translateY(-1px);
 }
+
+.button:hover::before {
+	opacity: 1;
+}
+
 .button:active {
-	position:relative;
-	top:1px;
+	transform: translateY(0);
+	box-shadow: 
+		0 2px 8px rgba(168, 85, 247, 0.3),
+		0 1px 3px rgba(0, 0, 0, 0.1),
+		inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 /* Light mode button styles */
 .light .button {
-	background: linear-gradient(126deg, #3b82f6 5%, #8b5cf6 100%);
-	border: 2px solid #6366f1;
+	background: linear-gradient(135deg, #a855f7 0%, #8b5cf6 100%);
 	color: #ffffff;
-	box-shadow: 0 6px 18px rgba(59, 130, 246, 0.4);
+	box-shadow: 
+		0 4px 15px rgba(139, 92, 246, 0.25),
+		0 1px 3px rgba(0, 0, 0, 0.1),
+		inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
+
 .light .button:hover {
-	background: linear-gradient(126deg, #2563eb 2%, #7c3aed 100%);
-	box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5);
+	background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%);
+	box-shadow: 
+		0 8px 25px rgba(139, 92, 246, 0.35),
+		0 4px 12px rgba(0, 0, 0, 0.15),
+		inset 0 1px 0 rgba(255, 255, 255, 0.2);
+	transform: translateY(-1px);
+}
+
+.light .button:active {
+	transform: translateY(0);
+	box-shadow: 
+		0 2px 8px rgba(139, 92, 246, 0.3),
+		0 1px 3px rgba(0, 0, 0, 0.1),
+		inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 :root {

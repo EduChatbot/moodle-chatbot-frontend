@@ -74,7 +74,12 @@ export default function VisualHero({ logoSrc = "/favicon.ico" }) {
             splitLevelClassName="overflow-hidden pb-1"
             transition={{ type: "spring", damping: 60, stiffness: 400, ease: "easeInOut" }}
             rotationInterval={3000}
-            style={{ backgroundColor: "#6e036eff", color: "white" }}
+            style={{ 
+              background: theme === 'light' 
+                ? '#8b5cf6' 
+                : '#6e036eff',
+              color: "white" 
+            }}
           />
         </div>
         <p className={`text-lg md:text-xl max-w-2xl ${theme === 'light' ? 'text-gray-700' : 'text-gray-300'}`}>

@@ -27,7 +27,7 @@ export default function RootLayout({
 
           {/* Circular rotating logo top-right on every page */}
           <div style={{ position: 'fixed', right: 12, top: 12, pointerEvents: 'auto', zIndex: 40, transform: 'scale(0.7)', transformOrigin: 'top right' }}>
-            <CircularText text="ASK*EXPLORE*MASTER*" spinDuration={60} className="string" />
+            <CircularText text="ASK*EXPLORE*MASTER*" spinDuration={90} className="string" />
           </div>
 
           {/* Main content wrapper — positioned above the background visual */}

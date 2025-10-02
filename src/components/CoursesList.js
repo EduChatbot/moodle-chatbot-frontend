@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import ChatWindow from "@/components/ChatWindow";
 import RotatingText from "@/components/RotatingText";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -13,6 +14,7 @@ function CoursesList() {
   const [error, setError] = useState(null);
   const [selectedCourse, setSelectedCourse] = useState(null);
   const { theme } = useTheme();
+  const router = useRouter();
 
   useEffect(() => {
     import('ldrs')
@@ -47,16 +49,61 @@ function CoursesList() {
     </div></>
   );
 
-  if (error) return <><p className="text-red-500 text-lg text-center mt-20">Error: connection to backend failed</p></>;
-  if (!courses || courses.length === 0) return <><p className={`text-lg text-center mt-20 ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>No available courses.</p></>;
+  if (error) return (
+    <>
+      <div className="relative min-h-screen">
+        <button 
+          onClick={() => router.back()}
+          className={`fixed top-4 left-4 z-10 px-4 py-2 rounded-lg backdrop-blur-sm transition-colors shadow-lg ${
+            theme === 'light' 
+              ? 'bg-white/80 hover:bg-gray-100/80 text-gray-700 border border-gray-200' 
+              : 'bg-gray-800/80 hover:bg-gray-700/80 text-gray-300 border border-gray-600'
+          }`}
+        >
+          ← Go Back
+        </button>
+        <p className="text-red-500 text-lg text-center mt-20">Error: connection to backend failed</p>
+      </div>
+    </>
+  );
+
+  if (!courses || courses.length === 0) return (
+    <>
+      <div className="relative min-h-screen">
+        <button 
+          onClick={() => router.back()}
+          className={`fixed top-4 left-4 z-10 px-4 py-2 rounded-lg backdrop-blur-sm transition-colors shadow-lg ${
+            theme === 'light' 
+              ? 'bg-white/80 hover:bg-gray-100/80 text-gray-700 border border-gray-200' 
+              : 'bg-gray-800/80 hover:bg-gray-700/80 text-gray-300 border border-gray-600'
+          }`}
+        >
+          ← Go Back
+        </button>
+        <p className={`text-lg text-center mt-20 ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>No available courses.</p>
+      </div>
+    </>
+  );
 
   return (
     <>
-      {/* Courses Section */}
-      <section className="max-w-xl mx-auto">
-        <h3 className={`text-2xl font-serif font-semibold mb-6 text-center ${theme === 'light' ? 'text-gray-800' : 'text-gray-200'}`}>
-          Available Courses
-        </h3>
+      <div className="relative min-h-screen">
+        <button 
+          onClick={() => router.back()}
+          className={`fixed top-4 left-4 z-10 px-4 py-2 rounded-lg backdrop-blur-sm transition-colors shadow-lg ${
+            theme === 'light' 
+              ? 'bg-white/80 hover:bg-gray-100/80 text-gray-700 border border-gray-200' 
+              : 'bg-gray-800/80 hover:bg-gray-700/80 text-gray-300 border border-gray-600'
+          }`}
+        >
+          ← Go Back
+        </button>
+        
+        {/* Courses Section */}
+        <section className="max-w-xl mx-auto">
+          <h3 className={`text-2xl font-serif font-semibold mb-6 text-center ${theme === 'light' ? 'text-gray-800' : 'text-gray-200'}`}>
+            Available Courses
+          </h3>
         <ul className="space-y-4">
           {courses.map((course, index) => (
             <li
@@ -83,6 +130,7 @@ function CoursesList() {
           </div>
         )}
       </section>
+      </div>
     </>
   );
 }

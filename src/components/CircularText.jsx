@@ -19,11 +19,11 @@ const getTransition = (duration, from) => ({
   scale: {
     type: 'spring',
     damping: 20,
-    stiffness: 300
+    stiffness: 100
   }
 });
 
-const CircularText = ({ text, spinDuration = 20, onHover = 'speedUp', className = '' }) => {
+const CircularText = ({ text, spinDuration = 70, onHover = 'goBonkers', className = '' }) => {
   const letters = Array.from(text);
   const controls = useAnimation();
   const rotation = useMotionValue(0);

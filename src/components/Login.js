@@ -1,6 +1,7 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useRouter } from "next/navigation";
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const usernameInputRef = useRef(null);
@@ -9,6 +10,7 @@ export default function Login() {
   const [error, setError] = useState(null);
   const [showToast, setShowToast] = useState(false);
   const { theme } = useTheme();
+  const router = useRouter();
 
   // Show toast whenever an error is set
   useEffect(() => {
@@ -115,6 +117,16 @@ export default function Login() {
 
   return (
     <div style={styles.wrapper}>
+      <button 
+                onClick={() => router.back()}
+                className={`fixed top-4 left-4 z-10 px-4 py-2 rounded-lg backdrop-blur-sm transition-colors shadow-lg ${
+                    theme === 'light' 
+                        ? 'bg-white/80 hover:bg-gray-100/80 text-gray-700 border border-gray-200' 
+                        : 'bg-gray-800/80 hover:bg-gray-700/80 text-gray-300 border border-gray-600'
+                }`}
+            >
+                ← Go Back
+            </button>
       <div style={styles.card} className="auth-card">
         <h1 style={styles.title}>Welcome Back</h1>
 
