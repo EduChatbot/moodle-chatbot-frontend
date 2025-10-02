@@ -13,6 +13,16 @@
   -webkit-transform-origin: 50% 50%;
 }
 
+/* Light mode styles */
+.light .circular-text {
+  color: #1f2937;
+}
+
+/* Dark mode styles (default) */
+.dark .circular-text {
+  color: #fff;
+}
+
 .circular-text span {
   position: absolute;
   display: inline-block;
