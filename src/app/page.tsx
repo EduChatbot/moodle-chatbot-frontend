@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import CircularText from "@/components/CircularText";
 
 export default function Home() {
   const [healthData, setHealthData] = useState<any>(null);
@@ -44,7 +43,7 @@ export default function Home() {
         </div>
       </section>
 
-    
+
       {/* Backend Health Check */}
       <section className="max-w-2xl mx-auto px-4 py-10 -mt-15">
         <div className="bg-gray-800 rounded-2xl shadow-md p-6">
@@ -55,11 +54,10 @@ export default function Home() {
           <button
             onClick={fetchHealthCheck}
             disabled={loading}
-            className={`px-5 py-2 rounded-lg font-medium ${
-              loading
+            className={`px-5 py-2 rounded-lg font-medium ${loading
                 ? "bg-gray-600 cursor-not-allowed text-gray-200"
                 : "bg-blue-600 hover:bg-blue-700 text-white transition"
-            }`}
+              }`}
           >
             {loading ? "Loading..." : "Check Health API"}
           </button>

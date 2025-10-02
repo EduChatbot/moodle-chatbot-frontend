@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import CircularText from "@/components/CircularText";
 import VisualHero from "@/components/VisualHero";
+import { ThemeProvider } from "@/contexts/ThemeContext";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,18 +18,23 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`antialiased`}>
-        {/* Site-wide visual + hero (client-only) */}
-        <VisualHero />
+        <ThemeProvider>
+          {/* Site-wide visual + hero (client-only) */}
+          <VisualHero />
 
-        {/* Circular rotating logo top-right on every page */}
-        <div style={{ position: 'fixed', right: 12, top: 12, pointerEvents: 'auto', zIndex: 40, transform: 'scale(0.7)', transformOrigin: 'top right' }}>
-          <CircularText text="ASK*EXPLORE*MASTER*" spinDuration={60} className="string" />
-        </div>
+          {/* Theme toggle button */}
+          <ThemeToggle />
 
-        {/* Main content wrapper — positioned above the background visual */}
-        <div style={{ position: 'relative', zIndex: 20 }}>
-          {children}
-        </div>
+          {/* Circular rotating logo top-right on every page */}
+          <div style={{ position: 'fixed', right: 12, top: 12, pointerEvents: 'auto', zIndex: 40, transform: 'scale(0.7)', transformOrigin: 'top right' }}>
+            <CircularText text="ASK*EXPLORE*MASTER*" spinDuration={60} className="string" />
+          </div>
+
+          {/* Main content wrapper — positioned above the background visual */}
+          <div style={{ position: 'relative', zIndex: 20 }}>
+            {children}
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );

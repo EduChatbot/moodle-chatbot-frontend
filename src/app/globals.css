@@ -71,9 +71,9 @@
 
 :root {
   --radius: 0.625rem;
-  /* Default to a dark background so visuals sit on a dark canvas */
-  --background: #0b1220; /* deep navy */
-  --foreground: #e6eef8; /* light foreground text */
+  /* Light mode defaults */
+  --background: #ffffff;
+  --foreground: #0f172a;
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
@@ -145,5 +145,18 @@
   }
   body {
     @apply bg-background text-foreground;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
+}
+
+/* Dark mode overrides */
+.dark {
+  --background: #0b1220;
+  --foreground: #e6eef8;
+}
+
+/* Light mode overrides */
+.light {
+  --background: #ffffff;
+  --foreground: #0f172a;
 }

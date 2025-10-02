@@ -38,15 +38,15 @@ function CoursesList() {
       });
   }, []);
 
-  if (loading) return (
-    <div className="flex justify-center items-center min-h-screen text-gray-300 text-lg gap-2">
+  if (loading) return (<>
+    <div className="flex justify-center items-center min-h-screen text-gray-300 text-lg gap-2 mt-15">
       Loading courses...
       <l-newtons-cradle size="58" speed="1.4" color="white"></l-newtons-cradle>
-    </div>
+    </div></>
   );
 
-  if (error) return <p className="text-red-500 text-lg text-center mt-20">Error: connection to backend failed</p>;
-  if (!courses || courses.length === 0) return <p className="text-gray-400 text-lg text-center mt-20">No available courses.</p>;
+  if (error) return <><p className="text-red-500 text-lg text-center mt-20">Error: connection to backend failed</p></>;
+  if (!courses || courses.length === 0) return <><p className="text-gray-400 text-lg text-center mt-20">No available courses.</p></>;
 
   return (
     <>
