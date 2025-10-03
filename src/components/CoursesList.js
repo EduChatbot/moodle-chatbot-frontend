@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import ChatWindow from "@/components/ChatWindow";
-import RotatingText from "@/components/RotatingText";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAnimation } from "@/contexts/AnimationContext";
 
@@ -29,7 +28,7 @@ function CoursesList() {
     fetch("http://localhost:8000/courses", {credentials: 'include'})
       .then((res) => res.json())
       .then((data) => {
-        try { console.log("Backend response (courses):", JSON.parse(JSON.stringify(data))); } catch (e) { console.log("Backend response (courses, raw):", data); }
+        try { console.log("Backend response (courses):", JSON.parse(JSON.stringify(data))); } catch { console.log("Backend response (courses, raw):", data); }
         const coursesArray = Array.isArray(data) ? data : data.courses || [];
         setCourses(coursesArray);
         setLoading(false);

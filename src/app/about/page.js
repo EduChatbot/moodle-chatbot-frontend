@@ -223,7 +223,7 @@ export default function AboutPage() {
                     <p className={`font-inter text-base max-w-2xl mx-auto ${
                       theme === 'light' ? 'text-gray-600' : 'text-gray-300'
                     }`}>
-                        Have questions or want to collaborate? We'd love to hear from you! 
+                        Have questions or want to collaborate? We&apos;d love to hear from you! 
                         Reach out through any of the channels above.
                     </p>
                 </div>

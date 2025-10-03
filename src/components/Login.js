@@ -66,7 +66,7 @@ export default function Login() {
       }
 
       console.log("Login successful:", body);
-      try { localStorage.setItem("user", JSON.stringify(body)); } catch (e) { }
+      try { localStorage.setItem("user", JSON.stringify(body)); } catch { }
       window.location.href = "/courses";
     } catch (err) {
       console.error(err);
@@ -210,7 +210,7 @@ export default function Login() {
         <p className={`font-inter text-center text-sm mt-6 animate-fade-in-up delay-600 duration-medium ease-smooth ${
           theme === 'light' ? 'text-gray-600' : 'text-gray-400'
         }`}>
-          Don't have an account? Contact your administrator.
+          Don&apos;t have an account? Contact your administrator.
         </p>
       </div>
     </div>

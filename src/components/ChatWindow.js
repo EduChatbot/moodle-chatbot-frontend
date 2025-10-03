@@ -40,7 +40,7 @@ export default function ChatWindow({ course = { name: "Default Course" }, isExpa
 
       const data = await response.json();
 
-      try { console.log("Backend response (parsed):", JSON.parse(JSON.stringify(data))); } catch (e) { console.log("Backend response (raw):", data); }
+      try { console.log("Backend response (parsed):", JSON.parse(JSON.stringify(data))); } catch { console.log("Backend response (raw):", data); }
 
 
       let botText = "No server response";

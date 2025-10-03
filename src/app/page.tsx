@@ -6,7 +6,7 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { useAnimation } from "@/contexts/AnimationContext";
 
 export default function Home() {
-  const [healthData, setHealthData] = useState<any>(null);
+  const [healthData, setHealthData] = useState<Record<string, unknown> | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { theme } = useTheme();
