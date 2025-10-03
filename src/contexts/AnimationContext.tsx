@@ -21,7 +21,7 @@ export function AnimationProvider({ children }: { children: ReactNode }) {
   const { theme, setTheme } = useTheme();
   const [animationsEnabled, setAnimationsEnabled] = useState(true);
   const [backgroundType, setBackgroundTypeState] = useState<BackgroundType>('liquidether');
-  const [backgroundColor, setBackgroundColorState] = useState<BackgroundColor>('gray');
+  const [backgroundColor, setBackgroundColorState] = useState<BackgroundColor>('black');
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
