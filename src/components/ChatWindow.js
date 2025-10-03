@@ -79,9 +79,48 @@ export default function ChatWindow({ course = { name: "Default Course" }, isExpa
     router.push(`/chat?course=${encodeURIComponent(courseName)}`);
   };
 
+  // Define container styles based on background color
+  const getContainerStyles = () => {
+    switch(backgroundColor) {
+      case 'darkblue':
+        return 'glass-strong border-2 border-slate-400/20 shadow-slate-500/20';
+      case 'cream':
+        return 'glass-strong border-2 border-amber-600/25 shadow-amber-700/15 bg-amber-50/10';
+      case 'white':
+        return 'bg-white/90 border-2 border-gray-200 shadow-xl';
+      case 'black':
+        return 'glass-strong border-2 border-purple-400/20 shadow-purple-500/20';
+      case 'gray':
+        return theme === 'light' 
+          ? 'glass-strong border-2 border-gray-300/30 shadow-gray-400/20'
+          : 'glass-strong border-2 border-white/10 shadow-white/10';
+      default:
+        return 'glass-strong';
+    }
+  };
+
+  const getChatAreaStyles = () => {
+    switch(backgroundColor) {
+      case 'darkblue':
+        return 'glass border border-slate-400/20 bg-slate-900/30';
+      case 'cream':
+        return 'glass border border-amber-600/20 bg-amber-50/20';
+      case 'white':
+        return 'bg-gray-50 border border-gray-200';
+      case 'black':
+        return 'glass border border-purple-400/20 bg-purple-950/30';
+      case 'gray':
+        return theme === 'light'
+          ? 'glass border border-gray-200 bg-white/30'
+          : 'glass border border-white/10 bg-black/30';
+      default:
+        return 'glass';
+    }
+  };
+
   return (
     <div className={`${isExpanded ? 'w-full h-full' : 'max-w-4xl w-full mx-auto my-5'} 
-                    glass-strong rounded-2xl p-6 shadow-2xl animate-fade-in-up duration-slow`}>
+                    ${getContainerStyles()} rounded-2xl p-6 shadow-2xl animate-fade-in-up duration-slow`}>
       {!isExpanded && (
         <div className="flex justify-between items-center mb-4 animate-fade-in-down delay-200">
           <h2 className={`font-montserrat text-2xl font-bold ${
@@ -103,7 +142,7 @@ export default function ChatWindow({ course = { name: "Default Course" }, isExpa
         </div>
       )}
       <div className={`${isExpanded ? 'h-[calc(100vh-200px)]' : 'h-[400px]'} 
-                      mb-4 p-4 rounded-xl overflow-y-auto glass
+                      mb-4 p-4 rounded-xl overflow-y-auto ${getChatAreaStyles()}
                       animate-scale-in delay-300 duration-slower ease-smooth`}>
         {messages.map((msg, i) => (
           <Message key={i} text={msg.text} fromUser={msg.fromUser} />

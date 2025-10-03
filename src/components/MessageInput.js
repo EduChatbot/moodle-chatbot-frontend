@@ -1,7 +1,9 @@
 import { useTheme } from '@/contexts/ThemeContext';
+import { useAnimation } from '@/contexts/AnimationContext';
 
 export default function MessageInput({ onSend, disabled = false }) {
   const { theme } = useTheme();
+  const { backgroundColor } = useAnimation();
   let inputRef;
 
   const handleSend = () => {
@@ -17,6 +19,47 @@ export default function MessageInput({ onSend, disabled = false }) {
     }
   };
 
+  // Define button styles based on background color
+  const getButtonStyles = () => {
+    if (disabled) return 'bg-gray-400 text-gray-600 cursor-not-allowed';
+    
+    switch(backgroundColor) {
+      case 'darkblue':
+        return 'bg-slate-700 text-white hover:bg-slate-800 shadow-lg hover:shadow-xl shadow-slate-600/30';
+      case 'cream':
+        return 'bg-amber-800 text-white hover:bg-amber-900 shadow-lg hover:shadow-xl shadow-amber-700/30';
+      case 'white':
+        return 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-xl shadow-blue-400/40';
+      case 'black':
+        return 'bg-purple-600 text-white hover:bg-purple-700 shadow-lg hover:shadow-xl shadow-purple-500/30';
+      case 'gray':
+        return theme === 'light'
+          ? 'bg-gray-700 text-white hover:bg-gray-800 shadow-lg hover:shadow-xl shadow-gray-500/40'
+          : 'bg-gray-600 text-white hover:bg-gray-700 shadow-xl hover:shadow-2xl shadow-gray-500/30';
+      default:
+        return 'bg-blue-500 text-white hover:bg-blue-600 shadow-lg hover:shadow-xl shadow-blue-200';
+    }
+  };
+
+  const getInputBorderColor = () => {
+    switch(backgroundColor) {
+      case 'darkblue':
+        return 'border-slate-400/30 focus:border-slate-500';
+      case 'cream':
+        return 'border-amber-600/30 focus:border-amber-700';
+      case 'white':
+        return 'border-gray-300 focus:border-blue-500';
+      case 'black':
+        return 'border-purple-400/30 focus:border-purple-400';
+      case 'gray':
+        return theme === 'light'
+          ? 'border-gray-300 focus:border-gray-500'
+          : 'border-white/20 focus:border-gray-400';
+      default:
+        return 'border-gray-300 focus:border-blue-500';
+    }
+  };
+
   return (
     <div className="flex mt-4 gap-3">
       <input
@@ -27,14 +70,14 @@ export default function MessageInput({ onSend, disabled = false }) {
         onKeyUp={handleKeyPress}
         className={`
           flex-1 px-4 py-3 rounded-xl font-inter text-base
-          transition-all duration-300 outline-none
+          transition-all duration-300 outline-none border-2
           ${theme === 'light'
             ? disabled
               ? 'glass-card text-gray-500 cursor-not-allowed'
-              : 'glass-card text-gray-800 border-2 border-gray-300 focus:border-blue-500 focus:shadow-lg'
+              : `glass-card text-gray-800 ${getInputBorderColor()} focus:shadow-lg`
             : disabled
               ? 'glass text-gray-500 cursor-not-allowed'
-              : 'glass text-white border-2 border-white/20 focus:border-blue-400 focus:shadow-xl focus:shadow-blue-500/20'
+              : `glass text-white ${getInputBorderColor()} focus:shadow-xl`
           }
         `}
       />
@@ -44,12 +87,7 @@ export default function MessageInput({ onSend, disabled = false }) {
         className={`
           px-6 py-3 rounded-xl font-space font-bold text-base min-w-[100px]
           transition-all duration-300 hover:scale-105 active:scale-95
-          ${disabled
-            ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
-            : theme === 'light'
-              ? 'bg-blue-500 text-white hover:bg-blue-600 shadow-lg hover:shadow-xl shadow-blue-200'
-              : 'bg-blue-600 text-white hover:bg-blue-500 shadow-xl hover:shadow-2xl shadow-blue-900/50'
-          }
+          ${getButtonStyles()}
         `}
       >
         {disabled ? "✨ Sending..." : "Send →"}
