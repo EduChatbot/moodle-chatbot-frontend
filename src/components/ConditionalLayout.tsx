@@ -2,7 +2,6 @@
 
 import { usePathname } from "next/navigation";
 import VisualHero from "@/components/VisualHero";
-import ThemeToggle from "@/components/ThemeToggle";
 import AnimationToggle from "@/components/AnimationToggle";
 import SettingsToggle from "@/components/SettingsToggle";
 
@@ -18,7 +17,6 @@ export default function ConditionalLayout({
   return (
     <>
       {shouldShowVisualHero && <VisualHero />}
-      <ThemeToggle />
       <AnimationToggle />
       <SettingsToggle />
       <div style={{ position: 'relative', zIndex: 20 }}>

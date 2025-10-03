@@ -18,7 +18,7 @@ interface AnimationContextType {
 const AnimationContext = createContext<AnimationContextType | undefined>(undefined);
 
 export function AnimationProvider({ children }: { children: ReactNode }) {
-  const { theme, toggleTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const [animationsEnabled, setAnimationsEnabled] = useState(true);
   const [backgroundType, setBackgroundTypeState] = useState<BackgroundType>('liquidether');
   const [backgroundColor, setBackgroundColorState] = useState<BackgroundColor>('black');
@@ -42,7 +42,7 @@ export function AnimationProvider({ children }: { children: ReactNode }) {
       setBackgroundColorState(savedColor as BackgroundColor);
     }
 
-    // Listen for theme background changes
+    // Listen for theme background changes (only for default white/black colors)
     const handleThemeBackgroundChange = (event: CustomEvent) => {
       const newColor = event.detail.color as BackgroundColor;
       setBackgroundColorState(newColor);
@@ -85,7 +85,7 @@ export function AnimationProvider({ children }: { children: ReactNode }) {
       }
       // Force dark theme for DarkVeil
       if (theme === 'light') {
-        toggleTheme();
+        setTheme('dark');
       }
     }
   };
@@ -107,10 +107,11 @@ export function AnimationProvider({ children }: { children: ReactNode }) {
       const lightColors: BackgroundColor[] = ['cream', 'white'];
       const darkColors: BackgroundColor[] = ['black', 'gray', 'darkblue'];
       
-      if (lightColors.includes(color) && theme === 'dark') {
-        toggleTheme();
-      } else if (darkColors.includes(color) && theme === 'light') {
-        toggleTheme();
+      // Directly set the theme based on color - no toggling
+      if (lightColors.includes(color)) {
+        setTheme('light');
+      } else if (darkColors.includes(color)) {
+        setTheme('dark');
       }
     }
   };

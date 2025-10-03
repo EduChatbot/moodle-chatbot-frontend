@@ -14,7 +14,7 @@ export default function AnimationToggle() {
       style={{
         position: 'fixed',
         top: 12,
-        right: 80,
+        right: 12,
         zIndex: 50,
         width: 48,
         height: 48,

@@ -7,11 +7,13 @@ type Theme = 'light' | 'dark';
 interface ThemeContextType {
   theme: Theme;
   toggleTheme: () => void;
+  setTheme: (theme: Theme) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType>({
   theme: 'dark',
   toggleTheme: () => {},
+  setTheme: () => {},
 });
 
 export const useTheme = () => {
@@ -48,14 +50,22 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
     
-    // Auto-change background color based on theme
-    const targetColor = newTheme === 'light' ? 'white' : 'black';
-    localStorage.setItem('backgroundColor', targetColor);
-    
-    // Dispatch custom event to notify AnimationContext
-    window.dispatchEvent(new CustomEvent('themeBackgroundChange', { 
-      detail: { color: targetColor } 
-    }));
+    // Only auto-change background color if it's currently white or black (default colors)
+    const currentBgColor = localStorage.getItem('backgroundColor');
+    if (currentBgColor === 'white' || currentBgColor === 'black' || !currentBgColor) {
+      const targetColor = newTheme === 'light' ? 'white' : 'black';
+      localStorage.setItem('backgroundColor', targetColor);
+      
+      // Dispatch event to notify AnimationContext only for default colors
+      window.dispatchEvent(new CustomEvent('themeBackgroundChange', { 
+        detail: { color: targetColor } 
+      }));
+    }
+  };
+
+  // Add a direct setTheme function for external control
+  const setThemeDirectly = (newTheme: Theme) => {
+    setTheme(newTheme);
   };
 
 
@@ -64,7 +74,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme, toggleTheme, setTheme: setThemeDirectly }}>
       {children}
     </ThemeContext.Provider>
   );
