@@ -2,10 +2,24 @@
 
 import { useTheme } from "@/contexts/ThemeContext";
 import { useRouter } from "next/navigation";
+import { useRef, useEffect } from "react";
 
 export default function AboutPage() {
     const { theme } = useTheme();
     const router = useRouter();
+    const aboutSectionRef = useRef(null);
+
+    // Auto-scroll to About Us section on mount
+    useEffect(() => {
+        if (aboutSectionRef.current) {
+            aboutSectionRef.current.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center',
+                inline: 'center'
+            });
+        }
+    }, []);
+
     return (
         <div className="relative min-h-screen py-16 px-4">
             {/* Back Button */}
@@ -20,10 +34,10 @@ export default function AboutPage() {
             
             <div className="flex flex-col items-center pt-20">
                 {/* Main Content Card */}
-                <div className="max-w-5xl mx-auto glass-strong p-12 rounded-3xl shadow-2xl animate-scale-in duration-dramatic ease-elastic">
+                <div ref={aboutSectionRef} className="max-w-4xl mx-auto glass-strong p-8 rounded-3xl shadow-2xl">
                 
                 {/* Hero Title */}
-                <h1 className={`font-playfair text-5xl md:text-6xl font-bold mb-8 text-center animate-fade-in-down duration-slow ease-bounce ${
+                <h1 className={`font-playfair text-4xl md:text-5xl font-bold mb-6 text-center ${
                   theme === 'light'
                     ? 'gradient-text-light'
                     : 'bg-gradient-to-r from-emerald-400 via-blue-500 to-purple-600 bg-clip-text text-transparent'
@@ -32,8 +46,8 @@ export default function AboutPage() {
                 </h1>
 
                 {/* Introduction */}
-                <div className="space-y-6 mb-12 animate-fade-in-up delay-250 duration-slower ease-smooth">
-                    <p className={`font-inter text-xl text-center leading-relaxed ${
+                <div className="space-y-4 mb-8">
+                    <p className={`font-inter text-lg text-center leading-relaxed ${
                       theme === 'light' ? 'text-gray-700' : 'text-gray-200'
                     }`}>
                         We are passionate Data Science students at <span className={`font-montserrat font-semibold ${
@@ -41,13 +55,13 @@ export default function AboutPage() {
                         }`}>Warsaw University of Technology</span>, 
                         combining cutting-edge AI technology with educational innovation.
                     </p>
-                    <p className={`font-inter text-lg text-center leading-relaxed ${
+                    <p className={`font-inter text-base text-center leading-relaxed ${
                       theme === 'light' ? 'text-gray-600' : 'text-gray-300'
                     }`}>
                         This project represents our bachelor thesis work, showcasing our commitment to 
                         enhancing the learning experience through intelligent chatbot technology.
                     </p>
-                    <p className={`font-space text-xl text-center font-semibold ${
+                    <p className={`font-space text-lg text-center font-semibold ${
                       theme === 'light' ? 'text-emerald-600' : 'text-emerald-300'
                     }`}>
                         💡 Feel free to reach out to us!
@@ -55,20 +69,19 @@ export default function AboutPage() {
                 </div>
 
                 {/* Team Members Section */}
-                <div className={`mb-12 pb-8 animate-fade-in-up delay-400 duration-slow ease-smooth ${
+                <div className={`mb-8 pb-6 ${
                   theme === 'light' ? 'border-b border-gray-300' : 'border-b border-white/20'
                 }`}>
-                    <h3 className={`font-montserrat text-3xl font-bold mb-8 text-center ${
+                    <h3 className={`font-montserrat text-2xl font-bold mb-6 text-center ${
                       theme === 'light' ? 'text-gray-800' : 'text-white'
                     }`}>
                         🎓 Our Team
                     </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         {/* Team Member 1 */}
-                        <div className="glass-card p-6 text-center hover:scale-105 transition-all duration-300
-                                      animate-fade-in-left delay-550 duration-slower ease-bounce">
-                            <div className="text-4xl mb-3">👩‍💻</div>
-                            <h4 className={`font-montserrat text-xl font-bold mb-3 ${
+                        <div className="glass-card p-5 text-center hover:scale-105 transition-all duration-300">
+                            <div className="text-3xl mb-2">👩‍💻</div>
+                            <h4 className={`font-montserrat text-lg font-bold mb-2 ${
                               theme === 'light' ? 'text-gray-800' : 'text-white'
                             }`}>
                                 Anna Ostrowska
@@ -88,10 +101,9 @@ export default function AboutPage() {
                         </div>
 
                         {/* Team Member 2 */}
-                        <div className="glass-card p-6 text-center hover:scale-105 transition-all duration-300
-                                      animate-fade-in-up delay-700 duration-slow ease-elastic">
-                            <div className="text-4xl mb-3">👩‍💻</div>
-                            <h4 className={`font-montserrat text-xl font-bold mb-3 ${
+                        <div className="glass-card p-5 text-center hover:scale-105 transition-all duration-300">
+                            <div className="text-3xl mb-2">👩‍💻</div>
+                            <h4 className={`font-montserrat text-lg font-bold mb-2 ${
                               theme === 'light' ? 'text-gray-800' : 'text-white'
                             }`}>
                                 Gabriela Majstrak
@@ -111,10 +123,9 @@ export default function AboutPage() {
                         </div>
 
                         {/* Team Member 3 */}
-                        <div className="glass-card p-6 text-center hover:scale-105 transition-all duration-300
-                                      animate-fade-in-right delay-900 duration-slower ease-bounce">
-                            <div className="text-4xl mb-3">👨‍💻</div>
-                            <h4 className={`font-montserrat text-xl font-bold mb-3 ${
+                        <div className="glass-card p-5 text-center hover:scale-105 transition-all duration-300">
+                            <div className="text-3xl mb-2">👨‍💻</div>
+                            <h4 className={`font-montserrat text-lg font-bold mb-2 ${
                               theme === 'light' ? 'text-gray-800' : 'text-white'
                             }`}>
                                 Jan Opala
@@ -136,8 +147,8 @@ export default function AboutPage() {
                 </div>
 
                 {/* Project Repository */}
-                <div className="text-center mb-12 animate-fade-in-up delay-1000 duration-medium ease-smooth">
-                    <div className="glass p-6 rounded-2xl inline-block">
+                <div className="text-center mb-8">
+                    <div className="glass p-5 rounded-2xl inline-block">
                         <p className={`font-inter mb-2 ${
                           theme === 'light' ? 'text-gray-800' : 'text-white'
                         }`}>
@@ -153,13 +164,13 @@ export default function AboutPage() {
                 </div>
 
                 {/* Contact Section */}
-                <div className="text-center animate-fade-in-up delay-1200 duration-slowest ease-elastic">
-                    <h3 className={`font-montserrat text-3xl font-bold mb-4 ${
+                <div className="text-center">
+                    <h3 className={`font-montserrat text-2xl font-bold mb-3 ${
                       theme === 'light' ? 'text-gray-800' : 'text-white'
                     }`}>
                         💬 Get In Touch
                     </h3>
-                    <p className={`font-inter text-lg max-w-2xl mx-auto ${
+                    <p className={`font-inter text-base max-w-2xl mx-auto ${
                       theme === 'light' ? 'text-gray-600' : 'text-gray-300'
                     }`}>
                         Have questions or want to collaborate? We'd love to hear from you! 

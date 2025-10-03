@@ -149,17 +149,31 @@ export default function Login() {
           </div>
         </div>
 
-        <button
-          onClick={handleLogin}
-          disabled={loading}
-          className={`w-full glass-card px-8 py-4 font-space text-lg font-semibold rounded-xl transition-all duration-300 animate-scale-in delay-500 duration-slow ease-elastic ${loading ? "opacity-50 cursor-not-allowed" : "hover:scale-105 animate-glow-fast"} relative overflow-hidden group`}
-          style={{ color: theme === 'light' ? '#1f2937' : 'white' }}
-        >
-          <span className="relative z-10">
-            {loading ? "Logging in..." : "Login"}
-          </span>
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-        </button>
+        <div className="flex justify-center">
+          <button
+            onClick={handleLogin}
+            disabled={loading}
+            className={`px-8 py-2.5 font-montserrat text-sm font-semibold rounded transition-all duration-300 animate-fade-in-up delay-500 ${
+              loading 
+                ? "opacity-60 cursor-not-allowed" 
+                : "hover:scale-105 hover:shadow-xl active:scale-95"
+            } relative overflow-hidden group ${
+              theme === 'light'
+                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
+                : 'glass-card border border-white/20 shadow-lg'
+            }`}
+            style={theme === 'dark' ? { color: 'white' } : {}}
+          >
+            <span className="relative z-10">
+              {loading ? "Signing in..." : "Sign In"}
+            </span>
+            <div className={`absolute inset-0 transition-opacity duration-300 ${
+              theme === 'light'
+                ? 'bg-gradient-to-r from-blue-700 to-purple-700 opacity-0 group-hover:opacity-100'
+                : 'bg-gradient-to-r from-blue-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100'
+            }`}></div>
+          </button>
+        </div>
 
         {showToast && error && (
           <div className={`mt-6 glass p-4 rounded-xl animate-fade-in-up duration-fast ease-bounce relative ${
