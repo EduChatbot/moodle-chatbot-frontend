@@ -89,7 +89,13 @@ export default function Login() {
       <div ref={loginFormRef} className="w-full max-w-md glass-strong rounded-3xl p-10 shadow-2xl animate-scale-in duration-dramatic ease-elastic">
         <h1 className={`font-playfair text-4xl font-bold mb-2 text-center animate-fade-in-down duration-slow ease-bounce ${
           theme === 'light'
-            ? 'gradient-text-light'
+            ? backgroundColor === 'cream'
+              ? 'bg-gradient-to-r from-stone-700 via-stone-600 to-stone-700 bg-clip-text text-transparent'
+              : 'gradient-text-light'
+            : backgroundColor === 'gray'
+            ? 'bg-gradient-to-r from-zinc-400 via-zinc-300 to-zinc-400 bg-clip-text text-transparent'
+            : backgroundColor === 'darkblue'
+            ? 'bg-gradient-to-r from-slate-400 via-slate-300 to-slate-400 bg-clip-text text-transparent'
             : 'bg-gradient-to-r from-emerald-400 via-blue-500 to-purple-600 bg-clip-text text-transparent'
         }`}>
           Welcome Back
@@ -159,7 +165,9 @@ export default function Login() {
                 : "hover:scale-105 hover:shadow-xl active:scale-95"
             } relative overflow-hidden group ${
               theme === 'light'
-                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
+                ? backgroundColor === 'cream'
+                  ? 'bg-gradient-to-r from-stone-700 to-stone-600 text-white shadow-lg'
+                  : 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
                 : 'glass-card border border-white/20 shadow-lg'
             }`}
             style={theme === 'dark' ? { color: 'white' } : {}}
@@ -169,7 +177,9 @@ export default function Login() {
             </span>
             <div className={`absolute inset-0 transition-opacity duration-300 ${
               theme === 'light'
-                ? 'bg-gradient-to-r from-blue-700 to-purple-700 opacity-0 group-hover:opacity-100'
+                ? backgroundColor === 'cream'
+                  ? 'bg-gradient-to-r from-stone-800 to-stone-700 opacity-0 group-hover:opacity-100'
+                  : 'bg-gradient-to-r from-blue-700 to-purple-700 opacity-0 group-hover:opacity-100'
                 : 'bg-gradient-to-r from-blue-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100'
             }`}></div>
           </button>

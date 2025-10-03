@@ -1,11 +1,13 @@
 "use client";
 
 import { useTheme } from "@/contexts/ThemeContext";
+import { useAnimation } from "@/contexts/AnimationContext";
 import { useRouter } from "next/navigation";
 import { useRef, useEffect } from "react";
 
 export default function AboutPage() {
     const { theme } = useTheme();
+    const { backgroundColor } = useAnimation();
     const router = useRouter();
     const aboutSectionRef = useRef(null);
 
@@ -39,7 +41,13 @@ export default function AboutPage() {
                 {/* Hero Title */}
                 <h1 className={`font-playfair text-4xl md:text-5xl font-bold mb-6 text-center ${
                   theme === 'light'
-                    ? 'gradient-text-light'
+                    ? backgroundColor === 'cream'
+                      ? 'bg-gradient-to-r from-stone-700 via-stone-600 to-stone-700 bg-clip-text text-transparent'
+                      : 'gradient-text-light'
+                    : backgroundColor === 'gray'
+                    ? 'bg-gradient-to-r from-zinc-400 via-zinc-300 to-zinc-400 bg-clip-text text-transparent'
+                    : backgroundColor === 'darkblue'
+                    ? 'bg-gradient-to-r from-slate-400 via-slate-300 to-slate-400 bg-clip-text text-transparent'
                     : 'bg-gradient-to-r from-emerald-400 via-blue-500 to-purple-600 bg-clip-text text-transparent'
                 }`}>
                     About Us
@@ -51,7 +59,13 @@ export default function AboutPage() {
                       theme === 'light' ? 'text-gray-700' : 'text-gray-200'
                     }`}>
                         We are passionate Data Science students at <span className={`font-montserrat font-semibold ${
-                          theme === 'light' ? 'text-blue-600' : 'text-blue-300'
+                          theme === 'light' 
+                            ? backgroundColor === 'cream' 
+                              ? 'text-stone-700' 
+                              : 'text-blue-600'
+                            : backgroundColor === 'cream'
+                            ? 'text-stone-400'
+                            : 'text-blue-300'
                         }`}>Warsaw University of Technology</span>, 
                         combining cutting-edge AI technology with educational innovation.
                     </p>
@@ -88,13 +102,25 @@ export default function AboutPage() {
                             </h4>
                             <a href="mailto:anna.ostrowska@example.com" 
                                className={`font-inter text-sm transition-colors block mb-2 ${
-                                 theme === 'light' ? 'text-blue-600 hover:text-blue-700' : 'text-blue-300 hover:text-blue-200'
+                                 theme === 'light' 
+                                   ? backgroundColor === 'cream'
+                                     ? 'text-stone-700 hover:text-stone-800'
+                                     : 'text-blue-600 hover:text-blue-700'
+                                   : backgroundColor === 'cream'
+                                   ? 'text-stone-400 hover:text-stone-300'
+                                   : 'text-blue-300 hover:text-blue-200'
                                }`}>
                                 📧 Email
                             </a>
                             <a href="https://github.com/anna-ostrowska" 
                                className={`font-inter text-sm transition-colors block ${
-                                 theme === 'light' ? 'text-purple-600 hover:text-purple-700' : 'text-purple-300 hover:text-purple-200'
+                                 theme === 'light'
+                                   ? backgroundColor === 'cream'
+                                     ? 'text-stone-600 hover:text-stone-700'
+                                     : 'text-purple-600 hover:text-purple-700'
+                                   : backgroundColor === 'cream'
+                                   ? 'text-stone-500 hover:text-stone-400'
+                                   : 'text-purple-300 hover:text-purple-200'
                                }`}>
                                 🔗 GitHub
                             </a>
@@ -110,13 +136,25 @@ export default function AboutPage() {
                             </h4>
                             <a href="mailto:gabriela.majstrak@example.com" 
                                className={`font-inter text-sm transition-colors block mb-2 ${
-                                 theme === 'light' ? 'text-blue-600 hover:text-blue-700' : 'text-blue-300 hover:text-blue-200'
+                                 theme === 'light'
+                                   ? backgroundColor === 'cream'
+                                     ? 'text-stone-700 hover:text-stone-800'
+                                     : 'text-blue-600 hover:text-blue-700'
+                                   : backgroundColor === 'cream'
+                                   ? 'text-stone-400 hover:text-stone-300'
+                                   : 'text-blue-300 hover:text-blue-200'
                                }`}>
                                 📧 Email
                             </a>
                             <a href="https://github.com/gabriela-majstrak" 
                                className={`font-inter text-sm transition-colors block ${
-                                 theme === 'light' ? 'text-purple-600 hover:text-purple-700' : 'text-purple-300 hover:text-purple-200'
+                                 theme === 'light'
+                                   ? backgroundColor === 'cream'
+                                     ? 'text-stone-600 hover:text-stone-700'
+                                     : 'text-purple-600 hover:text-purple-700'
+                                   : backgroundColor === 'cream'
+                                   ? 'text-stone-500 hover:text-stone-400'
+                                   : 'text-purple-300 hover:text-purple-200'
                                }`}>
                                 🔗 GitHub
                             </a>
@@ -132,13 +170,25 @@ export default function AboutPage() {
                             </h4>
                             <a href="mailto:jan.opala@example.com" 
                                className={`font-inter text-sm transition-colors block mb-2 ${
-                                 theme === 'light' ? 'text-blue-600 hover:text-blue-700' : 'text-blue-300 hover:text-blue-200'
+                                 theme === 'light'
+                                   ? backgroundColor === 'cream'
+                                     ? 'text-stone-700 hover:text-stone-800'
+                                     : 'text-blue-600 hover:text-blue-700'
+                                   : backgroundColor === 'cream'
+                                   ? 'text-stone-400 hover:text-stone-300'
+                                   : 'text-blue-300 hover:text-blue-200'
                                }`}>
                                 📧 Email
                             </a>
                             <a href="https://github.com/jan-opala" 
                                className={`font-inter text-sm transition-colors block ${
-                                 theme === 'light' ? 'text-purple-600 hover:text-purple-700' : 'text-purple-300 hover:text-purple-200'
+                                 theme === 'light'
+                                   ? backgroundColor === 'cream'
+                                     ? 'text-stone-600 hover:text-stone-700'
+                                     : 'text-purple-600 hover:text-purple-700'
+                                   : backgroundColor === 'cream'
+                                   ? 'text-stone-500 hover:text-stone-400'
+                                   : 'text-purple-300 hover:text-purple-200'
                                }`}>
                                 🔗 GitHub
                             </a>

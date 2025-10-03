@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import ChatWindow from "@/components/ChatWindow";
 import RotatingText from "@/components/RotatingText";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useAnimation } from "@/contexts/AnimationContext";
 
 function CoursesList() {
   const [courses, setCourses] = useState([]);
@@ -12,6 +13,7 @@ function CoursesList() {
   const [error, setError] = useState(null);
   const [selectedCourse, setSelectedCourse] = useState(null);
   const { theme } = useTheme();
+  const { backgroundColor } = useAnimation();
   const router = useRouter();
 
   useEffect(() => {
@@ -107,7 +109,13 @@ function CoursesList() {
         <div className="text-center mb-12 animate-fade-in-down duration-slow ease-bounce">
           <h1 className={`font-playfair text-5xl md:text-6xl font-bold mb-4 ${
             theme === 'light' 
-              ? 'gradient-text-light'
+              ? backgroundColor === 'cream'
+                ? 'bg-gradient-to-r from-amber-700 via-yellow-800 to-amber-800 bg-clip-text text-transparent'
+                : 'gradient-text-light'
+              : backgroundColor === 'gray'
+              ? 'bg-gradient-to-r from-zinc-400 via-zinc-300 to-zinc-400 bg-clip-text text-transparent'
+              : backgroundColor === 'darkblue'
+              ? 'bg-gradient-to-r from-slate-400 via-slate-300 to-slate-400 bg-clip-text text-transparent'
               : 'bg-gradient-to-r from-emerald-400 via-blue-500 to-purple-600 bg-clip-text text-transparent'
           }`}>
             Available Courses

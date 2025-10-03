@@ -21,17 +21,19 @@ function ChatContent() {
   const getPageBackground = () => {
     switch(backgroundColor) {
       case 'darkblue':
-        return 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900';
+        return 'bg-gradient-to-br from-slate-950 via-slate-950 to-black';
       case 'cream':
-        return 'bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50';
+        return theme === 'light' 
+          ? 'bg-gradient-to-br from-stone-100 via-stone-50 to-stone-100'
+          : 'bg-gradient-to-br from-stone-900 via-stone-950 to-black';
       case 'white':
         return 'bg-white';
       case 'black':
         return 'bg-black';
       case 'gray':
         return theme === 'light'
-          ? 'bg-gradient-to-br from-gray-50 via-slate-50 to-gray-100'
-          : 'bg-gradient-to-br from-gray-900 via-slate-900 to-gray-950';
+          ? 'bg-gradient-to-br from-stone-200 via-stone-100 to-stone-200'
+          : 'bg-gradient-to-br from-stone-950 via-black to-stone-950';
       default:
         return 'bg-gradient-to-br from-gray-900 to-gray-950';
     }
@@ -40,17 +42,19 @@ function ChatContent() {
   const getHeaderStyles = () => {
     switch(backgroundColor) {
       case 'darkblue':
-        return 'bg-slate-800/30 border-slate-500/30';
+        return 'bg-slate-900/30 border-slate-700/30';
       case 'cream':
-        return 'bg-amber-100/40 border-amber-600/30';
+        return theme === 'light'
+          ? 'bg-stone-200/40 border-stone-400/30'
+          : 'bg-stone-800/40 border-stone-600/30';
       case 'white':
         return 'bg-gray-100 border-gray-300';
       case 'black':
         return 'bg-gray-900/80 border-purple-500/30';
       case 'gray':
         return theme === 'light'
-          ? 'bg-white/40 border-gray-300/30'
-          : 'bg-gray-800/30 border-white/20';
+          ? 'bg-stone-100/40 border-stone-300/30'
+          : 'bg-stone-900/30 border-stone-700/20';
       default:
         return 'bg-white/10 border-white/20';
     }

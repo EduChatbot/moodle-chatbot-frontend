@@ -40,7 +40,13 @@ export default function Home() {
           {/* Main Heading with animation */}
           <h1 className={`font-playfair text-4xl md:text-5xl lg:text-6xl font-bold animate-fade-in-down duration-slow ease-bounce ${
             theme === 'light'
-              ? 'gradient-text-light'
+              ? backgroundColor === 'cream'
+                ? 'bg-gradient-to-r from-stone-700 via-stone-600 to-stone-700 bg-clip-text text-transparent'
+                : 'gradient-text-light'
+              : backgroundColor === 'gray'
+              ? 'bg-gradient-to-r from-zinc-400 via-zinc-300 to-zinc-400 bg-clip-text text-transparent'
+              : backgroundColor === 'darkblue'
+              ? 'bg-gradient-to-r from-slate-400 via-slate-300 to-slate-400 bg-clip-text text-transparent'
               : 'bg-gradient-to-r from-emerald-400 via-blue-500 to-purple-600 bg-clip-text text-transparent'
           }`}>
             Moodle Chatbot

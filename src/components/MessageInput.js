@@ -25,7 +25,7 @@ export default function MessageInput({ onSend, disabled = false }) {
     
     switch(backgroundColor) {
       case 'darkblue':
-        return 'bg-slate-700 text-white hover:bg-slate-800 shadow-lg hover:shadow-xl shadow-slate-600/30';
+        return 'bg-slate-900 text-white hover:bg-black shadow-lg hover:shadow-xl shadow-slate-800/30';
       case 'cream':
         return 'bg-amber-800 text-white hover:bg-amber-900 shadow-lg hover:shadow-xl shadow-amber-700/30';
       case 'white':
@@ -34,8 +34,8 @@ export default function MessageInput({ onSend, disabled = false }) {
         return 'bg-purple-600 text-white hover:bg-purple-700 shadow-lg hover:shadow-xl shadow-purple-500/30';
       case 'gray':
         return theme === 'light'
-          ? 'bg-gray-700 text-white hover:bg-gray-800 shadow-lg hover:shadow-xl shadow-gray-500/40'
-          : 'bg-gray-600 text-white hover:bg-gray-700 shadow-xl hover:shadow-2xl shadow-gray-500/30';
+          ? 'bg-stone-900 text-white hover:bg-black shadow-lg hover:shadow-xl shadow-stone-800/40'
+          : 'bg-stone-800 text-white hover:bg-stone-900 shadow-xl hover:shadow-2xl shadow-stone-700/30';
       default:
         return 'bg-blue-500 text-white hover:bg-blue-600 shadow-lg hover:shadow-xl shadow-blue-200';
     }
@@ -44,7 +44,7 @@ export default function MessageInput({ onSend, disabled = false }) {
   const getInputBorderColor = () => {
     switch(backgroundColor) {
       case 'darkblue':
-        return 'border-slate-400/30 focus:border-slate-500';
+        return 'border-slate-600/30 focus:border-slate-700';
       case 'cream':
         return 'border-amber-600/30 focus:border-amber-700';
       case 'white':
@@ -53,8 +53,8 @@ export default function MessageInput({ onSend, disabled = false }) {
         return 'border-purple-400/30 focus:border-purple-400';
       case 'gray':
         return theme === 'light'
-          ? 'border-gray-300 focus:border-gray-500'
-          : 'border-white/20 focus:border-gray-400';
+          ? 'border-stone-300 focus:border-stone-700'
+          : 'border-stone-600/20 focus:border-stone-500';
       default:
         return 'border-gray-300 focus:border-blue-500';
     }

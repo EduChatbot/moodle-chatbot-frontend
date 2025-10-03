@@ -27,9 +27,9 @@ const Settings = () => {
   const getColorDisplay = (color: BackgroundColor) => {
     const colorMap = {
       black: '#1F2937',
-      gray: '#1F2937', 
-      darkblue: '#334155',
-      cream: '#F5F5DC',
+      gray: '#57534e', 
+      darkblue: '#475569',
+      cream: '#8B7355',
       white: '#FFFFFF'
     };
     return colorMap[color];

@@ -10,8 +10,8 @@ export default function Message({ text, fromUser = false }) {
     switch(backgroundColor) {
       case 'darkblue':
         return {
-          user: 'bg-slate-700 text-white shadow-slate-600/40',
-          bot: 'glass-strong text-gray-100 border border-slate-500/25'
+          user: 'bg-slate-900 text-white shadow-slate-800/40',
+          bot: 'glass-strong text-gray-100 border border-slate-700/25'
         };
       case 'cream':
         return {
@@ -31,11 +31,11 @@ export default function Message({ text, fromUser = false }) {
       case 'gray':
         return {
           user: theme === 'light'
-            ? 'bg-gray-700 text-white shadow-gray-500/40'
-            : 'bg-gray-600 text-white shadow-gray-500/30',
+            ? 'bg-stone-900 text-white shadow-stone-800/40'
+            : 'bg-stone-800 text-white shadow-stone-700/30',
           bot: theme === 'light'
-            ? 'glass-card text-gray-800 border border-gray-300'
-            : 'glass-strong text-gray-100 border border-gray-500/15'
+            ? 'glass-card text-gray-800 border border-stone-300'
+            : 'glass-strong text-gray-100 border border-stone-600/15'
         };
       default:
         return {

@@ -35,9 +35,9 @@ const LightRays = ({ animationsEnabled = true, backgroundColor, theme }) => {
       return theme === 'light' ? '#8b5cf6' : '#a855f7';
     }
     switch (backgroundColor) {
-      case 'gray': return '#6B7280';
-      case 'darkblue': return '#6366f1';
-      case 'cream': return '#D2B48C';
+      case 'gray': return '#57534e';
+      case 'darkblue': return '#475569';
+      case 'cream': return '#8B7355';
       default: return '#8b5cf6';
     }
   };
@@ -125,9 +125,9 @@ export default function VisualHero({ logoSrc = "/favicon.ico" }) {
     }
     const colorMap = {
       black: theme === 'light' ? '#ffffff' : '#0a0b0f',
-      gray: '#1F2937', 
+      gray: theme === 'light' ? '#e7e5e4' : '#1c1917',
       darkblue: '#334155',
-      cream: theme === 'light' ? '#FDF5E6' : '#A0845C',
+      cream: theme === 'light' ? '#FDF5E6' : '#8B7355',
       white: theme === 'light' ? '#FFFFFF' : '#1F2937'
     };
     return colorMap[backgroundColor] || (theme === 'light' ? '#f8fafc' : '#0a0b0f');
@@ -186,22 +186,22 @@ export default function VisualHero({ logoSrc = "/favicon.ico" }) {
                       )
                     : backgroundColor === 'cream'
                     ? (theme === 'light'
-                        ? ["#D2B48C", "#E6C2A6", "#DEB887"]
-                        : ["#8B7355", "#A0845C", "#D2B48C"]
+                        ? ["#8B7355", "#A0845C", "#B8956B"]
+                        : ["#6B5B4A", "#8B7355", "#A0845C"]
                       )
                     : backgroundColor === 'gray'
-                    ? ["#6B7280", "#9CA3AF", "#D1D5DB"]
+                    ? ["#57534e", "#78716c", "#a8a29e"]
                     : backgroundColor === 'darkblue'
-                    ? ["#6366f1", "#8b5cf6", "#a855f7"]
+                    ? ["#475569", "#64748b", "#94a3b8"]
                     : (theme === 'light' 
                         ? ["#8b5cf6", "#a855f7", "#9333ea"]
                         : ["#5227FF", "#FF9FFC", "#B19EEF"]
                       )
                   }
-                  mouseForce={animationsEnabled ? 12 : 0}
-                  cursorSize={60}
+                  mouseForce={animationsEnabled ? 25 : 0}
+                  cursorSize={80}
                   isViscous={true}
-                  viscous={60}
+                  viscous={40}
                   iterationsViscous={48}
                   iterationsPoisson={48}
                   resolution={0.3}
@@ -280,11 +280,11 @@ export default function VisualHero({ logoSrc = "/favicon.ico" }) {
                 background: (backgroundColor === 'black' || backgroundColor === 'white')
                   ? (theme === 'light' ? '#8b5cf6' : '#6e036eff')
                   : backgroundColor === 'cream'
-                  ? (theme === 'light' ? '#D2B48C' : '#8B7355')
+                  ? (theme === 'light' ? '#8B7355' : '#6B5B4A')
                   : backgroundColor === 'gray'
-                  ? '#6B7280'
+                  ? '#57534e'
                   : backgroundColor === 'darkblue'
-                  ? '#6366f1'
+                  ? '#475569'
                   : (theme === 'light' ? '#8b5cf6' : '#6e036eff'),
                 color: "white" 
               }}
@@ -295,11 +295,11 @@ export default function VisualHero({ logoSrc = "/favicon.ico" }) {
                 background: (backgroundColor === 'black' || backgroundColor === 'white')
                   ? (theme === 'light' ? '#8b5cf6' : '#6e036eff')
                   : backgroundColor === 'cream'
-                  ? (theme === 'light' ? '#D2B48C' : '#8B7355')
+                  ? (theme === 'light' ? '#8B7355' : '#6B5B4A')
                   : backgroundColor === 'gray'
-                  ? '#6B7280'
+                  ? '#57534e'
                   : backgroundColor === 'darkblue'
-                  ? '#6366f1'
+                  ? '#475569'
                   : (theme === 'light' ? '#8b5cf6' : '#6e036eff')
               }}
             >

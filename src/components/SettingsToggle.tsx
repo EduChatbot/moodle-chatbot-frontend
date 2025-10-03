@@ -10,7 +10,7 @@ const SettingsToggle = () => {
     <>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed top-3 right-36 z-30 p-3 rounded-xl bg-white/20 dark:bg-black/30 backdrop-blur-md border border-white/30 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-white/30 dark:hover:bg-black/40 transition-all duration-200 shadow-lg"
+        className="fixed top-3 right-16 z-30 p-3 rounded-xl bg-white/20 dark:bg-black/30 backdrop-blur-md border border-white/30 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-white/30 dark:hover:bg-black/40 transition-all duration-200 shadow-lg"
         title="Background Settings"
       >
         <span className="text-xl">⚙️</span>
