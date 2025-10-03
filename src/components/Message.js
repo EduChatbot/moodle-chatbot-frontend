@@ -1,36 +1,23 @@
 import { useTheme } from '@/contexts/ThemeContext';
-import { useAnimation } from '@/contexts/AnimationContext';
 
 export default function Message({ text, fromUser = false }) {
   const { theme } = useTheme();
-  const { backgroundColor } = useAnimation();
+  
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: fromUser ? "flex-end" : "flex-start",
-        margin: "8px 0"
-      }}
-    >
-      <div
-        style={{
-          background: fromUser 
-            ? (backgroundColor === 'cream' && theme === 'light' ? "#D2B48C" : "#0070f3")
-            : (theme === 'light' ? "#f3f4f6" : "#374151"),
-          color: fromUser 
-            ? (backgroundColor === 'cream' && theme === 'light' ? "#422919" : "white")
-            : (theme === 'light' ? "#1f2937" : "#e5e7eb"),
-          padding: "12px 16px",
-          borderRadius: "16px",
-          maxWidth: "75%",
-          fontSize: "15px",
-          lineHeight: "1.4",
-          boxShadow: backgroundColor === 'cream' && theme === 'light'
-            ? "0 2px 8px rgba(210,180,140,0.15)"
-            : "0 1px 3px rgba(0,0,0,0.1)",
-          wordWrap: "break-word"
-        }}
-      >
+    <div className={`flex ${fromUser ? 'justify-end' : 'justify-start'} my-2 
+                    animate-fade-in-up duration-fast`}>
+      <div className={`
+        px-4 py-3 rounded-2xl max-w-[75%] font-inter text-[15px] leading-relaxed
+        shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-[1.02]
+        ${fromUser 
+          ? theme === 'light'
+            ? 'bg-blue-500 text-white shadow-blue-200'
+            : 'bg-blue-600 text-white shadow-blue-900/50'
+          : theme === 'light'
+            ? 'glass-card text-gray-800 border border-gray-200'
+            : 'glass-strong text-gray-100 border border-white/10'
+        }
+      `}>
         {text}
       </div>
     </div>

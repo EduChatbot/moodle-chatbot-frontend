@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAnimation } from "@/contexts/AnimationContext";
 import { useRouter } from "next/navigation";
+
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const usernameInputRef = useRef(null);
@@ -10,15 +11,14 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showToast, setShowToast] = useState(false);
+  const loginFormRef = useRef(null);
   const { theme } = useTheme();
   const { backgroundColor } = useAnimation();
   const router = useRouter();
 
-
   useEffect(() => {
     if (error) setShowToast(true);
   }, [error]);
-
 
   useEffect(() => {
     if (!showToast) return;
@@ -26,257 +26,168 @@ export default function Login() {
     return () => clearTimeout(t);
   }, [showToast]);
 
-  const styles = {
-    wrapper: {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      padding: "40px 20px",
-      width: "100vw",
-      boxSizing: "border-box",
-      overflowX: "hidden",
-      fontFamily: "'Inter', sans-serif",
-    },
-    card: {
-      width: "100%",
-      maxWidth: "400px",
-      background: theme === 'light' ? "rgba(255,255,255,0.9)" : "#1f2937",
-      borderRadius: "16px",
-      boxShadow: theme === 'light' 
-        ? "0 12px 30px rgba(0,0,0,0.1)" 
-        : "0 12px 30px rgba(0,0,0,0.6)",
-      border: theme === 'light' 
-        ? "1px solid rgba(0,0,0,0.1)" 
-        : "1px solid rgba(255,255,255,0.08)",
-      padding: "32px",
-      display: "flex",
-      flexDirection: "column",
-      gap: "16px",
-      color: theme === 'light' ? "#1f2937" : "#f1f5f9",
-      backdropFilter: "blur(10px)",
-    },
-    title: {
-      margin: 0,
-      textAlign: "center",
-      fontSize: "28px",
-      color: theme === 'light' ? "#111827" : "#f8fafc",
-      fontWeight: 700,
-      fontFamily: "'Merriweather', serif",
-    },
-    input: {
-      width: "100%",
-      padding: "14px 16px",
-      borderRadius: "10px",
-      border: theme === 'light' 
-        ? "1px solid rgba(0,0,0,0.2)" 
-        : "1px solid rgba(255,255,255,0.2)",
-      fontSize: "16px",
-      outline: "none",
-      boxSizing: "border-box",
-      color: theme === 'light' ? "#111827" : "#f8fafc",
-      background: theme === 'light' ? "rgba(255,255,255,0.8)" : "#111827",
-      transition: "all 0.3s ease",
-    },
-    inputWithButtonWrap: {
-      position: "relative",
-      width: "100%",
-    },
-    showBtn: {
-      position: "absolute",
-      right: "10px",
-      top: "50%",
-      transform: "translateY(-50%)",
-      background: "transparent",
-      border: "none",
-      color: theme === 'light' ? "#6b7280" : "#9ca3af",
-      cursor: "pointer",
-      padding: "8px",
-      fontSize: "17px",
-    },
-    button: {
-      padding: "14px 18px",
-      borderRadius: "10px",
-      border: "none",
-      background: backgroundColor === 'cream' && theme === 'light'
-        ? "linear-gradient(90deg, #D2B48C, #CD853F)"
-        : theme === 'light' 
-        ? "linear-gradient(90deg, #3b82f6, #6366f1)" 
-        : "linear-gradient(90deg, #3b82f6, #6366f1)",
-      color: backgroundColor === 'cream' && theme === 'light' ? "#422919" : "#fff",
-      fontWeight: 700,
-      cursor: "pointer",
-      boxShadow: backgroundColor === 'cream' && theme === 'light'
-        ? "0 8px 20px rgba(210,180,140,0.4)"
-        : theme === 'light' 
-        ? "0 8px 20px rgba(59,130,246,0.4)" 
-        : "0 8px 20px rgba(99,102,241,0.3)",
-      fontSize: "16px",
-      transition: "all 0.3s ease",
-    },
-    meta: {
-      marginTop: "8px",
-      textAlign: "center",
-      color: theme === 'light' ? "#64748b" : "#94a3b8",
-      fontSize: "14px",
-    },
+  // Auto-scroll to login form on mount
+  useEffect(() => {
+    if (loginFormRef.current) {
+      loginFormRef.current.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'center',
+        inline: 'center'
+      });
+    }
+  }, []);
+
+  const handleLogin = async () => {
+    setError(null);
+    setLoading(true);
+    try {
+      const username = usernameInputRef.current?.value || "";
+      const password = passwordInputRef.current?.value || "";
+      const res = await fetch("http://127.0.0.1:8000/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ username, password }),
+      });
+
+      const body = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        const message = (body && (body.detail || body.error || body.message)) || "Login failed";
+        throw new Error(message);
+      }
+
+      const status = (body && (body.status || body.Status || body.statusCode || body.result)) || null;
+      const okStatus = typeof status === 'string' ? status.toLowerCase() === 'success' : status === true;
+
+      if (!okStatus) {
+        const message = (body && (body.detail || body.error || body.message || body.msg)) || "Wrong username or password";
+        throw new Error(message);
+      }
+
+      console.log("Login successful:", body);
+      try { localStorage.setItem("user", JSON.stringify(body)); } catch (e) { }
+      window.location.href = "/courses";
+    } catch (err) {
+      console.error(err);
+      setError(err.message || "An unexpected error occurred");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div style={styles.wrapper}>
+    <div className="min-h-screen flex items-center justify-center px-4 py-8">
       <button 
-                onClick={() => router.back()}
-                className={`fixed top-4 left-4 z-10 px-4 py-2 rounded-lg backdrop-blur-sm transition-colors shadow-lg ${
-                    theme === 'light' 
-                        ? 'bg-white/80 hover:bg-gray-100/80 text-gray-700 border border-gray-200' 
-                        : 'bg-gray-800/80 hover:bg-gray-700/80 text-gray-300 border border-gray-600'
-                }`}
-            >
-                ← Go Back
-            </button>
-      <div style={styles.card} className="auth-card">
-        <h1 style={styles.title}>Welcome Back</h1>
+        onClick={() => router.push('/')}
+        className="glass-card fixed top-6 left-6 z-10 px-6 py-3 font-montserrat font-semibold hover:scale-105 transition-all duration-300 animate-fade-in-left duration-fast ease-smooth"
+        style={{ color: theme === 'light' ? '#1f2937' : 'white' }}
+      >
+         ← Home
+      </button>
 
-  <input ref={usernameInputRef} type="text" placeholder="Username" style={styles.input} />
+      <div ref={loginFormRef} className="w-full max-w-md glass-strong rounded-3xl p-10 shadow-2xl animate-scale-in duration-dramatic ease-elastic">
+        <h1 className={`font-playfair text-4xl font-bold mb-2 text-center animate-fade-in-down duration-slow ease-bounce ${
+          theme === 'light'
+            ? 'gradient-text-light'
+            : 'bg-gradient-to-r from-emerald-400 via-blue-500 to-purple-600 bg-clip-text text-transparent'
+        }`}>
+          Welcome Back
+        </h1>
+        
+        <p className={`font-inter text-center mb-8 animate-fade-in-up delay-150 duration-medium ease-smooth ${
+          theme === 'light' ? 'text-gray-600' : 'text-gray-300'
+        }`}>
+          Sign in to continue your learning journey
+        </p>
 
-        <div style={styles.inputWithButtonWrap} className="password-wrap">
+        <div className="mb-6 animate-fade-in-left delay-250 duration-slower ease-smooth">
+          <label className={`font-montserrat text-sm font-semibold mb-2 block ${
+            theme === 'light' ? 'text-gray-700' : 'text-gray-200'
+          }`}>
+            Username
+          </label>
           <input
-            ref={passwordInputRef}
-            type={showPassword ? "text" : "password"}
-            placeholder="Password"
-            style={styles.input}
+            ref={usernameInputRef}
+            type="text"
+            placeholder="Enter your username"
+            className={`w-full px-4 py-3 rounded-xl glass border font-inter placeholder-gray-400 focus:outline-none focus:ring-2 transition-all duration-300 ${
+              theme === 'light'
+                ? 'border-gray-300 text-gray-900 focus:ring-blue-500/50'
+                : 'border-white/30 text-white focus:ring-blue-400/50'
+            }`}
           />
-          <button
-            type="button"
-            aria-label={showPassword ? "Hide password" : "Show password"}
-            title={showPassword ? "Hide password" : "Show password"}
-            onClick={() => setShowPassword((s) => !s)}
-            onMouseEnter={() => setShowPassword(true)}
-            onMouseLeave={() => setShowPassword(false)}
-            onFocus={() => setShowPassword(true)}
-            onBlur={() => setShowPassword(false)}
-            style={styles.showBtn}
-          >
-            {showPassword ?  "🫣" : "🙈"}
-          </button>
         </div>
 
-  <div style={{ display: "flex", justifyContent: "center", marginTop: "8px" }}>
-          <button
-            style={styles.button}
-            type="button"
-            onClick={async () => {
-              setError(null);
-              setLoading(true);
-              try {
-                const username = usernameInputRef.current?.value || "";
-                const password = passwordInputRef.current?.value || "";
-                const res = await fetch("http://127.0.0.1:8000/api/login", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  credentials: "include",
-                  body: JSON.stringify({ username, password }),
-                });
-
-                const body = await res.json().catch(() => ({}));
-
-
-                if (!res.ok) {
-                  const message = (body && (body.detail || body.error || body.message)) || "Login failed";
-                  throw new Error(message);
-                }
-
-
-                const status = (body && (body.status || body.Status || body.statusCode || body.result)) || null;
-                const okStatus = typeof status === 'string' ? status.toLowerCase() === 'success' : status === true;
-
-                if (!okStatus) {
-
-                  const message = (body && (body.detail || body.error || body.message || body.msg)) || "Wrong username or password";
-                  throw new Error(message);
-                }
-
-                console.log("Login successful:", body);
-                try { localStorage.setItem("user", JSON.stringify(body)); } catch (e) { /* ignore storage errors */ }
-                window.location.href = "/courses";
-              } catch (err) {
-                console.error(err);
-                setError(err.message || "Login failed");
-              } finally {
-                setLoading(false);
-              }
-            }}
-            disabled={loading}
-          >
-            {loading ? "Signing in..." : "Sign in"}
-          </button>
-
-        </div>
-
-        <div style={styles.meta}>Need an account? Contact your administrator.</div>
-
-        <style jsx>{`
-          .auth-card input::placeholder { 
-            color: ${theme === 'light' ? '#9ca3af' : '#6b7280'}; 
-          }
-          .auth-card input:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 6px 18px rgba(59,130,246,0.4);
-          }
-          .auth-card button:hover {
-            transform: translateY(-2px);
-            box-shadow: ${theme === 'light' 
-              ? '0 10px 25px rgba(59,130,246,0.5)' 
-              : '0 10px 25px rgba(99,102,241,0.4)'};
-          }
-          @media (max-width: 480px) {
-            .auth-card { padding: 20px; }
-            .auth-card h1 { font-size: 24px; }
-            .auth-card button { width: 100%; }
-          }
-        `}</style>
-
-        <div
-          aria-live="assertive"
-          style={{
-            position: 'fixed',
-            right: 20,
-            top: 20,
-            zIndex: 9999,
-            transition: 'transform 260ms ease, opacity 260ms ease',
-            transform: showToast ? 'translateX(0)' : 'translateX(20px)',
-            opacity: showToast ? 1 : 0,
-            pointerEvents: showToast ? 'auto' : 'none',
-          }}
-        >
-          <div style={{ 
-            background: theme === 'light' ? '#fef2f2' : '#301212', 
-            color: theme === 'light' ? '#dc2626' : '#ffdede', 
-            padding: '12px 16px', 
-            borderRadius: 8, 
-            boxShadow: theme === 'light' 
-              ? '0 10px 30px rgba(0,0,0,0.15)' 
-              : '0 10px 30px rgba(0,0,0,0.4)', 
-            minWidth: 260,
-            border: theme === 'light' ? '1px solid #fecaca' : 'none'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-              <div style={{ fontWeight: 700 }}>Login error</div>
-              <button 
-                onClick={() => { setShowToast(false); setError(null); }} 
-                style={{ 
-                  background: 'transparent', 
-                  border: 'none', 
-                  color: theme === 'light' ? '#dc2626' : '#ffdede', 
-                  cursor: 'pointer' 
-                }}
-              >✕</button>
-            </div>
-            <div style={{ 
-              marginTop: 8, 
-              color: theme === 'light' ? '#dc2626' : '#ffdede' 
-            }}>{error}</div>
+        <div className="mb-8 animate-fade-in-right delay-350 duration-slower ease-smooth">
+          <label className={`font-montserrat text-sm font-semibold mb-2 block ${
+            theme === 'light' ? 'text-gray-700' : 'text-gray-200'
+          }`}>
+            Password
+          </label>
+          <div className="relative">
+            <input
+              ref={passwordInputRef}
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter your password"
+              className={`w-full px-4 py-3 rounded-xl glass border font-inter placeholder-gray-400 focus:outline-none focus:ring-2 transition-all duration-300 ${
+                theme === 'light'
+                  ? 'border-gray-300 text-gray-900 focus:ring-blue-500/50'
+                  : 'border-white/30 text-white focus:ring-blue-400/50'
+              }`}
+            />
+            <button
+              type="button"
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              onClick={() => setShowPassword((s) => !s)}
+              onMouseEnter={() => setShowPassword(true)}
+              onMouseLeave={() => setShowPassword(false)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-xl hover:scale-110 transition-transform duration-200"
+            >
+              {showPassword ? "🫣" : "🙈"}
+            </button>
           </div>
         </div>
+
+        <button
+          onClick={handleLogin}
+          disabled={loading}
+          className={`w-full glass-card px-8 py-4 font-space text-lg font-semibold rounded-xl transition-all duration-300 animate-scale-in delay-500 duration-slow ease-elastic ${loading ? "opacity-50 cursor-not-allowed" : "hover:scale-105 animate-glow-fast"} relative overflow-hidden group`}
+          style={{ color: theme === 'light' ? '#1f2937' : 'white' }}
+        >
+          <span className="relative z-10">
+            {loading ? "Logging in..." : "Login"}
+          </span>
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        </button>
+
+        {showToast && error && (
+          <div className={`mt-6 glass p-4 rounded-xl animate-fade-in-up duration-fast ease-bounce relative ${
+            theme === 'light' 
+              ? 'border-red-600/50 bg-red-100/80'
+              : 'border-red-400/50 bg-red-500/20'
+          }`}>
+            <button
+              onClick={() => setShowToast(false)}
+              className={`absolute top-2 right-2 hover:scale-110 transition-all duration-200 text-xl ${
+                theme === 'light' ? 'text-red-700 hover:text-red-900' : 'text-red-200 hover:text-white'
+              }`}
+            >
+              ✕
+            </button>
+            <p className={`font-inter text-sm pr-6 ${
+              theme === 'light' ? 'text-red-800' : 'text-red-200'
+            }`}>
+              {error}
+            </p>
+          </div>
+        )}
+
+        <p className={`font-inter text-center text-sm mt-6 animate-fade-in-up delay-600 duration-medium ease-smooth ${
+          theme === 'light' ? 'text-gray-600' : 'text-gray-400'
+        }`}>
+          Don't have an account? Contact your administrator.
+        </p>
       </div>
     </div>
   );

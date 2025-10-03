@@ -79,79 +79,22 @@ export default function ChatWindow({ course = { name: "Default Course" }, isExpa
     router.push(`/chat?course=${encodeURIComponent(courseName)}`);
   };
 
-  const containerStyle = isExpanded ? {
-    width: "100%",
-    height: "100%",
-    border: "1px solid rgba(255, 255, 255, 0.2)",
-    borderRadius: "12px",
-    padding: "20px",
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
-    backdropFilter: "blur(10px)",
-    boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)"
-  } : {
-    maxWidth: "900px",
-    width: "100%",
-    margin: "20px auto",
-    border: backgroundColor === 'cream' && theme === 'light' 
-      ? "1px solid rgba(210, 180, 140, 0.3)" 
-      : theme === 'light' ? "1px solid #ddd" : "1px solid #374151",
-    borderRadius: "8px",
-    padding: "20px",
-    backgroundColor: backgroundColor === 'cream' && theme === 'light'
-      ? "rgba(253, 245, 230, 0.8)"
-      : theme === 'light' ? "rgba(255, 255, 255, 0.9)" : "rgba(55, 65, 81, 0.8)",
-    backdropFilter: "blur(10px)",
-    boxShadow: backgroundColor === 'cream' && theme === 'light'
-      ? "0 4px 20px rgba(210, 180, 140, 0.2)"
-      : theme === 'light' ? "0 2px 10px rgba(0,0,0,0.1)" : "0 4px 20px rgba(0,0,0,0.3)"
-  };
-
-  const chatAreaStyle = isExpanded ? {
-    height: "calc(100vh - 200px)",
-    marginBottom: "20px",
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-    padding: "20px",
-    borderRadius: "12px",
-    overflowY: "auto",
-    border: "1px solid rgba(255, 255, 255, 0.2)",
-    backdropFilter: "blur(5px)"
-  } : {
-    height: "400px",
-    marginBottom: "15px",
-    backgroundColor: backgroundColor === 'cream' && theme === 'light'
-      ? "rgba(253, 245, 230, 0.5)"
-      : theme === 'light' ? "#f9f9f9" : "#1f2937",
-    padding: "15px",
-    borderRadius: "8px",
-    overflowY: "auto",
-    border: backgroundColor === 'cream' && theme === 'light'
-      ? "1px solid rgba(210, 180, 140, 0.2)"
-      : theme === 'light' ? "1px solid #e0e0e0" : "1px solid #374151"
-  };
-
   return (
-    <div style={containerStyle}>
+    <div className={`${isExpanded ? 'w-full h-full' : 'max-w-4xl w-full mx-auto my-5'} 
+                    glass-strong rounded-2xl p-6 shadow-2xl animate-fade-in-up duration-slow`}>
       {!isExpanded && (
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px" }}>
-          <h2>Chat Window - {course.name || course.title || "Unnamed Course"}</h2>
+        <div className="flex justify-between items-center mb-4 animate-fade-in-down delay-200">
+          <h2 className={`font-montserrat text-2xl font-bold ${
+            theme === 'light' ? 'text-gray-800' : 'text-white'
+          }`}>
+            💬 Chat - {course.name || course.title || "Unnamed Course"}
+          </h2>
           <button
             onClick={handleExpand}
-            style={{
-              padding: "8px 12px",
-              backgroundColor: backgroundColor === 'cream' && theme === 'light' ? "#D2B48C" : "#8b5cf6",
-              color: backgroundColor === 'cream' && theme === 'light' ? "#422919" : "white",
-              border: "none",
-              borderRadius: "6px",
-              cursor: "pointer",
-              fontSize: "14px",
-              fontWeight: "500",
-              display: "flex",
-              alignItems: "center",
-              gap: "5px",
-              transition: "background-color 0.2s ease"
-            }}
-            onMouseOver={(e) => e.target.style.backgroundColor = backgroundColor === 'cream' && theme === 'light' ? "#CD853F" : "#7c3aed"}
-            onMouseOut={(e) => e.target.style.backgroundColor = backgroundColor === 'cream' && theme === 'light' ? "#D2B48C" : "#8b5cf6"}
+            className={`glass-card px-4 py-2 font-space font-semibold rounded-lg 
+                       hover:scale-105 transition-all duration-300 flex items-center gap-2 ${
+              theme === 'light' ? 'text-gray-800 hover:shadow-lg' : 'text-white hover:shadow-xl'
+            }`}
             title="Expand to full chat"
           >
             <span>⛶</span>
@@ -159,25 +102,23 @@ export default function ChatWindow({ course = { name: "Default Course" }, isExpa
           </button>
         </div>
       )}
-      <div style={chatAreaStyle}>
+      <div className={`${isExpanded ? 'h-[calc(100vh-200px)]' : 'h-[400px]'} 
+                      mb-4 p-4 rounded-xl overflow-y-auto glass
+                      animate-scale-in delay-300 duration-slower ease-smooth`}>
         {messages.map((msg, i) => (
           <Message key={i} text={msg.text} fromUser={msg.fromUser} />
         ))}
         {loading && (
-          <div style={{ 
-            padding: "10px", 
-            fontStyle: "italic", 
-            color: "#666",
-            textAlign: "center",
-            backgroundColor: "#f0f0f0",
-            borderRadius: "5px",
-            margin: "5px 0"
-          }}>
-            Bot is typing...
+          <div className={`p-3 italic text-center rounded-lg my-2 glass-card animate-pulse ${
+            theme === 'light' ? 'text-gray-600' : 'text-gray-300'
+          }`}>
+            🤖 Bot is typing...
           </div>
         )}
       </div>
-      <MessageInput onSend={handleSend} disabled={loading} />
+      <div className="animate-fade-in-up delay-400 duration-medium">
+        <MessageInput onSend={handleSend} disabled={loading} />
+      </div>
     </div>
   );
 }

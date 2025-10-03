@@ -1,9 +1,7 @@
 import { useTheme } from '@/contexts/ThemeContext';
-import { useAnimation } from '@/contexts/AnimationContext';
 
 export default function MessageInput({ onSend, disabled = false }) {
   const { theme } = useTheme();
-  const { backgroundColor } = useAnimation();
   let inputRef;
 
   const handleSend = () => {
@@ -20,48 +18,41 @@ export default function MessageInput({ onSend, disabled = false }) {
   };
 
   return (
-    <div style={{ display: "flex", marginTop: "15px", gap: "10px" }}>
+    <div className="flex mt-4 gap-3">
       <input
         ref={(el) => (inputRef = el)}
         type="text"
         placeholder={disabled ? "Bot is typing..." : "Type a message..."}
         disabled={disabled}
         onKeyUp={handleKeyPress}
-        style={{ 
-          flex: 1, 
-          padding: "12px 15px", 
-          borderRadius: "8px", 
-          border: "2px solid #ddd",
-          backgroundColor: disabled ? "#f5f5f5" : "white",
-          cursor: disabled ? "not-allowed" : "text",
-          fontSize: "16px",
-          color: "#333",
-          fontFamily: "Arial, sans-serif",
-          outline: "none",
-          transition: "border-color 0.2s ease"
-        }}
-        onFocus={(e) => e.target.style.borderColor = "#0070f3"}
-        onBlur={(e) => e.target.style.borderColor = "#ddd"}
+        className={`
+          flex-1 px-4 py-3 rounded-xl font-inter text-base
+          transition-all duration-300 outline-none
+          ${theme === 'light'
+            ? disabled
+              ? 'glass-card text-gray-500 cursor-not-allowed'
+              : 'glass-card text-gray-800 border-2 border-gray-300 focus:border-blue-500 focus:shadow-lg'
+            : disabled
+              ? 'glass text-gray-500 cursor-not-allowed'
+              : 'glass text-white border-2 border-white/20 focus:border-blue-400 focus:shadow-xl focus:shadow-blue-500/20'
+          }
+        `}
       />
       <button
         onClick={handleSend}
         disabled={disabled}
-        style={{
-          padding: "12px 20px",
-          border: "none",
-          borderRadius: "8px",
-          background: disabled ? "#ccc" : (backgroundColor === 'cream' && theme === 'light' ? "#D2B48C" : "#0070f3"),
-          color: backgroundColor === 'cream' && theme === 'light' && !disabled ? "#422919" : "white",
-          cursor: disabled ? "not-allowed" : "pointer",
-          fontSize: "16px",
-          fontWeight: "600",
-          transition: "background-color 0.2s ease",
-          minWidth: "80px"
-        }}
-        onMouseOver={(e) => !disabled && (e.target.style.backgroundColor = backgroundColor === 'cream' && theme === 'light' ? "#CD853F" : "#005bb5")}
-        onMouseOut={(e) => !disabled && (e.target.style.backgroundColor = backgroundColor === 'cream' && theme === 'light' ? "#D2B48C" : "#0070f3")}
+        className={`
+          px-6 py-3 rounded-xl font-space font-bold text-base min-w-[100px]
+          transition-all duration-300 hover:scale-105 active:scale-95
+          ${disabled
+            ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
+            : theme === 'light'
+              ? 'bg-blue-500 text-white hover:bg-blue-600 shadow-lg hover:shadow-xl shadow-blue-200'
+              : 'bg-blue-600 text-white hover:bg-blue-500 shadow-xl hover:shadow-2xl shadow-blue-900/50'
+          }
+        `}
       >
-        {disabled ? "Sending..." : "Send"}
+        {disabled ? "✨ Sending..." : "Send →"}
       </button>
     </div>
   );

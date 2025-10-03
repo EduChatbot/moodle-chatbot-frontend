@@ -10,7 +10,7 @@ function ChatContent() {
   const courseName = searchParams.get('course') || 'Default Course';
 
   const handleClose = () => {
-    router.push('/');
+    router.push('/courses');
   };
 
   return (
