@@ -33,7 +33,6 @@ export default function ThemeToggle() {
       }}
       title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
     >
-      {theme === 'dark' ? '☀️' : '🌙'}
     </button>
   );
 }
