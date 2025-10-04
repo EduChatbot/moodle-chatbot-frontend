@@ -9,12 +9,21 @@ import MessageInput from "@/components/MessageInput";
 
 export default function ChatWindow({ course = { name: "Default Course" }, isExpanded = false }) {
   const [messages, setMessages] = useState([
-    { text: "Hello! I am your chatbot.", fromUser: false }
+    { text: "Hello! What can I help you with today?", fromUser: false }
   ]);
   const [loading, setLoading] = useState(false);
   const { theme } = useTheme();
   const { backgroundColor } = useAnimation();
   const router = useRouter();
+
+  // Convert messages to history format for backend
+  const getHistory = () => {
+    // Exclude the initial welcome message and the current user message
+    return messages.slice(1).map(msg => ({
+      role: msg.fromUser ? "user" : "assistant",
+      content: msg.text
+    }));
+  };
 
   const handleSend = async (text) => {
 
@@ -26,12 +35,19 @@ export default function ChatWindow({ course = { name: "Default Course" }, isExpa
     try {
   console.log("Sending message to backend:", text);
       
+      // Get conversation history (excluding the welcome message)
+      const history = getHistory();
+      console.log("Sending history:", history);
+      
       const response = await fetch("http://127.0.0.1:8000/chat", {
         method: "POST",
         headers: { 
           "Content-Type": "application/json" 
         },
-        body: JSON.stringify({ message: text })
+        body: JSON.stringify({ 
+          message: text,
+          history: history
+        })
       });
 
       if (!response.ok) {
