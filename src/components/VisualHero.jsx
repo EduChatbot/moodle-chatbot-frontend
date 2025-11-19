@@ -261,56 +261,70 @@ export default function VisualHero({ logoSrc = "/favicon.ico" }) {
       })()}
 
 
-  <section style={{ position: "relative", zIndex: 10, pointerEvents: 'none' }} className="flex flex-col items-center justify-center py-20 text-center">
-    <div className="flex items-center gap-3 mb-6" style={{ pointerEvents: 'auto' }}>
-          <span className={`text-4xl md:text-5xl font-bold ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>Ask</span>
-          {animationsEnabled ? (
-            <RotatingText
-              texts={["anything!", "anytime!", "anywhere!"]}
-              mainClassName="px-3 md:px-5 overflow-hidden py-1.5 md:py-2.5 justify-center rounded-lg text-4xl md:text-5xl font-bold"
-              staggerFrom={"last"}
-              initial={{ y: "100%" }}
-              animate={{ y: 0 }}
-              exit={{ y: "-120%" }}
-              staggerDuration={0.045}
-              splitLevelClassName="overflow-hidden pb-1"
-              transition={{ type: "spring", damping: 60, stiffness: 400, ease: "easeInOut" }}
-              rotationInterval={3000}
-              style={{ 
-                background: (backgroundColor === 'black' || backgroundColor === 'white')
-                  ? (theme === 'light' ? '#8b5cf6' : '#6e036eff')
-                  : backgroundColor === 'cream'
-                  ? (theme === 'light' ? '#8B7355' : '#6B5B4A')
-                  : backgroundColor === 'gray'
-                  ? '#57534e'
-                  : backgroundColor === 'darkblue'
-                  ? '#475569'
-                  : (theme === 'light' ? '#8b5cf6' : '#6e036eff'),
-                color: "white" 
-              }}
-            />
-          ) : (
-            <span className="px-3 md:px-5 py-1.5 md:py-2.5 rounded-lg text-4xl md:text-5xl font-bold text-white"
-              style={{ 
-                background: (backgroundColor === 'black' || backgroundColor === 'white')
-                  ? (theme === 'light' ? '#8b5cf6' : '#6e036eff')
-                  : backgroundColor === 'cream'
-                  ? (theme === 'light' ? '#8B7355' : '#6B5B4A')
-                  : backgroundColor === 'gray'
-                  ? '#57534e'
-                  : backgroundColor === 'darkblue'
-                  ? '#475569'
-                  : (theme === 'light' ? '#8b5cf6' : '#6e036eff')
-              }}
-            >
-              anything!
-            </span>
-          )}
+      {/* Compact "Ask" Card - Bottom Right Corner */}
+      <div style={{ 
+        position: "fixed", 
+        bottom: "20px", 
+        right: "20px", 
+        zIndex: 10,
+        pointerEvents: 'auto',
+        maxWidth: '280px'
+      }}>
+        <div className="glass-card" style={{ 
+          padding: '16px',
+          borderRadius: '12px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+        }}>
+          <div className="flex items-center gap-2 mb-2">
+            <span className={`text-xl font-bold ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>Ask</span>
+            {animationsEnabled ? (
+              <RotatingText
+                texts={["anything!", "anytime!", "anywhere!"]}
+                mainClassName="px-2 overflow-hidden py-1 justify-center rounded-md text-xl font-bold"
+                staggerFrom={"last"}
+                initial={{ y: "100%" }}
+                animate={{ y: 0 }}
+                exit={{ y: "-120%" }}
+                staggerDuration={0.045}
+                splitLevelClassName="overflow-hidden pb-0.5"
+                transition={{ type: "spring", damping: 60, stiffness: 400, ease: "easeInOut" }}
+                rotationInterval={3000}
+                style={{ 
+                  background: (backgroundColor === 'black' || backgroundColor === 'white')
+                    ? (theme === 'light' ? '#8b5cf6' : '#6e036eff')
+                    : backgroundColor === 'cream'
+                    ? (theme === 'light' ? '#8B7355' : '#6B5B4A')
+                    : backgroundColor === 'gray'
+                    ? '#57534e'
+                    : backgroundColor === 'darkblue'
+                    ? '#475569'
+                    : (theme === 'light' ? '#8b5cf6' : '#6e036eff'),
+                  color: "white" 
+                }}
+              />
+            ) : (
+              <span className="px-2 py-1 rounded-md text-xl font-bold text-white"
+                style={{ 
+                  background: (backgroundColor === 'black' || backgroundColor === 'white')
+                    ? (theme === 'light' ? '#8b5cf6' : '#6e036eff')
+                    : backgroundColor === 'cream'
+                    ? (theme === 'light' ? '#8B7355' : '#6B5B4A')
+                    : backgroundColor === 'gray'
+                    ? '#57534e'
+                    : backgroundColor === 'darkblue'
+                    ? '#475569'
+                    : (theme === 'light' ? '#8b5cf6' : '#6e036eff')
+                }}
+              >
+                anything!
+              </span>
+            )}
+          </div>
+          <p className={`text-sm ${theme === 'light' ? 'text-gray-700' : 'text-gray-300'}`}>
+            Your AI study assistant
+          </p>
         </div>
-        <p className={`text-lg md:text-xl max-w-2xl ${theme === 'light' ? 'text-gray-700' : 'text-gray-300'}`}>
-          Your AI-powered study assistant. Get answers, explanations and guidance whenever you need it.
-        </p>
-      </section>
+      </div>
     </div>
   );
 }
