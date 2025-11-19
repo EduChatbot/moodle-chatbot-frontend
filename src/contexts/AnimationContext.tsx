@@ -3,7 +3,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useTheme } from './ThemeContext';
 
-type BackgroundType = 'liquidether' | 'darkveil' | 'lightrays' | 'prism' | 'threads' | 'normal';
+type BackgroundType = 'liquidether' | 'darkveil' | 'threads' | 'normal';
 type BackgroundColor = 'black' | 'gray' | 'darkblue' | 'cream' | 'white';
 
 interface AnimationContextType {
