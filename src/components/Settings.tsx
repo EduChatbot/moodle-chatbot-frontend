@@ -3,7 +3,7 @@
 import React from 'react';
 import { useAnimation } from '../contexts/AnimationContext';
 
-type BackgroundType = 'liquidether' | 'darkveil' | 'lightrays' | 'prism' | 'threads' | 'normal';
+type BackgroundType = 'liquidether' | 'darkveil' | 'threads' | 'normal';
 type BackgroundColor = 'black' | 'gray' | 'darkblue' | 'cream' | 'white';
 
 const Settings = () => {
@@ -14,7 +14,7 @@ const Settings = () => {
     setBackgroundColor 
   } = useAnimation();
 
-  const backgroundTypes: BackgroundType[] = ['liquidether', 'darkveil', 'lightrays', 'prism', 'threads'];
+  const backgroundTypes: BackgroundType[] = ['liquidether', 'darkveil', 'threads'];
   
   // Restrict color options for DarkVeil
   const getAvailableColors = (): BackgroundColor[] => {
@@ -69,8 +69,6 @@ const Settings = () => {
             >
               {type === 'liquidether' ? 'LiquidEther' : 
                type === 'darkveil' ? 'DarkVeil' :
-               type === 'lightrays' ? 'LightRays' :
-               type === 'prism' ? 'Prism' :
                type === 'threads' ? 'Threads' : type}
             </button>
           ))}
