@@ -25,16 +25,16 @@ function CoursesList() {
       .catch(() => {
       });
 
-    fetch("http://localhost:8000/courses", {credentials: 'include'})
+    fetch("http://localhost:8000/course/materials", {credentials: 'include'})
       .then((res) => res.json())
       .then((data) => {
-        try { console.log("Backend response (courses):", JSON.parse(JSON.stringify(data))); } catch { console.log("Backend response (courses, raw):", data); }
-        const coursesArray = Array.isArray(data) ? data : data.courses || [];
+        try { console.log("Backend response (materials):", JSON.parse(JSON.stringify(data))); } catch { console.log("Backend response (materials, raw):", data); }
+        const coursesArray = Array.isArray(data) ? data : data.materials || data.resources || [];
         setCourses(coursesArray);
         setLoading(false);
       })
       .catch((err) => {
-        console.error("Error fetching courses:", err);
+        console.error("Error fetching course materials:", err);
         setError(err);
         setLoading(false);
       });
@@ -43,7 +43,7 @@ function CoursesList() {
   if (loading) return (
     <div className="flex justify-center items-center min-h-screen text-lg gap-4">
       <span className={theme === 'light' ? 'text-gray-700 font-montserrat' : 'text-gray-300 font-montserrat'}>
-        Loading courses...
+        Loading resources...
       </span>
       <l-newtons-cradle size="58" speed="1.4" color={theme === 'light' ? '#374151' : 'white'}></l-newtons-cradle>
     </div>
@@ -85,7 +85,7 @@ function CoursesList() {
       <div className="max-w-2xl mx-auto text-center pt-20">
         <div className="glass-strong p-8 rounded-3xl animate-scale-in">
           <p className={`text-xl font-montserrat ${theme === 'light' ? 'text-gray-700' : 'text-gray-300'}`}>
-            📚 No available courses at this time.
+            📚 No course materials available at this time.
           </p>
         </div>
       </div>
@@ -117,10 +117,10 @@ function CoursesList() {
               ? 'bg-gradient-to-r from-slate-400 via-slate-300 to-slate-400 bg-clip-text text-transparent'
               : 'bg-gradient-to-r from-emerald-400 via-blue-500 to-purple-600 bg-clip-text text-transparent'
           }`}>
-            Available Courses
+            Course Materials
           </h1>
           <p className={`font-inter text-lg ${theme === 'light' ? 'text-gray-600' : 'text-gray-300'}`}>
-            Select a course to start chatting with your AI assistant
+            Browse course resources and ask questions about specific materials
           </p>
         </div>
 
@@ -147,7 +147,7 @@ function CoursesList() {
                   <p className={`font-inter text-sm ${
                     theme === 'light' ? 'text-gray-600' : 'text-gray-400'
                   }`}>
-                    Click to open course chat
+                    Click to ask questions about this material
                   </p>
                 </div>
                 <div className={`text-2xl transition-transform group-hover:translate-x-2 duration-300 ${
