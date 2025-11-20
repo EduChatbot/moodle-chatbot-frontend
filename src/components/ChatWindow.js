@@ -21,7 +21,7 @@ export default function ChatWindow({
   const router = useRouter();
   
   // Extract Moodle data
-  const { userId, courseId, userName } = moodleData;
+  const { moodleToken, courseId } = moodleData;
 
   // Convert messages to history format for backend
   const getHistory = () => {
@@ -50,15 +50,13 @@ export default function ChatWindow({
       const response = await fetch(`${apiUrl}/chat`, {
         method: "POST",
         headers: { 
-          "Content-Type": "application/json" 
+          "Content-Type": "application/json",
+          ...(moodleToken && { "Authorization": `Bearer ${moodleToken}` })
         },
         body: JSON.stringify({ 
           message: text,
           history: history,
-          // Moodle context
-          userId: userId,
-          courseId: courseId,
-          userName: userName
+          courseId: courseId
         })
       });
 
