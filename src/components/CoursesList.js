@@ -33,12 +33,25 @@ function CoursesList() {
     if (moodleToken) {
       headers['Authorization'] = `Bearer ${moodleToken}`;
     }
+
+    const url = new URL(`${apiUrl}/course/materials`);
+    if (courseId) {
+      url.searchParams.append('courseId', courseId);
+    }
     
-    fetch(`${apiUrl}/course/materials`, {
+    console.log(`Fetching materials from: ${url.toString()}`);
+    
+    fetch(url.toString(), {
+      method: 'GET',
       credentials: 'include',
       headers: headers
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+        }
+        return res.json();
+      })
       .then((data) => {
         try { console.log("Backend response (materials):", JSON.parse(JSON.stringify(data))); } catch { console.log("Backend response (materials, raw):", data); }
         const coursesArray = Array.isArray(data) ? data : data.materials || data.resources || [];
