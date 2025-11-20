@@ -100,7 +100,7 @@ export default function Home() {
       {/* Quick Links Section */}
       <section className="max-w-6xl mx-auto px-4 py-6 pb-12">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Link href="/about" className="group">
+          <Link href="/courses" className="group">
             <div className="glass-card p-8 text-center animate-fade-in-left delay-300 duration-slower ease-elastic
                          hover:scale-105 transition-all duration-500">
               <div className="text-5xl mb-3 animate-float-slow">📚</div>

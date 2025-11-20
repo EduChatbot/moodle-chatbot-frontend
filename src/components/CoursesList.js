@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import ChatWindow from "@/components/ChatWindow";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAnimation } from "@/contexts/AnimationContext";
 
@@ -10,7 +9,6 @@ function CoursesList() {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedCourse, setSelectedCourse] = useState(null);
   const { theme } = useTheme();
   const { backgroundColor } = useAnimation();
   const router = useRouter();
@@ -25,7 +23,8 @@ function CoursesList() {
       .catch(() => {
       });
 
-    fetch("http://localhost:8000/course/materials", {credentials: 'include'})
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+    fetch(`${apiUrl}/course/materials`, {credentials: 'include'})
       .then((res) => res.json())
       .then((data) => {
         try { console.log("Backend response (materials):", JSON.parse(JSON.stringify(data))); } catch { console.log("Backend response (materials, raw):", data); }
@@ -124,68 +123,57 @@ function CoursesList() {
           </p>
         </div>
 
-        {/* Courses Grid */}
+        {/* Materials Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-          {courses.map((course, index) => (
-            <div
-              key={course.id || index}
-              onClick={() => setSelectedCourse(course)}
-              className={`glass-card p-8 cursor-pointer group animate-fade-in-up
-                       transition-all duration-300 hover:scale-105
-                       ${index % 2 === 0 ? 'delay-200' : 'delay-350'} duration-slower ease-bounce`}
-            >
-              <div className="flex items-start gap-4">
-                <div className="text-4xl animate-float-slow">📚</div>
-                <div className="flex-1">
-                  <h3 className={`font-montserrat text-xl font-bold mb-2 ${
-                    theme === 'light' ? 'text-gray-800' : 'text-white'
-                  }`}>
-                    {typeof course === "string"
-                      ? course
-                      : course.name || course.title || "Unnamed Course"}
-                  </h3>
-                  <p className={`font-inter text-sm ${
-                    theme === 'light' ? 'text-gray-600' : 'text-gray-400'
-                  }`}>
-                    Click to ask questions about this material
-                  </p>
-                </div>
-                <div className={`text-2xl transition-transform group-hover:translate-x-2 duration-300 ${
-                  theme === 'light' ? 'text-blue-600' : 'text-blue-400'
-                }`}>
-                  →
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+          {courses.map((course, index) => {
+            const materialUrl = typeof course === "string" 
+              ? "#" 
+              : course.url || course.link || "#";
+            
+            const handleClick = () => {
+              if (materialUrl && materialUrl !== "#") {
+                // Otwórz materiał w nowym oknie/karcie
+                window.open(materialUrl, '_blank', 'noopener,noreferrer');
+              } else {
+                // Jeśli nie ma URL, pokaż info
+                alert('This material does not have a direct link available.');
+              }
+            };
 
-        {/* Selected Course Chat */}
-        {selectedCourse && (
-          <div className="mt-12 animate-fade-in-up duration-medium ease-smooth">
-            <div className="glass-strong p-6 rounded-3xl">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className={`font-playfair text-3xl font-bold ${
-                  theme === 'light' ? 'text-gray-800' : 'text-white'
-                }`}>
-                  💬 Chat: {typeof selectedCourse === "string" 
-                    ? selectedCourse 
-                    : selectedCourse.name || selectedCourse.title || "Course"}
-                </h2>
-                <button
-                  onClick={() => setSelectedCourse(null)}
-                  className={`glass-card px-4 py-2 font-montserrat font-semibold rounded-lg
-                           hover:scale-105 transition-all duration-300 ${
-                    theme === 'light' ? 'text-gray-700' : 'text-white'
-                  }`}
-                >
-                  ✕ Close
-                </button>
+            return (
+              <div
+                key={course.id || index}
+                onClick={handleClick}
+                className={`glass-card p-8 cursor-pointer group animate-fade-in-up
+                         transition-all duration-300 hover:scale-105
+                         ${index % 2 === 0 ? 'delay-200' : 'delay-350'} duration-slower ease-bounce`}
+              >
+                <div className="flex items-start gap-4">
+                  <div className="text-4xl animate-float-slow">📄</div>
+                  <div className="flex-1">
+                    <h3 className={`font-montserrat text-xl font-bold mb-2 ${
+                      theme === 'light' ? 'text-gray-800' : 'text-white'
+                    }`}>
+                      {typeof course === "string"
+                        ? course
+                        : course.name || course.title || "Unnamed Material"}
+                    </h3>
+                    <p className={`font-inter text-sm ${
+                      theme === 'light' ? 'text-gray-600' : 'text-gray-400'
+                    }`}>
+                      Click to open material
+                    </p>
+                  </div>
+                  <div className={`text-2xl transition-transform group-hover:translate-x-2 duration-300 ${
+                    theme === 'light' ? 'text-blue-600' : 'text-blue-400'
+                  }`}>
+                    ↗
+                  </div>
+                </div>
               </div>
-              <ChatWindow course={selectedCourse} />
-            </div>
-          </div>
-        )}
+            );
+          })}
+        </div>
       </section>
     </div>
   );
