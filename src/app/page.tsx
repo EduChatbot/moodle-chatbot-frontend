@@ -13,7 +13,8 @@ export default function Home() {
   useEffect(() => {
     const checkBackend = async () => {
       try {
-        const res = await fetch("http://127.0.0.1:8000/health");
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+        const res = await fetch(`${apiUrl}/health`);
         if (!res.ok) throw new Error(`Backend returned status: ${res.status}`);
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : "Unknown error";
