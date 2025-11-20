@@ -65,7 +65,7 @@ function CoursesList() {
         setError(err);
         setLoading(false);
       });
-  }, []);
+  }, [moodleToken, courseId]);
 
   if (loading) return (
     <div className="flex justify-center items-center min-h-screen text-lg gap-4">
