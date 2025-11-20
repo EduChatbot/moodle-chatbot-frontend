@@ -11,7 +11,12 @@ function ChatContent() {
   const router = useRouter();
   const { backgroundColor } = useAnimation();
   const { theme } = useTheme();
-  const courseName = searchParams.get('course') || 'Default Course';
+  
+  // Extract Moodle parameters from URL
+  const userId = searchParams.get('userid');
+  const courseId = searchParams.get('courseid');
+  const userName = searchParams.get('username');
+  const courseName = searchParams.get('coursename') || searchParams.get('course') || 'Default Course';
 
   const handleClose = () => {
     router.push('/courses');
@@ -106,6 +111,11 @@ function ChatContent() {
         <div style={{ flex: 1 }}>
           <ChatWindow 
             course={{ name: courseName }}
+            moodleData={{
+              userId: userId,
+              courseId: courseId,
+              userName: userName
+            }}
             isExpanded={true}
           />
         </div>

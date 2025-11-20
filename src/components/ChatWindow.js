@@ -7,7 +7,11 @@ import { useAnimation } from "@/contexts/AnimationContext";
 import Message from "@/components/Message";
 import MessageInput from "@/components/MessageInput";
 
-export default function ChatWindow({ course = { name: "Default Course" }, isExpanded = false }) {
+export default function ChatWindow({ 
+  course = { name: "Default Course" }, 
+  moodleData = {},
+  isExpanded = false 
+}) {
   const [messages, setMessages] = useState([
     { text: "Hello! What can I help you with today?", fromUser: false }
   ]);
@@ -15,6 +19,9 @@ export default function ChatWindow({ course = { name: "Default Course" }, isExpa
   const { theme } = useTheme();
   const { backgroundColor } = useAnimation();
   const router = useRouter();
+  
+  // Extract Moodle data
+  const { userId, courseId, userName } = moodleData;
 
   // Convert messages to history format for backend
   const getHistory = () => {
@@ -46,7 +53,11 @@ export default function ChatWindow({ course = { name: "Default Course" }, isExpa
         },
         body: JSON.stringify({ 
           message: text,
-          history: history
+          history: history,
+          // Moodle context
+          userId: userId,
+          courseId: courseId,
+          userName: userName
         })
       });
 

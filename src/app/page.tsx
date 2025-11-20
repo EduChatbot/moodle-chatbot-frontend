@@ -100,19 +100,19 @@ export default function Home() {
       {/* Quick Links Section */}
       <section className="max-w-6xl mx-auto px-4 py-6 pb-12">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Link href="/courses" className="group">
+          <Link href="/about" className="group">
             <div className="glass-card p-8 text-center animate-fade-in-left delay-300 duration-slower ease-elastic
                          hover:scale-105 transition-all duration-500">
-              <div className="text-5xl mb-3 animate-float-slow">📖</div>
+              <div className="text-5xl mb-3 animate-float-slow">📚</div>
               <h3 className={`font-montserrat text-xl font-bold mb-2 ${
                 theme === 'light' ? 'text-gray-800' : 'text-white'
               }`}>
-                Browse Courses
+                Browse Resources
               </h3>
               <p className={`font-inter text-sm ${
                 theme === 'light' ? 'text-gray-600' : 'text-gray-300'
               }`}>
-                Explore all available courses and start learning today
+                Explore course materials, guides, and learning resources
               </p>
             </div>
           </Link>
@@ -126,12 +126,12 @@ export default function Home() {
               <h3 className={`font-montserrat text-xl font-bold mb-2 ${
                 theme === 'light' ? 'text-gray-800' : 'text-white'
               }`}>
-                Start Chatting
+                Ask AI Assistant
               </h3>
               <p className={`font-inter text-sm ${
                 theme === 'light' ? 'text-gray-600' : 'text-gray-300'
               }`}>
-                Get instant answers to your questions with our AI assistant
+                Get instant answers about your course content and materials
               </p>
             </div>
           </Link>
