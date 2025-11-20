@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAnimation } from "@/contexts/AnimationContext";
@@ -17,20 +17,29 @@ export default function ChatWindow({
   const { moodleToken, courseId } = useMoodle();
   const router = useRouter();
 
-  const [messages, setMessages] = useState(() => {
-    if (!moodleToken) {
-      return [
-        { 
-          text: "⚠️ Note: You're not authenticated via Moodle. To access personalized content, please open this chat from within Moodle.\n\nHowever, I can still answer general questions!", 
-          fromUser: false 
-        }
-      ];
-    }
-    return [
-      { text: "Hello! What can I help you with today?", fromUser: false }
-    ];
-  });
+  const [messages, setMessages] = useState([
+    { text: "Hello! What can I help you with today?", fromUser: false }
+  ]);
   const [loading, setLoading] = useState(false);
+  const [tokenChecked, setTokenChecked] = useState(false);
+
+  useEffect(() => {
+    if (!tokenChecked) {
+      console.log('Moodle Token:', moodleToken ? `${moodleToken.substring(0, 20)}...` : 'NO TOKEN');
+      console.log('Course ID:', courseId);
+      
+      if (!moodleToken) {
+
+        setMessages([
+          { 
+            text: "⚠️ Note: You're not authenticated via Moodle. To access personalized content, please open this chat from within Moodle.\n\nI'll try to answer your questions, but backend may require authentication.", 
+            fromUser: false 
+          }
+        ]);
+      }
+      setTokenChecked(true);
+    }
+  }, [moodleToken, courseId, tokenChecked]);
 
   // Convert messages to history format for backend
   const getHistory = () => {
@@ -49,9 +58,10 @@ export default function ChatWindow({
     setLoading(true);
     
     try {
-      console.log("Sending message to backend:", text);
-      console.log("Moodle Token:", moodleToken ? `${moodleToken.substring(0, 3)}...` : "NO TOKEN");
-      console.log("Course ID:", courseId);
+      console.log("Message:", text);
+      console.log("Moodle Token:", moodleToken ? `${moodleToken.substring(0, 20)}...` : "⚠️ NO TOKEN - Backend will reject request!");
+      console.log("Course ID:", courseId || "Not set");
+      console.log("Token length:", moodleToken ? moodleToken.length : 0);
       
       // Get conversation history (excluding the welcome message)
       const history = getHistory();
@@ -65,9 +75,14 @@ export default function ChatWindow({
       
       if (moodleToken) {
         headers["Authorization"] = `Bearer ${moodleToken}`;
+        console.log("✅ Authorization header added:", `Bearer ${moodleToken.substring(0, 10)}...`);
       } else {
-        console.warn("⚠️ No Moodle token available - backend may require authentication");
+        console.error("❌ No Moodle token available - backend WILL reject request!");
       }
+      
+      console.log("Request headers:", headers);
+      console.log("Request URL:", `${apiUrl}/chat`);
+      console.log("Request body:", { message: text, history, courseId });
       
       const response = await fetch(`${apiUrl}/chat`, {
         method: "POST",

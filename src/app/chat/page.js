@@ -19,9 +19,20 @@ function ChatContent() {
   const courseId = searchParams.get('courseid');
   const courseName = searchParams.get('coursename') || searchParams.get('course') || 'Default Course';
 
+  // Debug info
+  useEffect(() => {
+    console.log('Token:', moodleToken ? `${moodleToken.substring(0, 20)}...` : 'NOT PROVIDED');
+    console.log('Course ID:', courseId || 'NOT PROVIDED');
+    console.log('Course Name:', courseName);
+    console.log('Full URL:', window.location.href);
+  }, []);
+
   useEffect(() => {
     if (moodleToken || courseId || courseName) {
       setMoodleData(moodleToken, courseId, courseName);
+      console.log('✅ Moodle data saved to global context');
+    } else {
+      console.warn('⚠️ No Moodle parameters found in URL - user may not have access to authenticated features');
     }
   }, [moodleToken, courseId, courseName, setMoodleData]);
 
