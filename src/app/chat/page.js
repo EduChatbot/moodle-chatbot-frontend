@@ -12,29 +12,32 @@ function ChatContent() {
   const router = useRouter();
   const { backgroundColor } = useAnimation();
   const { theme } = useTheme();
-  const { setMoodleData } = useMoodle();
-  
-  // Extract Moodle parameters from URL and save to global context
-  const moodleToken = searchParams.get('token');
-  const courseId = searchParams.get('courseid');
-  const courseName = searchParams.get('coursename') || searchParams.get('course') || 'Default Course';
+  const { moodleToken: contextToken, courseId: contextCourseId, courseName: contextCourseName, setMoodleData } = useMoodle();
+
+  const urlToken = searchParams.get('token');
+  const urlCourseId = searchParams.get('courseid');
+  const urlCourseName = searchParams.get('coursename') || searchParams.get('course');
+
+  const moodleToken = urlToken || contextToken;
+  const courseId = urlCourseId || contextCourseId;
+  const courseName = urlCourseName || contextCourseName || 'Default Course';
 
   // Debug info
   useEffect(() => {
-    console.log('Token:', moodleToken ? `${moodleToken.substring(0, 20)}...` : 'NOT PROVIDED');
-    console.log('Course ID:', courseId || 'NOT PROVIDED');
-    console.log('Course Name:', courseName);
-    console.log('Full URL:', window.location.href);
-  }, []);
+    console.log('From URL:', urlToken ? `${urlToken.substring(0, 20)}...` : 'NOT IN URL');
+    console.log('From Context:', contextToken ? `${contextToken.substring(0, 20)}...` : 'NOT IN CONTEXT');
+    console.log('Using Token:', moodleToken ? `${moodleToken.substring(0, 20)}...` : 'NONE');
+    console.log('Course ID (URL):', urlCourseId || 'NOT IN URL');
+    console.log('Course ID (Context):', contextCourseId || 'NOT IN CONTEXT');
+    console.log('Using Course ID:', courseId);
+  }, [urlToken, contextToken, moodleToken, urlCourseId, contextCourseId, courseId]);
 
   useEffect(() => {
-    if (moodleToken || courseId || courseName) {
-      setMoodleData(moodleToken, courseId, courseName);
-      console.log('✅ Moodle data saved to global context');
-    } else {
-      console.warn('⚠️ No Moodle parameters found in URL - user may not have access to authenticated features');
+    if (urlToken || urlCourseId || urlCourseName) {
+      console.log('📝 Updating MoodleContext from URL parameters');
+      setMoodleData(urlToken, urlCourseId, urlCourseName);
     }
-  }, [moodleToken, courseId, courseName, setMoodleData]);
+  }, [urlToken, urlCourseId, urlCourseName, setMoodleData]);
 
   const handleClose = () => {
     router.push('/courses');

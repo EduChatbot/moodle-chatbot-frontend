@@ -27,19 +27,21 @@ function CoursesList() {
 
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
-    const headers = {
-      'Content-Type': 'application/json'
-    };
+    const headers = {};
     if (moodleToken) {
       headers['Authorization'] = `Bearer ${moodleToken}`;
+      console.log('Sending token to /course/materials:', `${moodleToken.substring(0, 10)}...`);
+    } else {
+      console.log('⚠️ No token available for /course/materials - will fetch public materials');
     }
 
     const url = new URL(`${apiUrl}/course/materials`);
     if (courseId) {
       url.searchParams.append('courseId', courseId);
+      console.log('Filtering by courseId:', courseId);
     }
     
-    console.log(`Fetching materials from: ${url.toString()}`);
+    console.log('Fetching materials from:', url.toString());
     
     fetch(url.toString(), {
       method: 'GET',

@@ -29,6 +29,12 @@ export function MoodleProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const setMoodleData = (token: string | null, courseId: string | null, courseName: string | null) => {
+    console.log('[MoodleContext] setMoodleData called:', {
+      token: token ? `${token.substring(0, 10)}...` : null,
+      courseId,
+      courseName
+    });
+    
     setMoodleToken(token);
     setCourseId(courseId);
     setCourseName(courseName);
@@ -51,6 +57,8 @@ export function MoodleProvider({ children }: { children: ReactNode }) {
       } else {
         localStorage.removeItem('moodle_coursename');
       }
+      
+      console.log('[MoodleContext] Data saved to localStorage');
     }
   };
 
@@ -66,5 +74,6 @@ export function useMoodle() {
   if (context === undefined) {
     throw new Error('useMoodle must be used within a MoodleProvider');
   }
+  
   return context;
 }

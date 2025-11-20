@@ -18,9 +18,16 @@ function HomeContent() {
     const token = searchParams.get('token');
     const courseId = searchParams.get('courseid');
     const courseName = searchParams.get('coursename');
+
+    console.log('Token from URL:', token ? `${token.substring(0, 20)}...` : 'NOT PROVIDED');
+    console.log('Course ID from URL:', courseId || 'NOT PROVIDED');
+    console.log('Course Name from URL:', courseName || 'NOT PROVIDED');
     
     if (token || courseId || courseName) {
       setMoodleData(token, courseId, courseName);
+      console.log('Saved to MoodleContext');
+    } else {
+      console.log('No Moodle parameters in URL');
     }
   }, [searchParams, setMoodleData]);
 
