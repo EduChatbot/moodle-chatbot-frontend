@@ -1,14 +1,28 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAnimation } from "@/contexts/AnimationContext";
+import { useMoodle } from "@/contexts/MoodleContext";
 
-export default function Home() {
+function HomeContent() {
   const [backendError, setBackendError] = useState<string | null>(null);
   const { theme } = useTheme();
   const { backgroundColor } = useAnimation();
+  const { setMoodleData } = useMoodle();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const token = searchParams.get('token');
+    const courseId = searchParams.get('courseid');
+    const courseName = searchParams.get('coursename');
+    
+    if (token || courseId || courseName) {
+      setMoodleData(token, courseId, courseName);
+    }
+  }, [searchParams, setMoodleData]);
 
   useEffect(() => {
     const checkBackend = async () => {
@@ -139,5 +153,13 @@ export default function Home() {
         </div>
       </section>
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+      <HomeContent />
+    </Suspense>
   );
 }

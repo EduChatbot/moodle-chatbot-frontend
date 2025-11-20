@@ -4,12 +4,12 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAnimation } from "@/contexts/AnimationContext";
+import { useMoodle } from "@/contexts/MoodleContext";
 import Message from "@/components/Message";
 import MessageInput from "@/components/MessageInput";
 
 export default function ChatWindow({ 
   course = { name: "Default Course" }, 
-  moodleData = {},
   isExpanded = false 
 }) {
   const [messages, setMessages] = useState([
@@ -18,10 +18,8 @@ export default function ChatWindow({
   const [loading, setLoading] = useState(false);
   const { theme } = useTheme();
   const { backgroundColor } = useAnimation();
+  const { moodleToken, courseId } = useMoodle();
   const router = useRouter();
-  
-  // Extract Moodle data
-  const { moodleToken, courseId } = moodleData;
 
   // Convert messages to history format for backend
   const getHistory = () => {

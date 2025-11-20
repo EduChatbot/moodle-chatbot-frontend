@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAnimation } from "@/contexts/AnimationContext";
+import { useMoodle } from "@/contexts/MoodleContext";
 
 function CoursesList() {
   const [courses, setCourses] = useState([]);
@@ -11,6 +12,7 @@ function CoursesList() {
   const [error, setError] = useState(null);
   const { theme } = useTheme();
   const { backgroundColor } = useAnimation();
+  const { moodleToken, courseId } = useMoodle();
   const router = useRouter();
 
   useEffect(() => {
@@ -24,7 +26,18 @@ function CoursesList() {
       });
 
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
-    fetch(`${apiUrl}/course/materials`, {credentials: 'include'})
+
+    const headers = {
+      'Content-Type': 'application/json'
+    };
+    if (moodleToken) {
+      headers['Authorization'] = `Bearer ${moodleToken}`;
+    }
+    
+    fetch(`${apiUrl}/course/materials`, {
+      credentials: 'include',
+      headers: headers
+    })
       .then((res) => res.json())
       .then((data) => {
         try { console.log("Backend response (materials):", JSON.parse(JSON.stringify(data))); } catch { console.log("Backend response (materials, raw):", data); }

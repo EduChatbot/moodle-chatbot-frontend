@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { AnimationProvider } from "@/contexts/AnimationContext";
+import { MoodleProvider } from "@/contexts/MoodleContext";
 import ConditionalLayout from "@/components/ConditionalLayout";
 import { Playfair_Display, Montserrat, Inter, Space_Grotesk } from 'next/font/google';
 
@@ -44,9 +45,11 @@ export default function RootLayout({
       <body className={`${playfair.variable} ${montserrat.variable} ${inter.variable} ${spaceGrotesk.variable} antialiased`}>
         <ThemeProvider>
           <AnimationProvider>
-            <ConditionalLayout>
-              {children}
-            </ConditionalLayout>
+            <MoodleProvider>
+              <ConditionalLayout>
+                {children}
+              </ConditionalLayout>
+            </MoodleProvider>
           </AnimationProvider>
         </ThemeProvider>
       </body>

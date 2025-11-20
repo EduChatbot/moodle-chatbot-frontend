@@ -1,22 +1,29 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import ChatWindow from "@/components/ChatWindow";
 import { useAnimation } from "@/contexts/AnimationContext";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useMoodle } from "@/contexts/MoodleContext";
 
 function ChatContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { backgroundColor } = useAnimation();
   const { theme } = useTheme();
+  const { setMoodleData } = useMoodle();
   
-  // Extract Moodle parameters from URL
-  const userId = searchParams.get('userid');
+  // Extract Moodle parameters from URL and save to global context
+  const moodleToken = searchParams.get('token');
   const courseId = searchParams.get('courseid');
-  const userName = searchParams.get('username');
   const courseName = searchParams.get('coursename') || searchParams.get('course') || 'Default Course';
+
+  useEffect(() => {
+    if (moodleToken || courseId || courseName) {
+      setMoodleData(moodleToken, courseId, courseName);
+    }
+  }, [moodleToken, courseId, courseName, setMoodleData]);
 
   const handleClose = () => {
     router.push('/courses');
@@ -111,11 +118,6 @@ function ChatContent() {
         <div style={{ flex: 1 }}>
           <ChatWindow 
             course={{ name: courseName }}
-            moodleData={{
-              userId: userId,
-              courseId: courseId,
-              userName: userName
-            }}
             isExpanded={true}
           />
         </div>
