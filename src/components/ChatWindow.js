@@ -12,14 +12,25 @@ export default function ChatWindow({
   course = { name: "Default Course" }, 
   isExpanded = false 
 }) {
-  const [messages, setMessages] = useState([
-    { text: "Hello! What can I help you with today?", fromUser: false }
-  ]);
-  const [loading, setLoading] = useState(false);
   const { theme } = useTheme();
   const { backgroundColor } = useAnimation();
   const { moodleToken, courseId } = useMoodle();
   const router = useRouter();
+
+  const [messages, setMessages] = useState(() => {
+    if (!moodleToken) {
+      return [
+        { 
+          text: "⚠️ Note: You're not authenticated via Moodle. To access personalized content, please open this chat from within Moodle.\n\nHowever, I can still answer general questions!", 
+          fromUser: false 
+        }
+      ];
+    }
+    return [
+      { text: "Hello! What can I help you with today?", fromUser: false }
+    ];
+  });
+  const [loading, setLoading] = useState(false);
 
   // Convert messages to history format for backend
   const getHistory = () => {
@@ -38,19 +49,29 @@ export default function ChatWindow({
     setLoading(true);
     
     try {
-  console.log("Sending message to backend:", text);
+      console.log("Sending message to backend:", text);
+      console.log("Moodle Token:", moodleToken ? `${moodleToken.substring(0, 3)}...` : "NO TOKEN");
+      console.log("Course ID:", courseId);
       
       // Get conversation history (excluding the welcome message)
       const history = getHistory();
       console.log("Sending history:", history);
       
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+
+      const headers = { 
+        "Content-Type": "application/json"
+      };
+      
+      if (moodleToken) {
+        headers["Authorization"] = `Bearer ${moodleToken}`;
+      } else {
+        console.warn("⚠️ No Moodle token available - backend may require authentication");
+      }
+      
       const response = await fetch(`${apiUrl}/chat`, {
         method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          ...(moodleToken && { "Authorization": `Bearer ${moodleToken}` })
-        },
+        headers: headers,
         body: JSON.stringify({ 
           message: text,
           history: history,
@@ -59,7 +80,14 @@ export default function ChatWindow({
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        let errorDetail = `HTTP ${response.status}`;
+        try {
+          const errorData = await response.json();
+          errorDetail = errorData.detail || errorData.message || JSON.stringify(errorData);
+        } catch (e) {
+          errorDetail = `HTTP ${response.status}: ${response.statusText}`;
+        }
+        throw new Error(errorDetail);
       }
 
       const data = await response.json();
