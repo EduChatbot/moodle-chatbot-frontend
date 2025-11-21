@@ -21,7 +21,7 @@ export function AnimationProvider({ children }: { children: ReactNode }) {
   const { theme, setTheme } = useTheme();
   const [animationsEnabled, setAnimationsEnabled] = useState(true);
   const [backgroundType, setBackgroundTypeState] = useState<BackgroundType>('liquidether');
-  const [backgroundColor, setBackgroundColorState] = useState<BackgroundColor>('black');
+  const [backgroundColor, setBackgroundColorState] = useState<BackgroundColor>('white');
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -143,7 +143,7 @@ export function useAnimation() {
       toggleAnimations: () => {},
       backgroundType: 'liquidether' as BackgroundType,
       setBackgroundType: () => {},
-      backgroundColor: 'gray' as BackgroundColor,
+      backgroundColor: 'white' as BackgroundColor,
       setBackgroundColor: () => {}
     };
   }
