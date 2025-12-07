@@ -1,5 +1,6 @@
 import { useTheme } from '@/contexts/ThemeContext';
 import { useAnimation } from '@/contexts/AnimationContext';
+import ReactMarkdown from 'react-markdown';
 
 export default function Message({ text, fromUser = false }) {
   const { theme } = useTheme();
@@ -50,12 +51,24 @@ export default function Message({ text, fromUser = false }) {
   return (
     <div className={`flex ${fromUser ? 'justify-end' : 'justify-start'} my-2 
                     animate-fade-in-up duration-fast`}>
-      <div className={`
-        px-4 py-3 rounded-2xl max-w-[75%] font-inter text-[15px] leading-relaxed
-        shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-[1.02]
-        ${fromUser ? colors.user : colors.bot}
-      `}>
-        {text}
+      <div 
+        className={`
+          px-4 py-3 rounded-2xl max-w-[75%] font-inter text-[15px] leading-relaxed
+          shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-[1.02]
+          ${fromUser ? colors.user : colors.bot}
+          prose prose-sm max-w-none
+          prose-headings:mt-3 prose-headings:mb-2 prose-headings:font-bold
+          prose-p:my-1
+          prose-pre:bg-gray-900/80 prose-pre:rounded-lg prose-pre:p-3 prose-pre:border prose-pre:border-gray-700/50
+          prose-code:before:content-[''] prose-code:after:content-['']
+          prose-code:bg-gray-900/60 prose-code:text-emerald-400 prose-code:px-2 prose-code:py-0.5 prose-code:rounded prose-code:font-mono prose-code:text-sm prose-code:font-semibold prose-code:border prose-code:border-gray-700/30
+          prose-strong:font-bold prose-strong:text-inherit
+          prose-em:italic prose-em:text-inherit
+          prose-ul:my-2 prose-ol:my-2
+          prose-li:my-0.5
+        `}
+      >
+        <ReactMarkdown>{text}</ReactMarkdown>
       </div>
     </div>
   );
