@@ -54,23 +54,28 @@ export default function Dashboard() {
 
       // Fetch course-specific data if courseId available
       if (courseId) {
-        const [statsRes, learningRes] = await Promise.all([
-          fetch(`${apiUrl}/dashboard/course/${courseId}/stats`, {
+        try {
+          const statsRes = await fetch(`${apiUrl}/dashboard/course/${courseId}/stats`, {
             headers: { 'Authorization': `Bearer ${moodleToken}` }
-          }),
-          fetch(`${apiUrl}/dashboard/course/${courseId}/learning-progress`, {
-            headers: { 'Authorization': `Bearer ${moodleToken}` }
-          })
-        ]);
-
-        if (statsRes.ok) {
-          const statsData = await statsRes.json();
-          setCourseStats(statsData);
+          });
+          if (statsRes.ok) {
+            const statsData = await statsRes.json();
+            setCourseStats(statsData);
+          }
+        } catch (err) {
+          console.warn("Course stats endpoint not available:", err);
         }
-        
-        if (learningRes.ok) {
-          const learningData = await learningRes.json();
-          setLearningProgress(learningData);
+
+        try {
+          const learningRes = await fetch(`${apiUrl}/dashboard/course/${courseId}/learning-progress`, {
+            headers: { 'Authorization': `Bearer ${moodleToken}` }
+          });
+          if (learningRes.ok) {
+            const learningData = await learningRes.json();
+            setLearningProgress(learningData);
+          }
+        } catch (err) {
+          console.warn("Learning progress endpoint not available:", err);
         }
       }
     } catch (err) {
