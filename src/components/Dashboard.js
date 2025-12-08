@@ -29,12 +29,17 @@ export default function Dashboard() {
   const fetchProgress = async () => {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
     
+    console.log('[Dashboard] Fetching progress with token:', moodleToken ? `${moodleToken.substring(0, 20)}...` : 'NO TOKEN');
+    console.log('[Dashboard] URL:', `${apiUrl}/dashboard/progress`);
+    
     try {
       const response = await fetch(`${apiUrl}/dashboard/progress`, {
         headers: {
           'Authorization': `Bearer ${moodleToken}`
         }
       });
+      
+      console.log('[Dashboard] Response status:', response.status);
 
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       

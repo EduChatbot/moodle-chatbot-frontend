@@ -33,12 +33,17 @@ export default function TakeQuizPage() {
   const fetchQuiz = async () => {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
     
+    console.log('[TakeQuiz] Fetching quiz with token:', moodleToken ? `${moodleToken.substring(0, 20)}...` : 'NO TOKEN');
+    console.log('[TakeQuiz] URL:', `${apiUrl}/quiz/${quizId}`);
+    
     try {
       const response = await fetch(`${apiUrl}/quiz/${quizId}`, {
         headers: {
           'Authorization': `Bearer ${moodleToken}`
         }
       });
+      
+      console.log('[TakeQuiz] Response status:', response.status);
 
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       
@@ -69,6 +74,9 @@ export default function TakeQuizPage() {
     setSubmitting(true);
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
     
+    console.log('[TakeQuiz] Submitting quiz with token:', moodleToken ? `${moodleToken.substring(0, 20)}...` : 'NO TOKEN');
+    console.log('[TakeQuiz] Submit URL:', `${apiUrl}/quiz/submit`);
+    
     try {
       const response = await fetch(`${apiUrl}/quiz/submit`, {
         method: 'POST',
@@ -81,6 +89,8 @@ export default function TakeQuizPage() {
           answers: answers
         })
       });
+      
+      console.log('[TakeQuiz] Submit response status:', response.status);
 
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       

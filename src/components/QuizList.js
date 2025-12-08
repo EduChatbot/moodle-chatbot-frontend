@@ -32,12 +32,17 @@ export default function QuizList() {
   const fetchQuizzes = async () => {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
     
+    console.log('Fetching quizzes with token:', moodleToken ? `${moodleToken.substring(0, 20)}...` : 'NO TOKEN');
+    console.log('URL:', `${apiUrl}/quiz/course/${courseId}/available`);
+    
     try {
       const response = await fetch(`${apiUrl}/quiz/course/${courseId}/available`, {
         headers: {
           'Authorization': `Bearer ${moodleToken}`
         }
       });
+      
+      console.log('Response status:', response.status);
 
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       
@@ -54,12 +59,16 @@ export default function QuizList() {
   const fetchHistory = async () => {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
     
+    console.log('Fetching history with token:', moodleToken ? `${moodleToken.substring(0, 20)}...` : 'NO TOKEN');
+    
     try {
       const response = await fetch(`${apiUrl}/quiz/history?courseId=${courseId}`, {
         headers: {
           'Authorization': `Bearer ${moodleToken}`
         }
       });
+      
+      console.log('History response status:', response.status);
 
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       
@@ -74,6 +83,9 @@ export default function QuizList() {
     setGeneratingQuiz(true);
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
     
+    console.log('Generating quiz with token:', moodleToken ? `${moodleToken.substring(0, 20)}...` : 'NO TOKEN');
+    console.log('Generate URL:', `${apiUrl}/quiz/generate/${courseId}?num_questions=${numQuestions}`);
+    
     try {
       const response = await fetch(
         `${apiUrl}/quiz/generate/${courseId}?num_questions=${numQuestions}`,
@@ -84,6 +96,8 @@ export default function QuizList() {
           }
         }
       );
+      
+      console.log('Generate response status:', response.status);
 
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       
