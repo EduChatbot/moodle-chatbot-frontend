@@ -124,7 +124,7 @@ function ChatContent() {
             onMouseOut={(e) => e.target.style.backgroundColor = "#6b7280"}
             title="Close and return to courses"
           >
-            ← Back to Courses
+            ← Go Back
           </button>
         </div>
 
