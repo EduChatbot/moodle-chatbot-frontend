@@ -8,8 +8,12 @@ import { useMoodle } from "@/contexts/MoodleContext";
 
 export default function Dashboard() {
   const [progress, setProgress] = useState(null);
+  const [activity, setActivity] = useState(null);
+  const [courseStats, setCourseStats] = useState(null);
+  const [learningProgress, setLearningProgress] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedView, setSelectedView] = useState('overview'); // 'overview' | 'course'
   
   const { theme } = useTheme();
   const { backgroundColor } = useAnimation();
@@ -23,30 +27,54 @@ export default function Dashboard() {
       return;
     }
 
-    fetchProgress();
-  }, [moodleToken]);
+    fetchAllData();
+  }, [moodleToken, courseId]);
 
-  const fetchProgress = async () => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
-    
-    console.log('[Dashboard] Fetching progress with token:', moodleToken ? `${moodleToken.substring(0, 20)}...` : 'NO TOKEN');
-    console.log('[Dashboard] URL:', `${apiUrl}/dashboard/progress`);
+  const fetchAllData = async () => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     
     try {
-      const response = await fetch(`${apiUrl}/dashboard/progress`, {
-        headers: {
-          'Authorization': `Bearer ${moodleToken}`
-        }
+      // Fetch user progress
+      const progressRes = await fetch(`${apiUrl}/dashboard/progress`, {
+        headers: { 'Authorization': `Bearer ${moodleToken}` }
       });
-      
-      console.log('[Dashboard] Response status:', response.status);
+      if (progressRes.ok) {
+        const progressData = await progressRes.json();
+        setProgress(progressData);
+      }
 
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      
-      const data = await response.json();
-      setProgress(data);
+      // Fetch activity (last 30 days)
+      const activityRes = await fetch(`${apiUrl}/dashboard/activity?days=30`, {
+        headers: { 'Authorization': `Bearer ${moodleToken}` }
+      });
+      if (activityRes.ok) {
+        const activityData = await activityRes.json();
+        setActivity(activityData);
+      }
+
+      // Fetch course-specific data if courseId available
+      if (courseId) {
+        const [statsRes, learningRes] = await Promise.all([
+          fetch(`${apiUrl}/dashboard/course/${courseId}/stats`, {
+            headers: { 'Authorization': `Bearer ${moodleToken}` }
+          }),
+          fetch(`${apiUrl}/dashboard/course/${courseId}/learning-progress`, {
+            headers: { 'Authorization': `Bearer ${moodleToken}` }
+          })
+        ]);
+
+        if (statsRes.ok) {
+          const statsData = await statsRes.json();
+          setCourseStats(statsData);
+        }
+        
+        if (learningRes.ok) {
+          const learningData = await learningRes.json();
+          setLearningProgress(learningData);
+        }
+      }
     } catch (err) {
-      console.error("Error fetching progress:", err);
+      console.error("Error fetching dashboard data:", err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -262,6 +290,170 @@ export default function Dashboard() {
             </p>
           </div>
         </div>
+
+        {/* Activity Chart (if available) */}
+        {activity && activity.activityByDate && (
+          <div className="glass-card p-8 mb-8">
+            <h2 className={`font-montserrat text-2xl font-bold mb-6 ${
+              theme === 'light' ? 'text-gray-800' : 'text-white'
+            }`}>
+              📈 Activity Overview (Last 30 Days)
+            </h2>
+            <div className="grid grid-cols-7 gap-2">
+              {Object.entries(activity.activityByDate)
+                .slice(-30)
+                .map(([date, count]) => (
+                  <div key={date} className="flex flex-col items-center">
+                    <div 
+                      className={`w-full h-24 rounded ${
+                        count === 0 
+                          ? 'bg-gray-700/20' 
+                          : count < 3
+                          ? 'bg-blue-500/30'
+                          : count < 6
+                          ? 'bg-blue-500/60'
+                          : 'bg-blue-500/90'
+                      } hover:scale-105 transition-all relative group`}
+                      style={{ height: `${Math.max(count * 15, 20)}px` }}
+                    >
+                      <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-xs bg-black/80 text-white px-2 py-1 rounded">
+                        {count} chats
+                      </span>
+                    </div>
+                    <p className={`text-xs mt-1 ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
+                      {new Date(date).getDate()}
+                    </p>
+                  </div>
+                ))}
+            </div>
+          </div>
+        )}
+
+        {/* Course-specific stats (if available) */}
+        {courseStats && (
+          <div className="glass-card p-8 mb-8">
+            <h2 className={`font-montserrat text-2xl font-bold mb-6 ${
+              theme === 'light' ? 'text-gray-800' : 'text-white'
+            }`}>
+              📚 {courseStats.courseName} Stats
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div className="glass-card p-4">
+                <p className={`text-sm ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
+                  Questions Asked
+                </p>
+                <p className={`text-3xl font-bold ${theme === 'light' ? 'text-blue-600' : 'text-blue-400'}`}>
+                  {courseStats.questionsCount}
+                </p>
+              </div>
+              <div className="glass-card p-4">
+                <p className={`text-sm ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
+                  Total Materials
+                </p>
+                <p className={`text-3xl font-bold ${theme === 'light' ? 'text-green-600' : 'text-green-400'}`}>
+                  {courseStats.materialsCount}
+                </p>
+              </div>
+            </div>
+            
+            {courseStats.topMaterials && courseStats.topMaterials.length > 0 && (
+              <div>
+                <h3 className={`font-montserrat text-lg font-bold mb-4 ${
+                  theme === 'light' ? 'text-gray-800' : 'text-white'
+                }`}>
+                  🔝 Top Materials
+                </h3>
+                <div className="space-y-2">
+                  {courseStats.topMaterials.map((material, idx) => (
+                    <div key={idx} className="glass-card p-3 flex justify-between items-center">
+                      <span className={theme === 'light' ? 'text-gray-800' : 'text-white'}>
+                        {material.name}
+                      </span>
+                      <span className={`text-sm ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
+                        {material.chunksCount} chunks
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Learning Progress (if available) */}
+        {learningProgress && (
+          <div className="glass-card p-8 mb-8">
+            <h2 className={`font-montserrat text-2xl font-bold mb-6 ${
+              theme === 'light' ? 'text-gray-800' : 'text-white'
+            }`}>
+              🎯 Learning Progress: {learningProgress.courseName}
+            </h2>
+            
+            {/* Overall Progress Circle */}
+            <div className="text-center mb-8">
+              <div className="inline-block relative">
+                <svg className="w-32 h-32">
+                  <circle
+                    cx="64"
+                    cy="64"
+                    r="56"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="8"
+                    className={theme === 'light' ? 'text-gray-300' : 'text-gray-700'}
+                  />
+                  <circle
+                    cx="64"
+                    cy="64"
+                    r="56"
+                    fill="none"
+                    stroke="url(#gradient)"
+                    strokeWidth="8"
+                    strokeLinecap="round"
+                    strokeDasharray={`${2 * Math.PI * 56}`}
+                    strokeDashoffset={`${2 * Math.PI * 56 * (1 - learningProgress.overallProgress / 100)}`}
+                    transform="rotate(-90 64 64)"
+                  />
+                  <defs>
+                    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#3b82f6" />
+                      <stop offset="100%" stopColor="#8b5cf6" />
+                    </linearGradient>
+                  </defs>
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className={`text-2xl font-bold ${theme === 'light' ? 'text-gray-800' : 'text-white'}`}>
+                    {learningProgress.overallProgress}%
+                  </span>
+                </div>
+              </div>
+              <p className={`mt-2 ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
+                Overall Course Progress
+              </p>
+            </div>
+
+            {/* Recommended Topics */}
+            {learningProgress.recommendedTopics && learningProgress.recommendedTopics.length > 0 && (
+              <div className="mb-6">
+                <h3 className={`font-montserrat text-lg font-bold mb-4 ${
+                  theme === 'light' ? 'text-gray-800' : 'text-white'
+                }`}>
+                  💡 What to Learn Next
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {learningProgress.recommendedTopics.map((topic, idx) => (
+                    <span 
+                      key={idx}
+                      className="glass-card px-4 py-2 text-sm hover:scale-105 transition-all"
+                    >
+                      {topic}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Quick Actions */}
         <div className="glass-card p-8">
