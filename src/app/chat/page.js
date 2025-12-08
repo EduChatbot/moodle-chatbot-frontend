@@ -40,7 +40,7 @@ function ChatContent() {
   }, [urlToken, urlCourseId, urlCourseName, setMoodleData]);
 
   const handleClose = () => {
-    router.push('/courses');
+    router.push('/');
   };
 
   // Define page background based on background color

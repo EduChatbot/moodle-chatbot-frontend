@@ -298,7 +298,7 @@ export default function Dashboard() {
             </button>
 
             <button
-              onClick={() => router.push('/courses')}
+              onClick={() => router.push('/')}
               className="glass-card p-6 hover:scale-105 transition-all text-left"
             >
               <div className="text-3xl mb-2">📚</div>
