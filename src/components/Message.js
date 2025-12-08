@@ -1,10 +1,12 @@
+import { useState } from 'react';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useAnimation } from '@/contexts/AnimationContext';
 import ReactMarkdown from 'react-markdown';
 
-export default function Message({ text, fromUser = false }) {
+export default function Message({ text, fromUser = false, sources = null }) {
   const { theme } = useTheme();
   const { backgroundColor } = useAnimation();
+  const [showSources, setShowSources] = useState(false);
   
   // Define color schemes based on background color
   const getColorScheme = () => {
@@ -50,7 +52,7 @@ export default function Message({ text, fromUser = false }) {
   
   return (
     <div className={`flex ${fromUser ? 'justify-end' : 'justify-start'} my-2 
-                    animate-fade-in-up duration-fast`}>
+                    animate-fade-in-up duration-fast flex-col ${fromUser ? 'items-end' : 'items-start'}`}>
       <div 
         className={`
           px-4 py-3 rounded-2xl max-w-[75%] font-inter text-[15px] leading-relaxed
@@ -70,6 +72,62 @@ export default function Message({ text, fromUser = false }) {
       >
         <ReactMarkdown>{text}</ReactMarkdown>
       </div>
+      
+      {/* Sources section - only for bot messages */}
+      {!fromUser && sources && sources.length > 0 && (
+        <div className="max-w-[75%] mt-2">
+          <button
+            onClick={() => setShowSources(!showSources)}
+            className={`glass-card px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 hover:scale-105 flex items-center gap-2 ${
+              theme === 'light' ? 'text-gray-700' : 'text-gray-300'
+            }`}
+          >
+            <span>📚</span>
+            {showSources ? 'Hide' : 'Show'} Sources ({sources.length})
+            <span className="text-[10px]">{showSources ? '▲' : '▼'}</span>
+          </button>
+          
+          {showSources && (
+            <div className="mt-2 space-y-2 animate-fade-in-up">
+              {sources.map((source, idx) => (
+                <div
+                  key={idx}
+                  className={`glass-card p-3 rounded-lg text-xs border ${
+                    theme === 'light' 
+                      ? 'border-gray-300 text-gray-700' 
+                      : 'border-gray-600/30 text-gray-300'
+                  }`}
+                >
+                  <div className="flex items-start justify-between mb-1">
+                    <span className="font-bold text-sm">
+                      📄 {source.material_name || 'Material'}
+                    </span>
+                    {source.section_name && (
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full ${
+                        theme === 'light' ? 'bg-blue-100 text-blue-700' : 'bg-blue-900/50 text-blue-300'
+                      }`}>
+                        {source.section_name}
+                      </span>
+                    )}
+                  </div>
+                  
+                  <p className={`text-[11px] leading-relaxed mt-2 p-2 rounded ${
+                    theme === 'light' ? 'bg-gray-50' : 'bg-black/30'
+                  }`}>
+                    {source.chunk_text}
+                  </p>
+                  
+                  {source.page_number && (
+                    <div className="mt-1 text-[10px] opacity-70">
+                      Page {source.page_number}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

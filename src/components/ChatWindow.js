@@ -67,7 +67,7 @@ export default function ChatWindow({
       const history = getHistory();
       console.log("Sending history:", history);
       
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
       const headers = { 
         "Content-Type": "application/json"
@@ -111,6 +111,7 @@ export default function ChatWindow({
 
 
       let botText = "No server response";
+      let sources = null;
       if (typeof data === "string") {
         botText = data;
       } else if (Array.isArray(data)) {
@@ -118,12 +119,14 @@ export default function ChatWindow({
         botText = data.map(item => (typeof item === 'string' ? item : JSON.stringify(item))).join(" \n");
       } else if (data && typeof data === 'object') {
         botText = data.response || data.message || data.text || JSON.stringify(data);
+        sources = data.sources || null;
       }
 
 
       const botMessage = { 
         text: botText,
-        fromUser: false 
+        fromUser: false,
+        sources: sources
       };
       setMessages(prev => [...prev, botMessage]);
       
@@ -131,7 +134,7 @@ export default function ChatWindow({
       console.error("Error communicating with backend:", error);
 
 
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
       const errorMessage = { 
         text: `Error: ${error.message}. Check if backend is running on ${apiUrl}`, 
         fromUser: false 
@@ -213,7 +216,7 @@ export default function ChatWindow({
                       mb-4 p-4 rounded-xl overflow-y-auto ${getChatAreaStyles()}
                       animate-scale-in delay-300 duration-slower ease-smooth`}>
         {messages.map((msg, i) => (
-          <Message key={i} text={msg.text} fromUser={msg.fromUser} />
+          <Message key={i} text={msg.text} fromUser={msg.fromUser} sources={msg.sources} />
         ))}
         {loading && (
           <div className={`p-3 italic text-center rounded-lg my-2 glass-card animate-pulse ${
