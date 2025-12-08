@@ -33,7 +33,7 @@ export default function QuizList() {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
     
     try {
-      const response = await fetch(`${apiUrl}/api/quiz/course/${courseId}/available`, {
+      const response = await fetch(`${apiUrl}/quiz/course/${courseId}/available`, {
         headers: {
           'Authorization': `Bearer ${moodleToken}`
         }
@@ -55,7 +55,7 @@ export default function QuizList() {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
     
     try {
-      const response = await fetch(`${apiUrl}/api/quiz/history?courseId=${courseId}`, {
+      const response = await fetch(`${apiUrl}/quiz/history?courseId=${courseId}`, {
         headers: {
           'Authorization': `Bearer ${moodleToken}`
         }
@@ -76,7 +76,7 @@ export default function QuizList() {
     
     try {
       const response = await fetch(
-        `${apiUrl}/api/quiz/generate/${courseId}?num_questions=${numQuestions}`,
+        `${apiUrl}/quiz/generate/${courseId}?num_questions=${numQuestions}`,
         {
           method: 'POST',
           headers: {
