@@ -121,39 +121,71 @@ function HomeContent() {
 
       {/* Quick Links Section */}
       <section className="max-w-6xl mx-auto px-4 py-6 pb-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Link href="/courses" className="group">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Link href="/chat" className="group">
             <div className="glass-card p-8 text-center animate-fade-in-left delay-300 duration-slower ease-elastic
+                         hover:scale-105 transition-all duration-500">
+              <div className="text-5xl mb-3 animate-float-fast">💬</div>
+              <h3 className={`font-montserrat text-xl font-bold mb-2 ${
+                theme === 'light' ? 'text-gray-800' : 'text-white'
+              }`}>
+                AI Chat
+              </h3>
+              <p className={`font-inter text-sm ${
+                theme === 'light' ? 'text-gray-600' : 'text-gray-300'
+              }`}>
+                Ask questions about your course
+              </p>
+            </div>
+          </Link>
+
+          <Link href="/courses" className="group">
+            <div className="glass-card p-8 text-center animate-fade-in-left delay-350 duration-slower ease-elastic
                          hover:scale-105 transition-all duration-500">
               <div className="text-5xl mb-3 animate-float-slow">📚</div>
               <h3 className={`font-montserrat text-xl font-bold mb-2 ${
                 theme === 'light' ? 'text-gray-800' : 'text-white'
               }`}>
-                Browse Resources
+                Materials
               </h3>
               <p className={`font-inter text-sm ${
                 theme === 'light' ? 'text-gray-600' : 'text-gray-300'
               }`}>
-                Explore course materials, guides, and learning resources
+                Browse course resources
               </p>
             </div>
           </Link>
 
-          <Link href="/chat" className="group">
-            <div className="glass-card p-8 text-center animate-fade-in-right delay-400 duration-slowest ease-bounce
+          <Link href="/quiz" className="group">
+            <div className="glass-card p-8 text-center animate-fade-in-right delay-400 duration-slower ease-elastic
                          hover:scale-105 transition-all duration-500">
-              <div className="text-5xl mb-3 animate-float-fast">
-                💬
-              </div>
+              <div className="text-5xl mb-3 animate-float-slow">📝</div>
               <h3 className={`font-montserrat text-xl font-bold mb-2 ${
                 theme === 'light' ? 'text-gray-800' : 'text-white'
               }`}>
-                Ask AI Assistant
+                Quizzes
               </h3>
               <p className={`font-inter text-sm ${
                 theme === 'light' ? 'text-gray-600' : 'text-gray-300'
               }`}>
-                Get instant answers about your course content and materials
+                Test your knowledge
+              </p>
+            </div>
+          </Link>
+
+          <Link href="/dashboard" className="group">
+            <div className="glass-card p-8 text-center animate-fade-in-right delay-450 duration-slowest ease-bounce
+                         hover:scale-105 transition-all duration-500">
+              <div className="text-5xl mb-3 animate-float-fast">📊</div>
+              <h3 className={`font-montserrat text-xl font-bold mb-2 ${
+                theme === 'light' ? 'text-gray-800' : 'text-white'
+              }`}>
+                Dashboard
+              </h3>
+              <p className={`font-inter text-sm ${
+                theme === 'light' ? 'text-gray-600' : 'text-gray-300'
+              }`}>
+                Track your progress
               </p>
             </div>
           </Link>
