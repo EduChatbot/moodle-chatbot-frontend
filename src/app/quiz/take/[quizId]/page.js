@@ -34,7 +34,7 @@ export default function TakeQuizPage() {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
     
     try {
-      const response = await fetch(`${apiUrl}/api/v1/quiz/${quizId}`, {
+      const response = await fetch(`${apiUrl}/api/quiz/${quizId}`, {
         headers: {
           'Authorization': `Bearer ${moodleToken}`
         }
@@ -70,7 +70,7 @@ export default function TakeQuizPage() {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
     
     try {
-      const response = await fetch(`${apiUrl}/api/v1/quiz/submit`, {
+      const response = await fetch(`${apiUrl}/api/quiz/submit`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${moodleToken}`,

@@ -30,7 +30,7 @@ export default function Dashboard() {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
     
     try {
-      const response = await fetch(`${apiUrl}/api/v1/dashboard/progress`, {
+      const response = await fetch(`${apiUrl}/api/dashboard/progress`, {
         headers: {
           'Authorization': `Bearer ${moodleToken}`
         }
