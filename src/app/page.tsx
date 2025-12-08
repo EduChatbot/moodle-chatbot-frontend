@@ -121,7 +121,7 @@ function HomeContent() {
 
       {/* Quick Links Section */}
       <section className="max-w-6xl mx-auto px-4 py-6 pb-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
           <Link href="/chat" className="group">
             <div className="glass-card p-8 text-center animate-fade-in-left delay-300 duration-slower ease-elastic
                          hover:scale-105 transition-all duration-500">
@@ -139,25 +139,8 @@ function HomeContent() {
             </div>
           </Link>
 
-          <Link href="/courses" className="group">
-            <div className="glass-card p-8 text-center animate-fade-in-left delay-350 duration-slower ease-elastic
-                         hover:scale-105 transition-all duration-500">
-              <div className="text-5xl mb-3 animate-float-slow">📚</div>
-              <h3 className={`font-montserrat text-xl font-bold mb-2 ${
-                theme === 'light' ? 'text-gray-800' : 'text-white'
-              }`}>
-                Materials
-              </h3>
-              <p className={`font-inter text-sm ${
-                theme === 'light' ? 'text-gray-600' : 'text-gray-300'
-              }`}>
-                Browse course resources
-              </p>
-            </div>
-          </Link>
-
           <Link href="/quiz" className="group">
-            <div className="glass-card p-8 text-center animate-fade-in-right delay-400 duration-slower ease-elastic
+            <div className="glass-card p-8 text-center animate-fade-in-up delay-350 duration-slower ease-elastic
                          hover:scale-105 transition-all duration-500">
               <div className="text-5xl mb-3 animate-float-slow">📝</div>
               <h3 className={`font-montserrat text-xl font-bold mb-2 ${
@@ -174,7 +157,7 @@ function HomeContent() {
           </Link>
 
           <Link href="/dashboard" className="group">
-            <div className="glass-card p-8 text-center animate-fade-in-right delay-450 duration-slowest ease-bounce
+            <div className="glass-card p-8 text-center animate-fade-in-right delay-400 duration-slower ease-bounce
                          hover:scale-105 transition-all duration-500">
               <div className="text-5xl mb-3 animate-float-fast">📊</div>
               <h3 className={`font-montserrat text-xl font-bold mb-2 ${
