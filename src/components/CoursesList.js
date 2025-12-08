@@ -55,8 +55,15 @@ function CoursesList() {
         return res.json();
       })
       .then((data) => {
-        try { console.log("Backend response (materials):", JSON.parse(JSON.stringify(data))); } catch { console.log("Backend response (materials, raw):", data); }
+        console.log("=== MATERIALS BACKEND RESPONSE ===");
+        console.log("Full data:", data);
+        console.log("Type:", typeof data);
+        console.log("Is Array:", Array.isArray(data));
+        
         const coursesArray = Array.isArray(data) ? data : data.materials || data.resources || [];
+        console.log("Extracted materials array:", coursesArray);
+        console.log("First item structure:", coursesArray[0]);
+        
         setCourses(coursesArray);
         setLoading(false);
       })
@@ -159,11 +166,16 @@ function CoursesList() {
               : course.url || course.link || "#";
             
             const handleClick = () => {
+              console.log('[MATERIAL CLICK] Course object:', course);
+              console.log('[MATERIAL CLICK] Material URL:', materialUrl);
+              console.log('[MATERIAL CLICK] Course type:', course.type);
+              
               if (materialUrl && materialUrl !== "#") {
+                console.log('[MATERIAL CLICK] Opening URL:', materialUrl);
                 // Otwórz materiał w nowym oknie/karcie
                 window.open(materialUrl, '_blank', 'noopener,noreferrer');
               } else {
-                // Jeśli nie ma URL, pokaż info
+                console.error('[MATERIAL CLICK] No valid URL found');
                 alert('This material does not have a direct link available.');
               }
             };
