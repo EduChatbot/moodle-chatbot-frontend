@@ -205,7 +205,15 @@ export default function TakeQuizPage() {
                 Back to Quizzes
               </button>
               <button
-                onClick={() => window.location.reload()}
+                onClick={() => {
+                  if (!moodleToken) {
+                    alert("Authentication required");
+                    router.push('/quiz');
+                    return;
+                  }
+                  setResult(null);
+                  setAnswers(new Array(quiz.questions.length).fill(null));
+                }}
                 className="glass-card px-8 py-3 font-montserrat font-semibold hover:scale-105 transition-all"
               >
                 Retry Quiz
