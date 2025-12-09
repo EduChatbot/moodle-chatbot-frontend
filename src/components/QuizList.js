@@ -113,6 +113,41 @@ export default function QuizList() {
     return Object.values(grouped);
   };
 
+  // Calculate statistics by topic/material
+  const calculateTopicStats = (attempts) => {
+    if (!attempts || attempts.length === 0) return [];
+    
+    const topicMap = {};
+    
+    attempts.forEach(attempt => {
+      // Extract topic from quiz title or use material info
+      const topic = attempt.topic || attempt.materialId ? `Material #${attempt.materialId}` : attempt.quizTitle.split('-')[0].trim() || 'General';
+      
+      if (!topicMap[topic]) {
+        topicMap[topic] = {
+          topic,
+          totalAttempts: 0,
+          totalScore: 0,
+          totalQuestions: 0,
+          correctAnswers: 0
+        };
+      }
+      
+      topicMap[topic].totalAttempts++;
+      topicMap[topic].totalScore += attempt.percentage;
+      topicMap[topic].correctAnswers += attempt.score;
+      topicMap[topic].totalQuestions += attempt.totalQuestions;
+    });
+
+    return Object.values(topicMap).map(stat => ({
+      topic: stat.topic,
+      avgPercentage: Math.round(stat.totalScore / stat.totalAttempts),
+      totalAttempts: stat.totalAttempts,
+      correctAnswers: stat.correctAnswers,
+      totalQuestions: stat.totalQuestions
+    })).sort((a, b) => b.avgPercentage - a.avgPercentage);
+  };
+
   const fetchHistory = async () => {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     
@@ -251,6 +286,51 @@ export default function QuizList() {
               <p className={`text-sm ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
                 Total Attempts
               </p>
+            </div>
+          </div>
+        )}
+
+        {/* Performance by Topic/Material */}
+        {history?.attempts && history.attempts.length > 0 && calculateTopicStats(history.attempts).length > 0 && (
+          <div className="glass-card p-6 mb-8">
+            <h2 className={`font-montserrat text-xl font-bold mb-4 ${
+              theme === 'light' ? 'text-gray-800' : 'text-white'
+            }`}>
+              📊 Performance by Topic
+            </h2>
+            <div className="space-y-3">
+              {calculateTopicStats(history.attempts).map((stat, idx) => (
+                <div key={idx} className="glass p-4 rounded-lg">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className={`font-semibold ${
+                      theme === 'light' ? 'text-gray-800' : 'text-white'
+                    }`}>
+                      {stat.topic}
+                    </span>
+                    <span className={`text-lg font-bold ${
+                      stat.avgPercentage >= 60
+                        ? (theme === 'light' ? 'text-green-600' : 'text-green-400')
+                        : (theme === 'light' ? 'text-red-600' : 'text-red-400')
+                    }`}>
+                      {stat.avgPercentage}%
+                    </span>
+                  </div>
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mb-2">
+                    <div
+                      className={`h-2.5 rounded-full ${
+                        stat.avgPercentage >= 60 ? 'bg-green-500' : 'bg-red-500'
+                      }`}
+                      style={{ width: `${stat.avgPercentage}%` }}
+                    ></div>
+                  </div>
+                  <div className={`text-xs flex justify-between ${
+                    theme === 'light' ? 'text-gray-600' : 'text-gray-400'
+                  }`}>
+                    <span>{stat.totalAttempts} attempt{stat.totalAttempts !== 1 ? 's' : ''}</span>
+                    <span>{stat.correctAnswers}/{stat.totalQuestions} correct</span>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         )}
