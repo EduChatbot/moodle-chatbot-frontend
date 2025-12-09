@@ -56,7 +56,7 @@ export default function QuizList() {
   };
 
   const fetchQuizzes = async () => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     
     console.log('Fetching quizzes with token:', moodleToken ? `${moodleToken.substring(0, 20)}...` : 'NO TOKEN');
     console.log('URL:', `${apiUrl}/quiz/course/${courseId}/available`);
@@ -82,8 +82,39 @@ export default function QuizList() {
     }
   };
 
+
+  const groupQuizzesByTopic = (quizzes) => {
+    const grouped = {};
+    quizzes.forEach(quiz => {
+      const topic = quiz.topic || quiz.materialId ? `Material #${quiz.materialId}` : 'General';
+      if (!grouped[topic]) grouped[topic] = [];
+      grouped[topic].push(quiz);
+    });
+    return grouped;
+  };
+
+
+  const groupAttemptsByQuiz = (attempts) => {
+    const grouped = {};
+    attempts.forEach(attempt => {
+      if (!grouped[attempt.quizId]) {
+        grouped[attempt.quizId] = {
+          quizTitle: attempt.quizTitle,
+          quizId: attempt.quizId,
+          attempts: []
+        };
+      }
+      grouped[attempt.quizId].attempts.push(attempt);
+    });
+    // Sort attempts by date (newest first) within each quiz
+    Object.values(grouped).forEach(group => {
+      group.attempts.sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt));
+    });
+    return Object.values(grouped);
+  };
+
   const fetchHistory = async () => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     
     console.log('Fetching history with token:', moodleToken ? `${moodleToken.substring(0, 20)}...` : 'NO TOKEN');
     
@@ -117,7 +148,7 @@ export default function QuizList() {
     }
     
     setGeneratingQuiz(true);
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     
     // Build URL based on mode
     let url = `${apiUrl}/quiz/generate/${courseId}?num_questions=${numQuestions}`;
@@ -394,7 +425,7 @@ export default function QuizList() {
           </div>
         </div>
 
-        {/* Available Quizzes */}
+        {/* Available Quizzes - Grouped by Topic */}
         <div className="mb-12">
           <h2 className={`font-montserrat text-2xl font-bold mb-6 ${
             theme === 'light' ? 'text-gray-800' : 'text-white'
@@ -409,67 +440,116 @@ export default function QuizList() {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {quizzes.map((quiz) => (
-                <div
-                  key={quiz.quizId}
-                  onClick={() => handleTakeQuiz(quiz.quizId)}
-                  className="glass-card p-6 cursor-pointer hover:scale-105 transition-all"
-                >
-                  <h3 className={`font-montserrat text-xl font-bold mb-2 ${
-                    theme === 'light' ? 'text-gray-800' : 'text-white'
+            <div className="space-y-8">
+              {Object.entries(groupQuizzesByTopic(quizzes)).map(([topic, topicQuizzes]) => (
+                <div key={topic}>
+                  <h3 className={`font-montserrat text-lg font-bold mb-4 ${
+                    theme === 'light' ? 'text-gray-700' : 'text-gray-200'
                   }`}>
-                    {quiz.title}
+                    📂 {topic}
                   </h3>
-                  <p className={`text-sm ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
-                    Created: {new Date(quiz.createdAt).toLocaleDateString()}
-                  </p>
-                  {quiz.materialId && (
-                    <p className={`text-sm ${theme === 'light' ? 'text-blue-600' : 'text-blue-400'}`}>
-                      Material #{quiz.materialId}
-                    </p>
-                  )}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {topicQuizzes.map((quiz) => (
+                      <div
+                        key={quiz.quizId}
+                        onClick={() => handleTakeQuiz(quiz.quizId)}
+                        className="glass-card p-6 cursor-pointer hover:scale-105 transition-all"
+                      >
+                        <h4 className={`font-montserrat text-xl font-bold mb-2 ${
+                          theme === 'light' ? 'text-gray-800' : 'text-white'
+                        }`}>
+                          {quiz.title}
+                        </h4>
+                        <p className={`text-sm ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
+                          Created: {new Date(quiz.createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               ))}
             </div>
           )}
         </div>
 
-        {/* Recent Attempts */}
+        {/* Recent Attempts - Grouped by Quiz */}
         {history?.attempts && history.attempts.length > 0 && (
           <div>
             <h2 className={`font-montserrat text-2xl font-bold mb-6 ${
               theme === 'light' ? 'text-gray-800' : 'text-white'
             }`}>
-              📊 Recent Attempts
+              📊 Quiz History
             </h2>
-            <div className="space-y-4">
-              {history.attempts.slice(0, 5).map((attempt) => (
-                <div key={attempt.attemptId} className="glass-card p-6">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className={`font-montserrat font-bold ${
-                        theme === 'light' ? 'text-gray-800' : 'text-white'
-                      }`}>
-                        {attempt.quizTitle}
-                      </h3>
-                      <p className={`text-sm ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
-                        {new Date(attempt.completedAt).toLocaleString()}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className={`text-2xl font-bold ${
-                        attempt.percentage >= 60 
-                          ? (theme === 'light' ? 'text-green-600' : 'text-green-400')
-                          : (theme === 'light' ? 'text-red-600' : 'text-red-400')
-                      }`}>
-                        {attempt.percentage}%
-                      </p>
-                      <p className={`text-sm ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
-                        {attempt.score}/{attempt.totalQuestions}
-                      </p>
-                    </div>
+            <div className="space-y-6">
+              {groupAttemptsByQuiz(history.attempts).map((quizGroup) => (
+                <div key={quizGroup.quizId} className="glass-card p-6">
+                  <h3 className={`font-montserrat text-xl font-bold mb-4 ${
+                    theme === 'light' ? 'text-gray-800' : 'text-white'
+                  }`}>
+                    {quizGroup.quizTitle}
+                  </h3>
+                  
+                  <div className="space-y-3">
+                    {quizGroup.attempts.map((attempt, idx) => (
+                      <div
+                        key={attempt.attemptId}
+                        className="glass p-4 rounded-lg cursor-pointer hover:scale-[1.02] transition-all duration-200"
+                        onClick={() => router.push(`/quiz/results/${attempt.attemptId}`)}
+                      >
+                        <div className="flex justify-between items-center">
+                          <div className="flex items-center gap-3">
+                            <span className={`font-bold ${
+                              theme === 'light' ? 'text-gray-600' : 'text-gray-400'
+                            }`}>
+                              #{idx + 1}
+                            </span>
+                            <div>
+                              <p className={`text-sm font-semibold ${
+                                theme === 'light' ? 'text-gray-700' : 'text-gray-300'
+                              }`}>
+                                {new Date(attempt.completedAt).toLocaleDateString()} at {new Date(attempt.completedAt).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
+                              </p>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center gap-4">
+                            <div className="text-right">
+                              <p className={`text-xl font-bold ${
+                                attempt.percentage >= 60 
+                                  ? (theme === 'light' ? 'text-green-600' : 'text-green-400')
+                                  : (theme === 'light' ? 'text-red-600' : 'text-red-400')
+                              }`}>
+                                {attempt.percentage}%
+                              </p>
+                              <p className={`text-xs ${theme === 'light' ? 'text-gray-500' : 'text-gray-400'}`}>
+                                {attempt.score}/{attempt.totalQuestions}
+                              </p>
+                            </div>
+                            <span className={`text-xs ${theme === 'light' ? 'text-gray-400' : 'text-gray-500'}`}>
+                              →
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
+                  
+                  {quizGroup.attempts.length > 1 && (
+                    <div className={`mt-3 pt-3 border-t ${
+                      theme === 'light' ? 'border-gray-200' : 'border-gray-700'
+                    }`}>
+                      <div className="flex justify-between text-sm">
+                        <span className={theme === 'light' ? 'text-gray-600' : 'text-gray-400'}>
+                          Total attempts: {quizGroup.attempts.length}
+                        </span>
+                        <span className={`font-semibold ${
+                          theme === 'light' ? 'text-gray-700' : 'text-gray-300'
+                        }`}>
+                          Best: {Math.max(...quizGroup.attempts.map(a => a.percentage))}%
+                        </span>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
