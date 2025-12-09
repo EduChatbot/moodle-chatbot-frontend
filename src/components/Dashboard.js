@@ -136,7 +136,7 @@ export default function Dashboard() {
           <h1 className={`font-playfair text-5xl md:text-6xl font-bold mb-4 ${
             theme === 'light' ? 'text-gray-800' : 'text-white'
           }`}>
-            📊 My Dashboard
+            My Learning Progress
           </h1>
           <p className={`font-inter text-lg ${theme === 'light' ? 'text-gray-600' : 'text-gray-300'}`}>
             Track your learning progress and activity
@@ -166,7 +166,7 @@ export default function Dashboard() {
                 Current Course
               </p>
               <p className={`font-semibold ${theme === 'light' ? 'text-gray-800' : 'text-white'}`}>
-                📚 {courseName}
+                {courseName}
               </p>
             </div>
           )}
@@ -230,19 +230,19 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <p className={`text-sm mb-2 ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
-                  Average Score
+                  {learningProgress ? 'Overall Coverage' : 'Average Score'}
                 </p>
                 <div className="flex items-end gap-2">
                   <p className={`text-5xl font-bold ${
-                    progress.averageQuizScore >= 60 
+                    (learningProgress?.overallProgress || progress.averageQuizScore) >= 60 
                       ? (theme === 'light' ? 'text-green-600' : 'text-green-400')
                       : (theme === 'light' ? 'text-orange-600' : 'text-orange-400')
                   }`}>
-                    {progress.averageQuizScore}%
+                    {learningProgress?.overallProgress || progress.averageQuizScore}%
                   </p>
                   <p className={`text-lg mb-2 ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
-                    {progress.averageQuizScore >= 80 ? 'Excellent!' : 
-                     progress.averageQuizScore >= 60 ? 'Good!' : 'Keep practicing!'}
+                    {(learningProgress?.overallProgress || progress.averageQuizScore) >= 80 ? 'Excellent!' : 
+                     (learningProgress?.overallProgress || progress.averageQuizScore) >= 60 ? 'Good!' : 'Keep practicing!'}
                   </p>
                 </div>
               </div>
@@ -361,24 +361,50 @@ export default function Dashboard() {
               </div>
             </div>
             
-            {courseStats.topMaterials && courseStats.topMaterials.length > 0 && (
+            {/* Recommended Materials to Study */}
+            {learningProgress?.materialsProgress && learningProgress.materialsProgress.length > 0 && (
               <div>
                 <h3 className={`font-montserrat text-lg font-bold mb-4 ${
                   theme === 'light' ? 'text-gray-800' : 'text-white'
                 }`}>
-                  🔝 Top Materials
+                  Recommended Materials to Study
                 </h3>
                 <div className="space-y-2">
-                  {courseStats.topMaterials.map((material, idx) => (
-                    <div key={idx} className="glass-card p-3 flex justify-between items-center">
-                      <span className={theme === 'light' ? 'text-gray-800' : 'text-white'}>
-                        {material.name}
-                      </span>
-                      <span className={`text-sm ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
-                        {material.chunksCount} chunks
-                      </span>
-                    </div>
-                  ))}
+                  {learningProgress.materialsProgress
+                    .sort((a, b) => (a.coveragePercentage || 0) - (b.coveragePercentage || 0))
+                    .slice(0, 5)
+                    .map((material, idx) => (
+                      <div key={idx} className="glass-card p-3">
+                        <div className="flex justify-between items-center mb-2">
+                          <span className={`font-semibold ${theme === 'light' ? 'text-gray-800' : 'text-white'}`}>
+                            {material.materialName}
+                          </span>
+                          <span className={`text-sm font-bold ${
+                            (material.coveragePercentage || 0) >= 60
+                              ? (theme === 'light' ? 'text-green-600' : 'text-green-400')
+                              : (theme === 'light' ? 'text-orange-600' : 'text-orange-400')
+                          }`}>
+                            {material.coveragePercentage || 0}%
+                          </span>
+                        </div>
+                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                          <div
+                            className={`h-2 rounded-full ${
+                              (material.coveragePercentage || 0) >= 60 ? 'bg-green-500' : 'bg-orange-500'
+                            }`}
+                            style={{ width: `${material.coveragePercentage || 0}%` }}
+                          ></div>
+                        </div>
+                        <div className="flex justify-between mt-1">
+                          <span className={`text-xs ${theme === 'light' ? 'text-gray-500' : 'text-gray-400'}`}>
+                            {material.status || 'Not started'}
+                          </span>
+                          <span className={`text-xs ${theme === 'light' ? 'text-gray-500' : 'text-gray-400'}`}>
+                            {material.questionsCount || 0} questions
+                          </span>
+                        </div>
+                      </div>
+                    ))}
                 </div>
               </div>
             )}
@@ -391,7 +417,7 @@ export default function Dashboard() {
             <h2 className={`font-montserrat text-2xl font-bold mb-6 ${
               theme === 'light' ? 'text-gray-800' : 'text-white'
             }`}>
-              🎯 Learning Progress: {learningProgress.courseName}
+              Learning Progress: {learningProgress.courseName}
             </h2>
             
             {/* Overall Progress Circle */}
@@ -465,7 +491,7 @@ export default function Dashboard() {
           <h2 className={`font-montserrat text-2xl font-bold mb-6 ${
             theme === 'light' ? 'text-gray-800' : 'text-white'
           }`}>
-            🚀 Quick Actions
+            Quick Actions
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <button
