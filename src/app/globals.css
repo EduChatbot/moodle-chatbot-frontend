@@ -638,7 +638,8 @@ body::after {
 
 .animate-shimmer {
   animation: shimmer 3s ease-in-out infinite;
-  
+}
+
 .logo-adaptive {
   transition: filter 0.3s ease;
 }
