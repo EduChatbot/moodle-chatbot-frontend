@@ -227,7 +227,9 @@ function UserInfoCard({ progress, courseName, theme, textColor, subtextColor }) 
   return (
     <div className="glass-card p-8 mb-8">
       <div className="flex items-center gap-4 mb-4">
-        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center p-2">
+        <div className={`w-16 h-16 rounded-full flex items-center justify-center p-2 ${
+          theme === 'light' ? 'bg-gray-900' : 'bg-white'
+        }`}>
           <img src="/chat_logo.png" alt="User" className="w-full h-full object-contain logo-adaptive" />
         </div>
         <div>
