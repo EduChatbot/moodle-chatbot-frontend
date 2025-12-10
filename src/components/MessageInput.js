@@ -90,7 +90,7 @@ export default function MessageInput({ onSend, disabled = false }) {
           ${getButtonStyles()}
         `}
       >
-        {disabled ? "✨ Sending..." : "Send →"}
+        {disabled ? "Sending..." : "Send →"}
       </button>
     </div>
   );
