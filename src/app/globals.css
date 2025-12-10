@@ -651,3 +651,21 @@ html.light .logo-adaptive {
 html.dark .logo-adaptive {
   filter: brightness(0) saturate(100%) invert(1);
 }
+
+/* Disable all animations when toggle is off */
+body.animations-disabled *,
+body.animations-disabled *::before,
+body.animations-disabled *::after {
+  animation: none !important;
+  animation-play-state: paused !important;
+}
+
+/* Ensure elements are visible when animations are disabled */
+body.animations-disabled .animate-fade-in-up,
+body.animations-disabled .animate-fade-in-down,
+body.animations-disabled .animate-fade-in-left,
+body.animations-disabled .animate-fade-in-right,
+body.animations-disabled .animate-scale-in {
+  opacity: 1 !important;
+  transform: none !important;
+}

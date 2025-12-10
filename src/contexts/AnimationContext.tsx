@@ -66,6 +66,17 @@ export function AnimationProvider({ children }: { children: ReactNode }) {
     }
   }, [backgroundColor, mounted]);
 
+  // Add body class for animations control
+  useEffect(() => {
+    if (mounted) {
+      if (!animationsEnabled) {
+        document.body.classList.add('animations-disabled');
+      } else {
+        document.body.classList.remove('animations-disabled');
+      }
+    }
+  }, [animationsEnabled, mounted]);
+
   const toggleAnimations = () => {
     const newValue = !animationsEnabled;
     setAnimationsEnabled(newValue);
