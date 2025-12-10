@@ -22,15 +22,7 @@ function ChatContent() {
   const courseId = urlCourseId || contextCourseId;
   const courseName = urlCourseName || contextCourseName || 'Default Course';
 
-  // Debug info
-  useEffect(() => {
-    console.log('From URL:', urlToken ? `${urlToken.substring(0, 20)}...` : 'NOT IN URL');
-    console.log('From Context:', contextToken ? `${contextToken.substring(0, 20)}...` : 'NOT IN CONTEXT');
-    console.log('Using Token:', moodleToken ? `${moodleToken.substring(0, 20)}...` : 'NONE');
-    console.log('Course ID (URL):', urlCourseId || 'NOT IN URL');
-    console.log('Course ID (Context):', contextCourseId || 'NOT IN CONTEXT');
-    console.log('Using Course ID:', courseId);
-  }, [urlToken, contextToken, moodleToken, urlCourseId, contextCourseId, courseId]);
+
 
   useEffect(() => {
     if (urlToken || urlCourseId || urlCourseName) {

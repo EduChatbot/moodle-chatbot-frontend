@@ -31,7 +31,7 @@ export default function TakeQuizPage() {
   }, [quizId, moodleToken]);
 
   const fetchQuiz = async () => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     
     console.log('[TakeQuiz] Fetching quiz with token:', moodleToken ? `${moodleToken.substring(0, 20)}...` : 'NO TOKEN');
     console.log('[TakeQuiz] URL:', `${apiUrl}/quiz/${quizId}`);
@@ -72,7 +72,7 @@ export default function TakeQuizPage() {
     }
 
     setSubmitting(true);
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     
     console.log('[TakeQuiz] Submitting quiz with token:', moodleToken ? `${moodleToken.substring(0, 20)}...` : 'NO TOKEN');
     console.log('[TakeQuiz] Submit URL:', `${apiUrl}/quiz/submit`);

@@ -24,23 +24,17 @@ function CoursesList() {
       })
       .catch(() => {});
 
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
     const headers = {};
     if (moodleToken) {
       headers['Authorization'] = `Bearer ${moodleToken}`;
-      console.log('Sending token to /course/materials:', `${moodleToken.substring(0, 10)}...`);
-    } else {
-      console.log('⚠️ No token available for /course/materials - will fetch public materials');
     }
 
     const url = new URL(`${apiUrl}/course/materials`);
     if (courseId) {
       url.searchParams.append('courseId', courseId);
-      console.log('Filtering by courseId:', courseId);
     }
-    
-    console.log('Fetching materials from:', url.toString());
     
     fetch(url.toString(), {
       method: 'GET',
@@ -54,15 +48,7 @@ function CoursesList() {
         return res.json();
       })
       .then((data) => {
-        console.log("=== MATERIALS BACKEND RESPONSE ===");
-        console.log("Full data:", data);
-        console.log("Type:", typeof data);
-        console.log("Is Array:", Array.isArray(data));
-        
         const coursesArray = Array.isArray(data) ? data : data.materials || data.resources || [];
-        console.log("Extracted materials array:", coursesArray);
-        console.log("First item structure:", coursesArray[0]);
-        
         setCourses(coursesArray);
         setLoading(false);
       })
@@ -95,7 +81,7 @@ function CoursesList() {
       <div className="max-w-2xl mx-auto text-center pt-20">
         <div className="glass-strong p-8 rounded-3xl animate-scale-in">
           <p className="text-red-500 text-xl font-montserrat font-semibold">
-            ⚠️ Connection to backend failed
+            Connection to backend failed
           </p>
           <p className={`mt-4 font-inter ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
             Please make sure the backend server is running and try again.
