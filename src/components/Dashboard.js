@@ -248,19 +248,25 @@ function UserInfoCard({ progress, courseName, theme, textColor, subtextColor }) 
 }
 
 function StatsGrid({ progress, theme, subtextColor }) {
+  const getColor = (value, thresholds) => {
+    if (value >= thresholds.high) return theme === 'light' ? 'text-green-600' : 'text-green-400';
+    if (value >= thresholds.medium) return theme === 'light' ? 'text-orange-600' : 'text-orange-400';
+    return theme === 'light' ? 'text-red-600' : 'text-red-400';
+  };
+
   const stats = [
-    { value: progress.totalConversations, label: 'Total Conversations', color: theme === 'light' ? 'text-blue-600' : 'text-blue-400' },
-    { value: progress.recentConversations, label: 'Recent Activity', color: theme === 'light' ? 'text-orange-600' : 'text-orange-400' },
-    { value: progress.coursesExplored, label: 'Courses Explored', color: theme === 'light' ? 'text-green-600' : 'text-green-400' },
-    { value: progress.totalQuizzesTaken || 0, label: 'Quizzes Taken', color: theme === 'light' ? 'text-purple-600' : 'text-purple-400' },
+    { value: progress.totalConversations, label: 'Total Conversations', color: getColor(progress.totalConversations, {high: 50, medium: 20}) },
+    { value: progress.recentConversations, label: 'Recent Activity', color: getColor(progress.recentConversations, {high: 10, medium: 5}) },
+    { value: progress.coursesExplored, label: 'Courses Explored', color: getColor(progress.coursesExplored, {high: 3, medium: 1}) },
+    { value: progress.totalQuizzesTaken || 0, label: 'Quizzes Taken', color: getColor(progress.totalQuizzesTaken || 0, {high: 10, medium: 5}) },
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
       {stats.map((stat, idx) => (
-        <div key={idx} className="glass-card p-6 hover:scale-105 transition-all">
-          <p className={`text-3xl font-bold ${stat.color}`}>{stat.value}</p>
-          <p className={`text-sm mt-2 ${subtextColor}`}>{stat.label}</p>
+        <div key={idx} className="glass-card p-4 hover:scale-105 transition-all">
+          <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
+          <p className={`text-xs mt-1 ${subtextColor}`}>{stat.label}</p>
         </div>
       ))}
     </div>
@@ -439,12 +445,16 @@ function MaterialsRecommendations({ learningProgress, courseId, theme, textColor
 }
 
 function MaterialCard({ material, theme, textColor, lightSubtextColor }) {
-  const coverage = material.coveragePercentage || 0;
-  const isGood = coverage >= 60;
-  const colorClass = isGood
+  const hasQuestions = (material.questionsCount || 0) > 0;
+  const coverage = hasQuestions ? (material.coveragePercentage || 0) : 0;
+  
+  const colorClass = coverage >= 70
     ? (theme === 'light' ? 'text-green-600' : 'text-green-400')
-    : (theme === 'light' ? 'text-orange-600' : 'text-orange-400');
-  const bgClass = isGood ? 'bg-green-500' : 'bg-orange-500';
+    : coverage >= 40
+    ? (theme === 'light' ? 'text-orange-600' : 'text-orange-400')
+    : (theme === 'light' ? 'text-red-600' : 'text-red-400');
+  
+  const bgClass = coverage >= 70 ? 'bg-green-500' : coverage >= 40 ? 'bg-orange-500' : 'bg-red-500';
 
   return (
     <div className="glass-card p-3">
