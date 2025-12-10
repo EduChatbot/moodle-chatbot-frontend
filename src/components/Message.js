@@ -8,7 +8,6 @@ export default function Message({ text, fromUser = false, sources = null }) {
   const { backgroundColor } = useAnimation();
   const [showSources, setShowSources] = useState(false);
   
-  // Define color schemes based on background color
   const getColorScheme = () => {
     switch(backgroundColor) {
       case 'darkblue':
@@ -102,13 +101,13 @@ export default function Message({ text, fromUser = false, sources = null }) {
                 >
                   <div className="flex items-start justify-between mb-1">
                     <span className="font-bold text-sm">
-                      📄 {source.material_name || 'Material'}
+                      {source.fileName || source.material_name || 'Material'}
                     </span>
-                    {source.section_name && (
+                    {(source.metadata?.page !== undefined) && (
                       <span className={`text-[10px] px-2 py-0.5 rounded-full ${
                         theme === 'light' ? 'bg-blue-100 text-blue-700' : 'bg-blue-900/50 text-blue-300'
                       }`}>
-                        {source.section_name}
+                        Page {source.metadata.page}
                       </span>
                     )}
                   </div>
@@ -116,12 +115,12 @@ export default function Message({ text, fromUser = false, sources = null }) {
                   <p className={`text-[11px] leading-relaxed mt-2 p-2 rounded ${
                     theme === 'light' ? 'bg-gray-50' : 'bg-black/30'
                   }`}>
-                    {source.chunk_text}
+                    {source.chunkText || source.chunk_text}
                   </p>
                   
-                  {source.page_number && (
+                  {(source.chunkId || source.materialId) && (
                     <div className="mt-1 text-[10px] opacity-70">
-                      Page {source.page_number}
+                      Chunk #{source.chunkId} • Material #{source.materialId}
                     </div>
                   )}
                 </div>
