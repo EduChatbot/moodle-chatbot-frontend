@@ -13,7 +13,7 @@ export default function QuizList() {
   const [error, setError] = useState(null);
   const [generatingQuiz, setGeneratingQuiz] = useState(false);
   const [materials, setMaterials] = useState([]);
-  const [quizMode, setQuizMode] = useState('all'); // 'all' | 'material' | 'topic'
+  const [quizMode, setQuizMode] = useState('all');
   const [selectedMaterial, setSelectedMaterial] = useState('');
   const [topicInput, setTopicInput] = useState('');
   const [showGenerator, setShowGenerator] = useState(false);
@@ -58,17 +58,12 @@ export default function QuizList() {
   const fetchQuizzes = async () => {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     
-    console.log('Fetching quizzes with token:', moodleToken ? `${moodleToken.substring(0, 20)}...` : 'NO TOKEN');
-    console.log('URL:', `${apiUrl}/quiz/course/${courseId}/available`);
-    
     try {
       const response = await fetch(`${apiUrl}/quiz/course/${courseId}/available`, {
         headers: {
           'Authorization': `Bearer ${moodleToken}`
         }
       });
-      
-      console.log('Response status:', response.status);
 
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       
@@ -106,21 +101,18 @@ export default function QuizList() {
       }
       grouped[attempt.quizId].attempts.push(attempt);
     });
-    // Sort attempts by date (newest first) within each quiz
     Object.values(grouped).forEach(group => {
       group.attempts.sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt));
     });
     return Object.values(grouped);
   };
 
-  // Calculate statistics by topic/material
   const calculateTopicStats = (attempts) => {
     if (!attempts || attempts.length === 0) return [];
     
     const topicMap = {};
     
     attempts.forEach(attempt => {
-      // Extract topic from quiz title or use material info
       const topic = attempt.topic || attempt.materialId ? `Material #${attempt.materialId}` : attempt.quizTitle.split('-')[0].trim() || 'General';
       
       if (!topicMap[topic]) {
@@ -151,16 +143,12 @@ export default function QuizList() {
   const fetchHistory = async () => {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     
-    console.log('Fetching history with token:', moodleToken ? `${moodleToken.substring(0, 20)}...` : 'NO TOKEN');
-    
     try {
       const response = await fetch(`${apiUrl}/quiz/history?courseId=${courseId}`, {
         headers: {
           'Authorization': `Bearer ${moodleToken}`
         }
       });
-      
-      console.log('History response status:', response.status);
 
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       
@@ -172,7 +160,6 @@ export default function QuizList() {
   };
 
   const handleGenerateQuiz = async (numQuestions = 5) => {
-    // Validation
     if (quizMode === 'material' && !selectedMaterial) {
       alert('Please select a material');
       return;
@@ -185,17 +172,12 @@ export default function QuizList() {
     setGeneratingQuiz(true);
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     
-    // Build URL based on mode
     let url = `${apiUrl}/quiz/generate/${courseId}?num_questions=${numQuestions}`;
     if (quizMode === 'material') {
       url += `&materialId=${selectedMaterial}`;
     } else if (quizMode === 'topic') {
       url += `&topic=${encodeURIComponent(topicInput.trim())}`;
     }
-    
-    console.log('Generating quiz with token:', moodleToken ? `${moodleToken.substring(0, 20)}...` : 'NO TOKEN');
-    console.log('Generate URL:', url);
-    console.log('Mode:', quizMode);
     
     try {
       const response = await fetch(url, {
@@ -362,7 +344,7 @@ export default function QuizList() {
             <h2 className={`font-montserrat text-2xl font-bold ${
               theme === 'light' ? 'text-gray-800' : 'text-white'
             }`}>
-              ✨ Generate New Quiz
+              Generate New Quiz
             </h2>
             <button
               onClick={() => setShowGenerator(!showGenerator)}
@@ -398,7 +380,6 @@ export default function QuizList() {
                         : 'glass-card hover:scale-105'
                     }`}
                   >
-                    <img src="/quiz.png" alt="Quiz" className="w-8 h-8 mb-2 mx-auto logo-adaptive" />
                     <div className={`font-semibold ${theme === 'light' ? 'text-gray-800' : 'text-white'}`}>
                       Entire Course
                     </div>
@@ -418,7 +399,6 @@ export default function QuizList() {
                         : 'glass-card hover:scale-105'
                     }`}
                   >
-                    <div className="text-2xl mb-2">📄</div>
                     <div className={`font-semibold ${theme === 'light' ? 'text-gray-800' : 'text-white'}`}>
                       Specific Material
                     </div>
@@ -438,7 +418,6 @@ export default function QuizList() {
                         : 'glass-card hover:scale-105'
                     }`}
                   >
-                    <div className="text-2xl mb-2">🔍</div>
                     <div className={`font-semibold ${theme === 'light' ? 'text-gray-800' : 'text-white'}`}>
                       Specific Topic
                     </div>
