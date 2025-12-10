@@ -270,11 +270,6 @@ export default function VisualHero() {
         pointerEvents: 'auto',
         maxWidth: '280px'
       }}>
-        <div className="glass-card" style={{ 
-          padding: '16px',
-          borderRadius: '12px',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
-        }}>
           <div className="flex items-center gap-2 mb-2">
             <span className={`text-xl font-bold ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>Ask</span>
             {animationsEnabled ? (
@@ -320,11 +315,7 @@ export default function VisualHero() {
               </span>
             )}
           </div>
-          <p className={`text-sm ${theme === 'light' ? 'text-gray-700' : 'text-gray-300'}`}>
-            Your AI study assistant
-          </p>
         </div>
-      </div>
     </div>
   );
 }
