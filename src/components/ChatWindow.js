@@ -17,6 +17,13 @@ export default function ChatWindow({
   const { moodleToken, courseId } = useMoodle();
   const router = useRouter();
 
+  const [sessionId] = useState(() => {
+    if (typeof window !== 'undefined' && window.crypto && window.crypto.randomUUID) {
+      return window.crypto.randomUUID();
+    }
+    return "session-" + Math.random().toString(36).substr(2, 9);
+  });
+
   const [messages, setMessages] = useState([
     { text: "Hello! How can I help you with your learning journey?", fromUser: false }
   ]);
@@ -71,7 +78,8 @@ export default function ChatWindow({
         body: JSON.stringify({ 
           message: text,
           history: history,
-          courseId: courseId
+          courseId: courseId,
+          sessionId: sessionId
         })
       });
 
