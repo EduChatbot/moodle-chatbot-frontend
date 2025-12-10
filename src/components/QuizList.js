@@ -264,7 +264,13 @@ export default function QuizList() {
         {history && (
           <div className="glass-card p-6 mb-8 grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="text-center">
-              <p className={`text-3xl font-bold ${theme === 'light' ? 'text-blue-600' : 'text-blue-400'}`}>
+              <p className={`text-3xl font-bold ${
+                history.totalQuizzesTaken >= 10
+                  ? (theme === 'light' ? 'text-green-600' : 'text-green-400')
+                  : history.totalQuizzesTaken >= 5
+                  ? (theme === 'light' ? 'text-orange-600' : 'text-orange-400')
+                  : (theme === 'light' ? 'text-red-600' : 'text-red-400')
+              }`}>
                 {history.totalQuizzesTaken}
               </p>
               <p className={`text-sm ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
@@ -272,7 +278,13 @@ export default function QuizList() {
               </p>
             </div>
             <div className="text-center">
-              <p className={`text-3xl font-bold ${theme === 'light' ? 'text-green-600' : 'text-green-400'}`}>
+              <p className={`text-3xl font-bold ${
+                history.averageScore >= 80
+                  ? (theme === 'light' ? 'text-green-600' : 'text-green-400')
+                  : history.averageScore >= 60
+                  ? (theme === 'light' ? 'text-orange-600' : 'text-orange-400')
+                  : (theme === 'light' ? 'text-red-600' : 'text-red-400')
+              }`}>
                 {history.averageScore}%
               </p>
               <p className={`text-sm ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
@@ -280,7 +292,13 @@ export default function QuizList() {
               </p>
             </div>
             <div className="text-center">
-              <p className={`text-3xl font-bold ${theme === 'light' ? 'text-purple-600' : 'text-purple-400'}`}>
+              <p className={`text-3xl font-bold ${
+                (history.attempts?.length || 0) >= 20
+                  ? (theme === 'light' ? 'text-green-600' : 'text-green-400')
+                  : (history.attempts?.length || 0) >= 10
+                  ? (theme === 'light' ? 'text-orange-600' : 'text-orange-400')
+                  : (theme === 'light' ? 'text-red-600' : 'text-red-400')
+              }`}>
                 {history.attempts?.length || 0}
               </p>
               <p className={`text-sm ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
@@ -308,8 +326,10 @@ export default function QuizList() {
                       {stat.topic}
                     </span>
                     <span className={`text-lg font-bold ${
-                      stat.avgPercentage >= 60
+                      stat.avgPercentage >= 70
                         ? (theme === 'light' ? 'text-green-600' : 'text-green-400')
+                        : stat.avgPercentage >= 50
+                        ? (theme === 'light' ? 'text-orange-600' : 'text-orange-400')
                         : (theme === 'light' ? 'text-red-600' : 'text-red-400')
                     }`}>
                       {stat.avgPercentage}%
@@ -318,7 +338,8 @@ export default function QuizList() {
                   <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mb-2">
                     <div
                       className={`h-2.5 rounded-full ${
-                        stat.avgPercentage >= 60 ? 'bg-green-500' : 'bg-red-500'
+                        stat.avgPercentage >= 70 ? 'bg-green-500' :
+                        stat.avgPercentage >= 50 ? 'bg-orange-500' : 'bg-red-500'
                       }`}
                       style={{ width: `${stat.avgPercentage}%` }}
                     ></div>
