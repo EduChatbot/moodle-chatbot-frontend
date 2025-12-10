@@ -93,7 +93,7 @@ const Threads = ({ animationsEnabled = true }) => {
   ) : null;
 };
 
-export default function VisualHero({ logoSrc = "/favicon.ico" }) {
+export default function VisualHero() {
   const [LiquidEther, setLiquidEther] = useState(null);
   const [mounted, setMounted] = useState(false);
   const { theme } = useTheme();

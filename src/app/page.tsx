@@ -63,7 +63,7 @@ function HomeContent() {
               ? 'bg-gradient-to-r from-slate-400 via-slate-300 to-slate-400 bg-clip-text text-transparent'
               : 'bg-gradient-to-r from-emerald-400 via-blue-500 to-purple-600 bg-clip-text text-transparent'
           }`}>
-            Moodle Chatbot
+            AI Learning Assistant
           </h1>
           
           {/* Subheading with different font */}
@@ -102,7 +102,6 @@ function HomeContent() {
         </div>
       </section>
 
-      {/* Backend Error Alert - Only shows if backend is down */}
       {backendError && (
         <section className="max-w-4xl mx-auto px-4 pb-6">
           <div className={`glass p-4 rounded-xl animate-fade-in-up duration-fast ease-bounce ${
@@ -113,7 +112,7 @@ function HomeContent() {
             <p className={`font-inter text-center ${
               theme === 'light' ? 'text-red-800' : 'text-red-200'
             }`}>
-              ⚠️ <strong>Backend Service Unavailable:</strong> {backendError}
+              <strong>Backend Service Unavailable:</strong> {backendError}
             </p>
           </div>
         </section>
@@ -125,7 +124,7 @@ function HomeContent() {
           <Link href="/chat" className="group">
             <div className="glass-card p-8 text-center animate-fade-in-left delay-300 duration-slower ease-elastic
                          hover:scale-105 transition-all duration-500">
-              <div className="text-5xl mb-3 animate-float-fast">💬</div>
+              <img src="/chat_logo.png" alt="Chat" className="w-14 h-14 mx-auto mb-1 animate-float-fast logo-adaptive" />
               <h3 className={`font-montserrat text-xl font-bold mb-2 ${
                 theme === 'light' ? 'text-gray-800' : 'text-white'
               }`}>
@@ -142,7 +141,7 @@ function HomeContent() {
           <Link href="/quiz" className="group">
             <div className="glass-card p-8 text-center animate-fade-in-up delay-350 duration-slower ease-elastic
                          hover:scale-105 transition-all duration-500">
-              <div className="text-5xl mb-3 animate-float-slow">📝</div>
+              <img src="/quiz.png" alt="Quiz" className="w-14 h-14 mx-auto mb-1 animate-float-slow logo-adaptive" />
               <h3 className={`font-montserrat text-xl font-bold mb-2 ${
                 theme === 'light' ? 'text-gray-800' : 'text-white'
               }`}>
@@ -159,7 +158,7 @@ function HomeContent() {
           <Link href="/dashboard" className="group">
             <div className="glass-card p-8 text-center animate-fade-in-right delay-400 duration-slower ease-bounce
                          hover:scale-105 transition-all duration-500">
-              <div className="text-5xl mb-3 animate-float-fast">📊</div>
+              <img src="/dashboard.png" alt="Dashboard" className="w-14 h-14 mx-auto mb-1 animate-float-fast logo-adaptive" />
               <h3 className={`font-montserrat text-xl font-bold mb-2 ${
                 theme === 'light' ? 'text-gray-800' : 'text-white'
               }`}>
