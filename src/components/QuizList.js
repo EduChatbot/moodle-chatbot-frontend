@@ -253,7 +253,7 @@ export default function QuizList() {
           <h1 className={`font-playfair text-5xl md:text-6xl font-bold mb-4 ${
             theme === 'light' ? 'text-gray-800' : 'text-white'
           }`}>
-            📝 Quiz Center
+            Quiz Center
           </h1>
           <p className={`font-inter text-lg ${theme === 'light' ? 'text-gray-600' : 'text-gray-300'}`}>
             Test your knowledge with AI-generated quizzes
@@ -296,7 +296,7 @@ export default function QuizList() {
             <h2 className={`font-montserrat text-xl font-bold mb-4 ${
               theme === 'light' ? 'text-gray-800' : 'text-white'
             }`}>
-              📊 Performance by Topic
+              Performance by Topic
             </h2>
             <div className="space-y-3">
               {calculateTopicStats(history.attempts).map((stat, idx) => (
@@ -377,7 +377,7 @@ export default function QuizList() {
                         : 'glass-card hover:scale-105'
                     }`}
                   >
-                    <div className="text-2xl mb-2">📚</div>
+                    <img src="/quiz.png" alt="Quiz" className="w-8 h-8 mb-2 mx-auto logo-adaptive" />
                     <div className={`font-semibold ${theme === 'light' ? 'text-gray-800' : 'text-white'}`}>
                       Entire Course
                     </div>
@@ -510,7 +510,7 @@ export default function QuizList() {
           <h2 className={`font-montserrat text-2xl font-bold mb-6 ${
             theme === 'light' ? 'text-gray-800' : 'text-white'
           }`}>
-            📚 Available Quizzes
+            Available Quizzes
           </h2>
           
           {quizzes.length === 0 ? (
@@ -558,7 +558,7 @@ export default function QuizList() {
             <h2 className={`font-montserrat text-2xl font-bold mb-6 ${
               theme === 'light' ? 'text-gray-800' : 'text-white'
             }`}>
-              📊 Quiz History
+              Quiz History
             </h2>
             <div className="space-y-6">
               {groupAttemptsByQuiz(history.attempts).map((quizGroup) => (

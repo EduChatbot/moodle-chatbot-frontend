@@ -18,12 +18,11 @@ function CoursesList() {
   useEffect(() => {
     import('ldrs')
       .then((mod) => {
-        if (mod && mod.newtonsCradle && typeof mod.newtonsCradle.register === 'function') {
-          try { mod.newtonsCradle.register(); } catch (e) { console.warn('ldrs registration failed', e); }
+        if (mod?.newtonsCradle?.register) {
+          try { mod.newtonsCradle.register(); } catch (e) {}
         }
       })
-      .catch(() => {
-      });
+      .catch(() => {});
 
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
@@ -119,7 +118,7 @@ function CoursesList() {
       <div className="max-w-2xl mx-auto text-center pt-20">
         <div className="glass-strong p-8 rounded-3xl animate-scale-in">
           <p className={`text-xl font-montserrat ${theme === 'light' ? 'text-gray-700' : 'text-gray-300'}`}>
-            📚 No course materials available at this time.
+            No course materials available at this time.
           </p>
         </div>
       </div>
@@ -172,7 +171,6 @@ function CoursesList() {
               
               if (materialUrl && materialUrl !== "#") {
                 console.log('[MATERIAL CLICK] Opening URL:', materialUrl);
-                // Otwórz materiał w nowym oknie/karcie
                 window.open(materialUrl, '_blank', 'noopener,noreferrer');
               } else {
                 console.error('[MATERIAL CLICK] No valid URL found');
@@ -189,7 +187,7 @@ function CoursesList() {
                          ${index % 2 === 0 ? 'delay-200' : 'delay-350'} duration-slower ease-bounce`}
               >
                 <div className="flex items-start gap-4">
-                  <div className="text-4xl animate-float-slow">📄</div>
+                  <img src="/file.svg" alt="Material" className="w-12 h-12 mx-auto animate-float-slow logo-adaptive" />
                   <div className="flex-1">
                     <h3 className={`font-montserrat text-xl font-bold mb-2 ${
                       theme === 'light' ? 'text-gray-800' : 'text-white'

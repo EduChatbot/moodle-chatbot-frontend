@@ -78,7 +78,7 @@ export default function AboutPage() {
                     <p className={`font-space text-lg text-center font-semibold ${
                       theme === 'light' ? 'text-emerald-600' : 'text-emerald-300'
                     }`}>
-                        💡 Feel free to reach out to us!
+                        Feel free to reach out to us!
                     </p>
                 </div>
 
@@ -92,7 +92,6 @@ export default function AboutPage() {
                         🎓 Our Team
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        {/* Team Member 1 */}
                         <div className="glass-card p-5 text-center hover:scale-105 transition-all duration-300">
                             <div className="text-3xl mb-2">👩‍💻</div>
                             <h4 className={`font-montserrat text-lg font-bold mb-2 ${
@@ -126,7 +125,6 @@ export default function AboutPage() {
                             </a>
                         </div>
 
-                        {/* Team Member 2 */}
                         <div className="glass-card p-5 text-center hover:scale-105 transition-all duration-300">
                             <div className="text-3xl mb-2">👩‍💻</div>
                             <h4 className={`font-montserrat text-lg font-bold mb-2 ${
@@ -160,7 +158,6 @@ export default function AboutPage() {
                             </a>
                         </div>
 
-                        {/* Team Member 3 */}
                         <div className="glass-card p-5 text-center hover:scale-105 transition-all duration-300">
                             <div className="text-3xl mb-2">👨‍💻</div>
                             <h4 className={`font-montserrat text-lg font-bold mb-2 ${
@@ -202,7 +199,7 @@ export default function AboutPage() {
                         <p className={`font-inter mb-2 ${
                           theme === 'light' ? 'text-gray-800' : 'text-white'
                         }`}>
-                            <strong className="font-montserrat text-xl">📦 Project Repository</strong>
+                            <strong className="font-montserrat text-xl">Project Repository</strong>
                         </p>
                         <a href="https://github.com/your-repo" 
                            className={`font-space transition-colors text-lg ${

@@ -34,7 +34,6 @@ function ChatContent() {
 
   useEffect(() => {
     if (urlToken || urlCourseId || urlCourseName) {
-      console.log('📝 Updating MoodleContext from URL parameters');
       setMoodleData(urlToken, urlCourseId, urlCourseName);
     }
   }, [urlToken, urlCourseId, urlCourseName, setMoodleData]);

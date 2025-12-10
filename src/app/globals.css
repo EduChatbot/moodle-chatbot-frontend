@@ -638,4 +638,15 @@ body::after {
 
 .animate-shimmer {
   animation: shimmer 3s ease-in-out infinite;
+  
+.logo-adaptive {
+  transition: filter 0.3s ease;
+}
+
+html.light .logo-adaptive {
+  filter: brightness(0) saturate(100%) invert(0);
+}
+
+html.dark .logo-adaptive {
+  filter: brightness(0) saturate(100%) invert(1);
 }

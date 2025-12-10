@@ -6,6 +6,8 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { useAnimation } from "@/contexts/AnimationContext";
 import { useMoodle } from "@/contexts/MoodleContext";
 
+const SCORE_THRESHOLD = { EXCELLENT: 80, GOOD: 60 };
+
 export default function Dashboard() {
   const [progress, setProgress] = useState(null);
   const [activity, setActivity] = useState(null);
@@ -13,10 +15,8 @@ export default function Dashboard() {
   const [learningProgress, setLearningProgress] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedView, setSelectedView] = useState('overview'); // 'overview' | 'course'
   
   const { theme } = useTheme();
-  const { backgroundColor } = useAnimation();
   const { moodleToken, courseId, courseName } = useMoodle();
   const router = useRouter();
 
@@ -26,57 +26,19 @@ export default function Dashboard() {
       setLoading(false);
       return;
     }
-
     fetchAllData();
   }, [moodleToken, courseId]);
 
   const fetchAllData = async () => {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const headers = { 'Authorization': `Bearer ${moodleToken}` };
     
     try {
-      // Fetch user progress
-      const progressRes = await fetch(`${apiUrl}/dashboard/progress`, {
-        headers: { 'Authorization': `Bearer ${moodleToken}` }
-      });
-      if (progressRes.ok) {
-        const progressData = await progressRes.json();
-        setProgress(progressData);
-      }
-
-      // Fetch activity (last 30 days)
-      const activityRes = await fetch(`${apiUrl}/dashboard/activity?days=30`, {
-        headers: { 'Authorization': `Bearer ${moodleToken}` }
-      });
-      if (activityRes.ok) {
-        const activityData = await activityRes.json();
-        setActivity(activityData);
-      }
-
-      // Fetch course-specific data if courseId available
+      await fetchUserProgress(apiUrl, headers);
+      await fetchUserActivity(apiUrl, headers);
+      
       if (courseId) {
-        try {
-          const statsRes = await fetch(`${apiUrl}/dashboard/course/${courseId}/stats`, {
-            headers: { 'Authorization': `Bearer ${moodleToken}` }
-          });
-          if (statsRes.ok) {
-            const statsData = await statsRes.json();
-            setCourseStats(statsData);
-          }
-        } catch (err) {
-          console.warn("Course stats endpoint not available:", err);
-        }
-
-        try {
-          const learningRes = await fetch(`${apiUrl}/dashboard/course/${courseId}/learning-progress`, {
-            headers: { 'Authorization': `Bearer ${moodleToken}` }
-          });
-          if (learningRes.ok) {
-            const learningData = await learningRes.json();
-            setLearningProgress(learningData);
-          }
-        } catch (err) {
-          console.warn("Learning progress endpoint not available:", err);
-        }
+        await fetchCourseData(apiUrl, headers);
       }
     } catch (err) {
       console.error("Error fetching dashboard data:", err);
@@ -86,12 +48,57 @@ export default function Dashboard() {
     }
   };
 
+  const fetchUserProgress = async (apiUrl, headers) => {
+    const res = await fetch(`${apiUrl}/dashboard/progress`, { headers });
+    if (res.ok) setProgress(await res.json());
+  };
+
+  const fetchUserActivity = async (apiUrl, headers) => {
+    const res = await fetch(`${apiUrl}/dashboard/activity?days=30`, { headers });
+    if (res.ok) setActivity(await res.json());
+  };
+
+  const fetchCourseData = async (apiUrl, headers) => {
+    try {
+      const statsRes = await fetch(`${apiUrl}/dashboard/course/${courseId}/stats`, { headers });
+      if (statsRes.ok) {
+        setCourseStats(await statsRes.json());
+      }
+    } catch (err) {
+      console.warn("Course stats unavailable:", err);
+    }
+
+    try {
+      const learningRes = await fetch(`${apiUrl}/dashboard/course/${courseId}/learning-progress`, { headers });
+      if (learningRes.ok) {
+        setLearningProgress(await learningRes.json());
+      }
+    } catch (err) {
+      console.warn("Learning progress unavailable:", err);
+    }
+  };
+
+  const getScoreLabel = (score) => {
+    if (score >= SCORE_THRESHOLD.EXCELLENT) return 'Excellent';
+    if (score >= SCORE_THRESHOLD.GOOD) return 'Good';
+    return 'Keep practicing';
+  };
+
+  const getScoreColor = (score) => {
+    const isGood = score >= SCORE_THRESHOLD.GOOD;
+    return isGood 
+      ? (theme === 'light' ? 'text-green-600' : 'text-green-400')
+      : (theme === 'light' ? 'text-orange-600' : 'text-orange-400');
+  };
+
+  const textColor = theme === 'light' ? 'text-gray-800' : 'text-white';
+  const subtextColor = theme === 'light' ? 'text-gray-600' : 'text-gray-400';
+  const lightSubtextColor = theme === 'light' ? 'text-gray-500' : 'text-gray-500';
+
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <p className={theme === 'light' ? 'text-gray-700' : 'text-gray-300'}>
-          Loading dashboard...
-        </p>
+        <p className={subtextColor}>Loading dashboard...</p>
       </div>
     );
   }
@@ -99,21 +106,13 @@ export default function Dashboard() {
   if (error) {
     return (
       <div className="relative min-h-screen py-16 px-4">
-        <button 
-          onClick={() => router.push('/')}
-          className="glass-card fixed top-6 left-6 z-10 px-6 py-3 font-montserrat font-semibold hover:scale-105 transition-all"
-          style={{ color: theme === 'light' ? '#1f2937' : 'white' }}
-        >
-          ← Home
-        </button>
+        <BackButton router={router} theme={theme} />
         <div className="max-w-2xl mx-auto text-center pt-20">
           <div className="glass-strong p-8 rounded-3xl">
             <p className="text-red-500 text-xl font-montserrat font-semibold">
               ⚠️ Failed to load dashboard
             </p>
-            <p className={`mt-4 font-inter ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
-              {error}
-            </p>
+            <p className={`mt-4 font-inter ${subtextColor}`}>{error}</p>
           </div>
         </div>
       </div>
@@ -122,419 +121,483 @@ export default function Dashboard() {
 
   return (
     <div className="relative min-h-screen py-16 px-4">
-      <button 
-        onClick={() => router.push('/')}
-        className="glass-card fixed top-6 left-6 z-10 px-6 py-3 font-montserrat font-semibold hover:scale-105 transition-all"
-        style={{ color: theme === 'light' ? '#1f2937' : 'white' }}
-      >
-        ← Home
-      </button>
+      <BackButton router={router} theme={theme} />
 
       <section className="max-w-6xl mx-auto pt-8">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className={`font-playfair text-5xl md:text-6xl font-bold mb-4 ${
-            theme === 'light' ? 'text-gray-800' : 'text-white'
-          }`}>
-            My Learning Progress
-          </h1>
-          <p className={`font-inter text-lg ${theme === 'light' ? 'text-gray-600' : 'text-gray-300'}`}>
-            Track your learning progress and activity
-          </p>
-        </div>
+        <Header theme={theme} subtextColor={subtextColor} />
+        
+        <UserInfoCard 
+          progress={progress} 
+          courseName={courseName} 
+          theme={theme} 
+          textColor={textColor}
+          subtextColor={subtextColor}
+        />
 
-        {/* User Info Card */}
-        <div className="glass-card p-8 mb-8">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-3xl">
-              👤
-            </div>
-            <div>
-              <h2 className={`font-montserrat text-2xl font-bold ${
-                theme === 'light' ? 'text-gray-800' : 'text-white'
-              }`}>
-                {progress.userName}
-              </h2>
-              <p className={`${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
-                User ID: {progress.userId}
-              </p>
-            </div>
-          </div>
-          {courseName && (
-            <div className="mt-4 p-3 glass-card rounded-lg">
-              <p className={`text-sm ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
-                Current Course
-              </p>
-              <p className={`font-semibold ${theme === 'light' ? 'text-gray-800' : 'text-white'}`}>
-                {courseName}
-              </p>
-            </div>
-          )}
-        </div>
+        <StatsGrid progress={progress} theme={theme} subtextColor={subtextColor} />
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {/* Total Conversations */}
-          <div className="glass-card p-6 hover:scale-105 transition-all">
-            <div className="text-4xl mb-2">💬</div>
-            <p className={`text-3xl font-bold ${theme === 'light' ? 'text-blue-600' : 'text-blue-400'}`}>
-              {progress.totalConversations}
-            </p>
-            <p className={`text-sm ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
-              Total Conversations
-            </p>
-          </div>
-
-          {/* Recent Activity */}
-          <div className="glass-card p-6 hover:scale-105 transition-all">
-            <div className="text-4xl mb-2">🔥</div>
-            <p className={`text-3xl font-bold ${theme === 'light' ? 'text-orange-600' : 'text-orange-400'}`}>
-              {progress.recentConversations}
-            </p>
-            <p className={`text-sm ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
-              Recent Conversations
-            </p>
-          </div>
-
-          {/* Courses Explored */}
-          <div className="glass-card p-6 hover:scale-105 transition-all">
-            <div className="text-4xl mb-2">📚</div>
-            <p className={`text-3xl font-bold ${theme === 'light' ? 'text-green-600' : 'text-green-400'}`}>
-              {progress.coursesExplored}
-            </p>
-            <p className={`text-sm ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
-              Courses Explored
-            </p>
-          </div>
-
-          {/* Quizzes Taken */}
-          <div className="glass-card p-6 hover:scale-105 transition-all">
-            <div className="text-4xl mb-2">📝</div>
-            <p className={`text-3xl font-bold ${theme === 'light' ? 'text-purple-600' : 'text-purple-400'}`}>
-              {progress.totalQuizzesTaken || 0}
-            </p>
-            <p className={`text-sm ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
-              Quizzes Taken
-            </p>
-          </div>
-        </div>
-
-        {/* Quiz Performance */}
         {progress.totalQuizzesTaken > 0 && (
-          <div className="glass-card p-8 mb-8">
-            <h2 className={`font-montserrat text-2xl font-bold mb-6 ${
-              theme === 'light' ? 'text-gray-800' : 'text-white'
-            }`}>
-              📊 Quiz Performance
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <p className={`text-sm mb-2 ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
-                  {learningProgress ? 'Overall Coverage' : 'Average Score'}
-                </p>
-                <div className="flex items-end gap-2">
-                  <p className={`text-5xl font-bold ${
-                    (learningProgress?.overallProgress || progress.averageQuizScore) >= 60 
-                      ? (theme === 'light' ? 'text-green-600' : 'text-green-400')
-                      : (theme === 'light' ? 'text-orange-600' : 'text-orange-400')
-                  }`}>
-                    {learningProgress?.overallProgress || progress.averageQuizScore}%
-                  </p>
-                  <p className={`text-lg mb-2 ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
-                    {(learningProgress?.overallProgress || progress.averageQuizScore) >= 80 ? 'Excellent!' : 
-                     (learningProgress?.overallProgress || progress.averageQuizScore) >= 60 ? 'Good!' : 'Keep practicing!'}
-                  </p>
-                </div>
-              </div>
-              
-              {/* Progress Bar */}
-              <div>
-                <p className={`text-sm mb-2 ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
-                  Overall Progress
-                </p>
-                <div className="h-8 bg-gray-700/30 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-gradient-to-r from-blue-500 to-purple-600 transition-all duration-500 flex items-center justify-end pr-3"
-                    style={{ width: `${progress.averageQuizScore}%` }}
-                  >
-                    <span className="text-white text-sm font-bold">
-                      {progress.averageQuizScore}%
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <QuizPerformance 
+            progress={progress}
+            learningProgress={learningProgress}
+            theme={theme}
+            textColor={textColor}
+            subtextColor={subtextColor}
+            getScoreLabel={getScoreLabel}
+            getScoreColor={getScoreColor}
+          />
         )}
 
-        {/* Activity Summary */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          {/* Favorite Course */}
-          <div className="glass-card p-6">
-            <h3 className={`font-montserrat text-lg font-bold mb-4 ${
-              theme === 'light' ? 'text-gray-800' : 'text-white'
-            }`}>
-              ⭐ Favorite Course
-            </h3>
-            <p className={`text-xl ${theme === 'light' ? 'text-gray-700' : 'text-gray-300'}`}>
-              {progress.favoriteCourse || 'No favorite yet'}
-            </p>
-          </div>
+        <ActivitySummary 
+          progress={progress} 
+          theme={theme} 
+          textColor={textColor}
+          subtextColor={subtextColor}
+        />
 
-          {/* Last Activity */}
-          <div className="glass-card p-6">
-            <h3 className={`font-montserrat text-lg font-bold mb-4 ${
-              theme === 'light' ? 'text-gray-800' : 'text-white'
-            }`}>
-              🕐 Last Activity
-            </h3>
-            <p className={`text-xl ${theme === 'light' ? 'text-gray-700' : 'text-gray-300'}`}>
-              {progress.lastActivity 
-                ? new Date(progress.lastActivity).toLocaleString()
-                : 'No activity yet'}
+        {activity?.activityByDate && (
+          <ActivityChart 
+            activity={activity} 
+            theme={theme} 
+            textColor={textColor}
+            subtextColor={subtextColor}
+          />
+        )}
+
+        {courseStats && (
+          <CourseStatsCard 
+            courseStats={courseStats}
+            learningProgress={learningProgress}
+            courseId={courseId}
+            theme={theme}
+            textColor={textColor}
+            subtextColor={subtextColor}
+            lightSubtextColor={lightSubtextColor}
+          />
+        )}
+
+        {courseId && !courseStats && !learningProgress && (
+          <LoadingRecommendations theme={theme} textColor={textColor} subtextColor={subtextColor} />
+        )}
+
+        {learningProgress && (
+          <LearningProgressCard 
+            learningProgress={learningProgress}
+            theme={theme}
+            textColor={textColor}
+            subtextColor={subtextColor}
+            lightSubtextColor={lightSubtextColor}
+          />
+        )}
+
+        <QuickActions router={router} theme={theme} textColor={textColor} subtextColor={subtextColor} />
+      </section>
+    </div>
+  );
+}
+
+function BackButton({ router, theme }) {
+  return (
+    <button 
+      onClick={() => router.push('/')}
+      className="glass-card fixed top-6 left-6 z-10 px-6 py-3 font-montserrat font-semibold hover:scale-105 transition-all"
+      style={{ color: theme === 'light' ? '#1f2937' : 'white' }}
+    >
+      ← Home
+    </button>
+  );
+}
+
+function Header({ theme, subtextColor }) {
+  return (
+    <div className="text-center mb-12">
+      <h1 className={`font-playfair text-5xl md:text-6xl font-bold mb-4 ${
+        theme === 'light' ? 'text-gray-800' : 'text-white'
+      }`}>
+        Learning Progress
+      </h1>
+      <p className={`font-inter text-lg ${subtextColor}`}>
+        Track your progress and activity
+      </p>
+    </div>
+  );
+}
+
+function UserInfoCard({ progress, courseName, theme, textColor, subtextColor }) {
+  return (
+    <div className="glass-card p-8 mb-8">
+      <div className="flex items-center gap-4 mb-4">
+        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center p-2">
+          <img src="/logo.ico" alt="User" className="w-full h-full object-contain logo-adaptive" />
+        </div>
+        <div>
+          <h2 className={`font-montserrat text-2xl font-bold ${textColor}`}>
+            {progress.userName}
+          </h2>
+          <p className={subtextColor}>ID: {progress.userId}</p>
+        </div>
+      </div>
+      {courseName && (
+        <div className="mt-4 p-3 glass-card rounded-lg">
+          <p className={`text-sm ${subtextColor}`}>Current Course</p>
+          <p className={`font-semibold ${textColor}`}>{courseName}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function StatsGrid({ progress, theme, subtextColor }) {
+  const stats = [
+    { value: progress.totalConversations, label: 'Total Conversations', color: theme === 'light' ? 'text-blue-600' : 'text-blue-400' },
+    { value: progress.recentConversations, label: 'Recent Activity', color: theme === 'light' ? 'text-orange-600' : 'text-orange-400' },
+    { value: progress.coursesExplored, label: 'Courses Explored', color: theme === 'light' ? 'text-green-600' : 'text-green-400' },
+    { value: progress.totalQuizzesTaken || 0, label: 'Quizzes Taken', color: theme === 'light' ? 'text-purple-600' : 'text-purple-400' },
+  ];
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      {stats.map((stat, idx) => (
+        <div key={idx} className="glass-card p-6 hover:scale-105 transition-all">
+          <p className={`text-3xl font-bold ${stat.color}`}>{stat.value}</p>
+          <p className={`text-sm mt-2 ${subtextColor}`}>{stat.label}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function QuizPerformance({ progress, learningProgress, theme, textColor, subtextColor, getScoreLabel, getScoreColor }) {
+  const score = learningProgress?.overallProgress || progress.averageQuizScore;
+
+  return (
+    <div className="glass-card p-8 mb-8">
+      <h2 className={`font-montserrat text-2xl font-bold mb-6 ${textColor}`}>
+        Quiz Performance
+      </h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <p className={`text-sm mb-2 ${subtextColor}`}>
+            {learningProgress ? 'Overall Coverage' : 'Average Score'}
+          </p>
+          <div className="flex items-end gap-2">
+            <p className={`text-5xl font-bold ${getScoreColor(score)}`}>
+              {score}%
+            </p>
+            <p className={`text-lg mb-2 ${subtextColor}`}>
+              {getScoreLabel(score)}
             </p>
           </div>
         </div>
-
-        {/* Activity Chart (if available) */}
-        {activity && activity.activityByDate && (
-          <div className="glass-card p-8 mb-8">
-            <h2 className={`font-montserrat text-2xl font-bold mb-6 ${
-              theme === 'light' ? 'text-gray-800' : 'text-white'
-            }`}>
-              📈 Activity Overview (Last 30 Days)
-            </h2>
-            <div className="grid grid-cols-7 gap-2">
-              {Object.entries(activity.activityByDate)
-                .slice(-30)
-                .map(([date, count]) => (
-                  <div key={date} className="flex flex-col items-center">
-                    <div 
-                      className={`w-full h-24 rounded ${
-                        count === 0 
-                          ? 'bg-gray-700/20' 
-                          : count < 3
-                          ? 'bg-blue-500/30'
-                          : count < 6
-                          ? 'bg-blue-500/60'
-                          : 'bg-blue-500/90'
-                      } hover:scale-105 transition-all relative group`}
-                      style={{ height: `${Math.max(count * 15, 20)}px` }}
-                    >
-                      <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-xs bg-black/80 text-white px-2 py-1 rounded">
-                        {count} chats
-                      </span>
-                    </div>
-                    <p className={`text-xs mt-1 ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
-                      {new Date(date).getDate()}
-                    </p>
-                  </div>
-                ))}
+        
+        <div>
+          <p className={`text-sm mb-2 ${subtextColor}`}>Overall Progress</p>
+          <div className="h-8 bg-gray-700/30 rounded-full overflow-hidden">
+            <div 
+              className="h-full bg-gradient-to-r from-blue-500 to-purple-600 transition-all duration-500 flex items-center justify-end pr-3"
+              style={{ width: `${progress.averageQuizScore}%` }}
+            >
+              <span className="text-white text-sm font-bold">
+                {progress.averageQuizScore}%
+              </span>
             </div>
           </div>
-        )}
+        </div>
+      </div>
+    </div>
+  );
+}
 
-        {/* Course-specific stats (if available) */}
-        {courseStats && (
-          <div className="glass-card p-8 mb-8">
-            <h2 className={`font-montserrat text-2xl font-bold mb-6 ${
-              theme === 'light' ? 'text-gray-800' : 'text-white'
-            }`}>
-              📚 {courseStats.courseName} Stats
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div className="glass-card p-4">
-                <p className={`text-sm ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
-                  Questions Asked
-                </p>
-                <p className={`text-3xl font-bold ${theme === 'light' ? 'text-blue-600' : 'text-blue-400'}`}>
-                  {courseStats.questionsCount}
-                </p>
-              </div>
-              <div className="glass-card p-4">
-                <p className={`text-sm ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
-                  Total Materials
-                </p>
-                <p className={`text-3xl font-bold ${theme === 'light' ? 'text-green-600' : 'text-green-400'}`}>
-                  {courseStats.materialsCount}
-                </p>
-              </div>
-            </div>
-            
-            {/* Recommended Materials to Study */}
-            {learningProgress?.materialsProgress && learningProgress.materialsProgress.length > 0 && (
-              <div>
-                <h3 className={`font-montserrat text-lg font-bold mb-4 ${
-                  theme === 'light' ? 'text-gray-800' : 'text-white'
-                }`}>
-                  Recommended Materials to Study
-                </h3>
-                <div className="space-y-2">
-                  {learningProgress.materialsProgress
-                    .sort((a, b) => (a.coveragePercentage || 0) - (b.coveragePercentage || 0))
-                    .slice(0, 5)
-                    .map((material, idx) => (
-                      <div key={idx} className="glass-card p-3">
-                        <div className="flex justify-between items-center mb-2">
-                          <span className={`font-semibold ${theme === 'light' ? 'text-gray-800' : 'text-white'}`}>
-                            {material.materialName}
-                          </span>
-                          <span className={`text-sm font-bold ${
-                            (material.coveragePercentage || 0) >= 60
-                              ? (theme === 'light' ? 'text-green-600' : 'text-green-400')
-                              : (theme === 'light' ? 'text-orange-600' : 'text-orange-400')
-                          }`}>
-                            {material.coveragePercentage || 0}%
-                          </span>
-                        </div>
-                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                          <div
-                            className={`h-2 rounded-full ${
-                              (material.coveragePercentage || 0) >= 60 ? 'bg-green-500' : 'bg-orange-500'
-                            }`}
-                            style={{ width: `${material.coveragePercentage || 0}%` }}
-                          ></div>
-                        </div>
-                        <div className="flex justify-between mt-1">
-                          <span className={`text-xs ${theme === 'light' ? 'text-gray-500' : 'text-gray-400'}`}>
-                            {material.status || 'Not started'}
-                          </span>
-                          <span className={`text-xs ${theme === 'light' ? 'text-gray-500' : 'text-gray-400'}`}>
-                            {material.questionsCount || 0} questions
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
+function ActivitySummary({ progress, theme, textColor, subtextColor }) {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <div className="glass-card p-6">
+        <h3 className={`font-montserrat text-lg font-bold mb-4 ${textColor}`}>
+          Favorite Course
+        </h3>
+        <p className={`text-xl ${theme === 'light' ? 'text-gray-700' : 'text-gray-300'}`}>
+          {progress.favoriteCourse || 'No favorite yet'}
+        </p>
+      </div>
 
-        {/* Learning Progress (if available) */}
-        {learningProgress && (
-          <div className="glass-card p-8 mb-8">
-            <h2 className={`font-montserrat text-2xl font-bold mb-6 ${
-              theme === 'light' ? 'text-gray-800' : 'text-white'
-            }`}>
-              Learning Progress: {learningProgress.courseName}
-            </h2>
+      <div className="glass-card p-6">
+        <h3 className={`font-montserrat text-lg font-bold mb-4 ${textColor}`}>
+          Last Activity
+        </h3>
+        <p className={`text-xl ${theme === 'light' ? 'text-gray-700' : 'text-gray-300'}`}>
+          {progress.lastActivity 
+            ? new Date(progress.lastActivity).toLocaleString()
+            : 'No activity yet'}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function ActivityChart({ activity, theme, textColor, subtextColor }) {
+  return (
+    <div className="glass-card p-8 mb-8">
+      <h2 className={`font-montserrat text-2xl font-bold mb-6 ${textColor}`}>
+        Activity Overview (Last 30 Days)
+      </h2>
+      <div className="grid grid-cols-7 gap-2">
+        {Object.entries(activity.activityByDate)
+          .slice(-30)
+          .map(([date, count]) => {
+            const intensity = count === 0 ? 'bg-gray-700/20' 
+              : count < 3 ? 'bg-blue-500/30'
+              : count < 6 ? 'bg-blue-500/60'
+              : 'bg-blue-500/90';
             
-            {/* Overall Progress Circle */}
-            <div className="text-center mb-8">
-              <div className="inline-block relative">
-                <svg className="w-32 h-32">
-                  <circle
-                    cx="64"
-                    cy="64"
-                    r="56"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="8"
-                    className={theme === 'light' ? 'text-gray-300' : 'text-gray-700'}
-                  />
-                  <circle
-                    cx="64"
-                    cy="64"
-                    r="56"
-                    fill="none"
-                    stroke="url(#gradient)"
-                    strokeWidth="8"
-                    strokeLinecap="round"
-                    strokeDasharray={`${2 * Math.PI * 56}`}
-                    strokeDashoffset={`${2 * Math.PI * 56 * (1 - learningProgress.overallProgress / 100)}`}
-                    transform="rotate(-90 64 64)"
-                  />
-                  <defs>
-                    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#3b82f6" />
-                      <stop offset="100%" stopColor="#8b5cf6" />
-                    </linearGradient>
-                  </defs>
-                </svg>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className={`text-2xl font-bold ${theme === 'light' ? 'text-gray-800' : 'text-white'}`}>
-                    {learningProgress.overallProgress}%
+            return (
+              <div key={date} className="flex flex-col items-center">
+                <div 
+                  className={`w-full rounded ${intensity} hover:scale-105 transition-all relative group`}
+                  style={{ height: `${Math.max(count * 15, 20)}px` }}
+                >
+                  <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-xs bg-black/80 text-white px-2 py-1 rounded">
+                    {count} chats
                   </span>
                 </div>
+                <p className={`text-xs mt-1 ${subtextColor}`}>
+                  {new Date(date).getDate()}
+                </p>
               </div>
-              <p className={`mt-2 ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
-                Overall Course Progress
-              </p>
-            </div>
+            );
+          })}
+      </div>
+    </div>
+  );
+}
 
-            {/* Recommended Topics */}
-            {learningProgress.recommendedTopics && learningProgress.recommendedTopics.length > 0 && (
-              <div className="mb-6">
-                <h3 className={`font-montserrat text-lg font-bold mb-4 ${
-                  theme === 'light' ? 'text-gray-800' : 'text-white'
-                }`}>
-                  💡 What to Learn Next
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {learningProgress.recommendedTopics.map((topic, idx) => (
-                    <span 
-                      key={idx}
-                      className="glass-card px-4 py-2 text-sm hover:scale-105 transition-all"
-                    >
-                      {topic}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
+function CourseStatsCard({ courseStats, learningProgress, courseId, theme, textColor, subtextColor, lightSubtextColor }) {
+  return (
+    <div className="glass-card p-8 mb-8">
+      <h2 className={`font-montserrat text-2xl font-bold mb-6 ${textColor}`}>
+        {courseStats.courseName}
+      </h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div className="glass-card p-4">
+          <p className={`text-sm ${subtextColor}`}>Questions Asked</p>
+          <p className={`text-3xl font-bold ${theme === 'light' ? 'text-blue-600' : 'text-blue-400'}`}>
+            {courseStats.questionsCount}
+          </p>
+        </div>
+        <div className="glass-card p-4">
+          <p className={`text-sm ${subtextColor}`}>Total Materials</p>
+          <p className={`text-3xl font-bold ${theme === 'light' ? 'text-green-600' : 'text-green-400'}`}>
+            {courseStats.materialsCount}
+          </p>
+        </div>
+      </div>
+      
+      <MaterialsRecommendations 
+        learningProgress={learningProgress}
+        courseId={courseId}
+        theme={theme}
+        textColor={textColor}
+        subtextColor={subtextColor}
+        lightSubtextColor={lightSubtextColor}
+      />
+    </div>
+  );
+}
 
-        {/* Quick Actions */}
-        <div className="glass-card p-8">
-          <h2 className={`font-montserrat text-2xl font-bold mb-6 ${
-            theme === 'light' ? 'text-gray-800' : 'text-white'
-          }`}>
-            Quick Actions
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <button
-              onClick={() => router.push('/chat')}
-              className="glass-card p-6 hover:scale-105 transition-all text-left"
-            >
-              <div className="text-3xl mb-2">💬</div>
-              <p className={`font-semibold ${theme === 'light' ? 'text-gray-800' : 'text-white'}`}>
-                Start Chatting
-              </p>
-              <p className={`text-sm ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
-                Ask questions about your course
-              </p>
-            </button>
+function MaterialsRecommendations({ learningProgress, courseId, theme, textColor, subtextColor, lightSubtextColor }) {
+  const hasMaterials = learningProgress?.materialsProgress?.length > 0;
 
-            <button
-              onClick={() => router.push('/quiz')}
-              className="glass-card p-6 hover:scale-105 transition-all text-left"
-            >
-              <div className="text-3xl mb-2">📝</div>
-              <p className={`font-semibold ${theme === 'light' ? 'text-gray-800' : 'text-white'}`}>
-                Take a Quiz
-              </p>
-              <p className={`text-sm ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
-                Test your knowledge
-              </p>
-            </button>
+  return (
+    <div className="mt-6">
+      <h3 className={`font-montserrat text-lg font-bold mb-4 ${textColor}`}>
+        Recommended Materials
+      </h3>
+      {hasMaterials ? (
+        <div className="space-y-2">
+          {learningProgress.materialsProgress
+            .sort((a, b) => (a.coveragePercentage || 0) - (b.coveragePercentage || 0))
+            .slice(0, 5)
+            .map((material, idx) => (
+              <MaterialCard 
+                key={idx} 
+                material={material} 
+                theme={theme}
+                textColor={textColor}
+                lightSubtextColor={lightSubtextColor}
+              />
+            ))}
+        </div>
+      ) : (
+        <div className="glass-card p-6 text-center">
+          <p className={subtextColor}>
+            No recommendations available yet.
+            {!courseId && " Please select a course to see personalized recommendations."}
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
 
-            <button
-              onClick={() => router.push('/')}
-              className="glass-card p-6 hover:scale-105 transition-all text-left"
-            >
-              <div className="text-3xl mb-2">📚</div>
-              <p className={`font-semibold ${theme === 'light' ? 'text-gray-800' : 'text-white'}`}>
-                Browse Materials
-              </p>
-              <p className={`text-sm ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
-                View course resources
-              </p>
-            </button>
+function MaterialCard({ material, theme, textColor, lightSubtextColor }) {
+  const coverage = material.coveragePercentage || 0;
+  const isGood = coverage >= 60;
+  const colorClass = isGood
+    ? (theme === 'light' ? 'text-green-600' : 'text-green-400')
+    : (theme === 'light' ? 'text-orange-600' : 'text-orange-400');
+  const bgClass = isGood ? 'bg-green-500' : 'bg-orange-500';
+
+  return (
+    <div className="glass-card p-3">
+      <div className="flex justify-between items-center mb-2">
+        <span className={`font-semibold ${textColor}`}>
+          {material.materialName}
+        </span>
+        <span className={`text-sm font-bold ${colorClass}`}>
+          {coverage}%
+        </span>
+      </div>
+      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+        <div
+          className={`h-2 rounded-full ${bgClass}`}
+          style={{ width: `${coverage}%` }}
+        ></div>
+      </div>
+      <div className="flex justify-between mt-1">
+        <span className={`text-xs ${lightSubtextColor}`}>
+          {material.status || 'Not started'}
+        </span>
+        <span className={`text-xs ${lightSubtextColor}`}>
+          {material.questionsCount || 0} questions
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function LoadingRecommendations({ theme, textColor, subtextColor }) {
+  return (
+    <div className="glass-card p-8 mb-8">
+      <h2 className={`font-montserrat text-2xl font-bold mb-6 ${textColor}`}>
+        Learning Recommendations
+      </h2>
+      <div className="text-center p-6">
+        <p className={subtextColor}>
+          Loading personalized recommendations...
+        </p>
+        <p className={`text-sm mt-2 ${subtextColor}`}>
+          Start asking questions to get customized study suggestions
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function LearningProgressCard({ learningProgress, theme, textColor, subtextColor, lightSubtextColor }) {
+  const progress = learningProgress.overallProgress;
+
+  return (
+    <div className="glass-card p-8 mb-8">
+      <h2 className={`font-montserrat text-2xl font-bold mb-6 ${textColor}`}>
+        Learning Progress: {learningProgress.courseName}
+      </h2>
+      
+      <div className="text-center mb-8">
+        <div className="inline-block relative">
+          <svg className="w-32 h-32">
+            <circle
+              cx="64" cy="64" r="56"
+              fill="none" stroke="currentColor" strokeWidth="12"
+              className={theme === 'light' ? 'text-gray-300' : 'text-gray-700'}
+            />
+            <circle
+              cx="64" cy="64" r="56"
+              fill="none" stroke="url(#gradient)" strokeWidth="12" strokeLinecap="round"
+              strokeDasharray={`${2 * Math.PI * 56}`}
+              strokeDashoffset={`${2 * Math.PI * 56 * (1 - progress / 100)}`}
+              transform="rotate(-90 64 64)"
+            />
+            <defs>
+              <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#3b82f6" />
+                <stop offset="100%" stopColor="#8b5cf6" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className={`text-2xl font-bold ${textColor}`}>{progress}%</span>
           </div>
         </div>
-      </section>
+        <p className={`mt-2 ${subtextColor}`}>Overall Course Progress</p>
+      </div>
+
+      {learningProgress.recommendedTopics?.length > 0 && (
+        <div className="mb-6">
+          <h3 className={`font-montserrat text-lg font-bold mb-4 ${textColor}`}>
+            What to Learn Next
+          </h3>
+          <div className="flex flex-wrap gap-2">
+            {learningProgress.recommendedTopics.map((topic, idx) => (
+              <span key={idx} className="glass-card px-4 py-2 text-sm hover:scale-105 transition-all">
+                {topic}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {learningProgress.materialsProgress?.length > 0 && (
+        <div className="mt-6">
+          <h3 className={`font-montserrat text-lg font-bold mb-4 ${textColor}`}>
+            Materials to Focus On
+          </h3>
+          <div className="space-y-2">
+            {learningProgress.materialsProgress
+              .sort((a, b) => (a.coveragePercentage || 0) - (b.coveragePercentage || 0))
+              .slice(0, 5)
+              .map((material, idx) => (
+                <MaterialCard 
+                  key={idx} 
+                  material={material} 
+                  theme={theme}
+                  textColor={textColor}
+                  lightSubtextColor={lightSubtextColor}
+                />
+              ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function QuickActions({ router, theme, textColor, subtextColor }) {
+  const actions = [
+    { icon: 'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z', 
+      title: 'Start Chatting', desc: 'Ask questions about your course', path: '/chat' },
+    { icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2',
+      title: 'Take a Quiz', desc: 'Test your knowledge', path: '/quiz' },
+    { icon: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253',
+      title: 'Browse Materials', desc: 'View course resources', path: '/' },
+  ];
+
+  return (
+    <div className="glass-card p-8">
+      <h2 className={`font-montserrat text-2xl font-bold mb-6 ${textColor}`}>
+        Quick Actions
+      </h2>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {actions.map((action, idx) => (
+          <button
+            key={idx}
+            onClick={() => router.push(action.path)}
+            className="glass-card p-6 hover:scale-105 transition-all text-left"
+          >
+            <img src="/logo.ico" alt={action.title} className="w-8 h-8 mb-2 mx-auto logo-adaptive" />
+            <p className={`font-semibold ${textColor}`}>{action.title}</p>
+            <p className={`text-sm ${subtextColor}`}>{action.desc}</p>
+          </button>
+        ))}
+      </div>
     </div>
   );
 }

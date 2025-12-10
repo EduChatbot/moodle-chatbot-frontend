@@ -18,21 +18,17 @@ export default function ChatWindow({
   const router = useRouter();
 
   const [messages, setMessages] = useState([
-    { text: "Hello! What can I help you with today?", fromUser: false }
+    { text: "Hello! How can I help you with your learning journey?", fromUser: false }
   ]);
   const [loading, setLoading] = useState(false);
   const [tokenChecked, setTokenChecked] = useState(false);
 
   useEffect(() => {
     if (!tokenChecked) {
-      console.log('Moodle Token:', moodleToken ? `${moodleToken.substring(0, 20)}...` : 'NO TOKEN');
-      console.log('Course ID:', courseId);
-      
       if (!moodleToken) {
-
         setMessages([
           { 
-            text: "⚠️ Note: You're not authenticated via Moodle. To access personalized content, please open this chat from within Moodle.\n\nI'll try to answer your questions, but backend may require authentication.", 
+            text: "Note: You're not authenticated via Moodle. To access personalized content, please open this chat from within Moodle.\n\nI'll try to answer your questions, but backend may require authentication.", 
             fromUser: false 
           }
         ]);
@@ -41,7 +37,6 @@ export default function ChatWindow({
     }
   }, [moodleToken, courseId, tokenChecked]);
 
-  // Convert messages to history format for backend
   const getHistory = () => {
     // Exclude the initial welcome message and the current user message
     return messages.slice(1).map(msg => ({
@@ -58,14 +53,7 @@ export default function ChatWindow({
     setLoading(true);
     
     try {
-      console.log("Message:", text);
-      console.log("Moodle Token:", moodleToken ? `${moodleToken.substring(0, 20)}...` : "⚠️ NO TOKEN - Backend will reject request!");
-      console.log("Course ID:", courseId || "Not set");
-      console.log("Token length:", moodleToken ? moodleToken.length : 0);
-      
-      // Get conversation history (excluding the welcome message)
       const history = getHistory();
-      console.log("Sending history:", history);
       
       const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -75,14 +63,7 @@ export default function ChatWindow({
       
       if (moodleToken) {
         headers["Authorization"] = `Bearer ${moodleToken}`;
-        console.log("✅ Authorization header added:", `Bearer ${moodleToken.substring(0, 10)}...`);
-      } else {
-        console.error("❌ No Moodle token available - backend WILL reject request!");
       }
-      
-      console.log("Request headers:", headers);
-      console.log("Request URL:", `${apiUrl}/chat`);
-      console.log("Request body:", { message: text, history, courseId });
       
       const response = await fetch(`${apiUrl}/chat`, {
         method: "POST",
@@ -107,21 +88,17 @@ export default function ChatWindow({
 
       const data = await response.json();
 
-      try { console.log("Backend response (parsed):", JSON.parse(JSON.stringify(data))); } catch { console.log("Backend response (raw):", data); }
-
-
       let botText = "No server response";
       let sources = null;
+      
       if (typeof data === "string") {
         botText = data;
       } else if (Array.isArray(data)) {
-
-        botText = data.map(item => (typeof item === 'string' ? item : JSON.stringify(item))).join(" \n");
+        botText = data.map(item => typeof item === 'string' ? item : JSON.stringify(item)).join(" \n");
       } else if (data && typeof data === 'object') {
         botText = data.response || data.message || data.text || JSON.stringify(data);
         sources = data.sources || null;
       }
-
 
       const botMessage = { 
         text: botText,
@@ -132,8 +109,6 @@ export default function ChatWindow({
       
     } catch (error) {
       console.error("Error communicating with backend:", error);
-
-
       const apiUrl = process.env.NEXT_PUBLIC_API_URL;
       const errorMessage = { 
         text: `Error: ${error.message}. Check if backend is running on ${apiUrl}`, 
@@ -197,7 +172,7 @@ export default function ChatWindow({
           <h2 className={`font-montserrat text-2xl font-bold ${
             theme === 'light' ? 'text-gray-800' : 'text-white'
           }`}>
-            💬 Chat - {course.name || course.title || "Unnamed Course"}
+            Chat - {course.name || course.title || "Unnamed Course"}
           </h2>
           <button
             onClick={handleExpand}
@@ -207,7 +182,9 @@ export default function ChatWindow({
             }`}
             title="Expand to full chat"
           >
-            <span>⛶</span>
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+            </svg>
             Expand
           </button>
         </div>
@@ -222,7 +199,7 @@ export default function ChatWindow({
           <div className={`p-3 italic text-center rounded-lg my-2 glass-card animate-pulse ${
             theme === 'light' ? 'text-gray-600' : 'text-gray-300'
           }`}>
-            🤖 Bot is typing...
+            Typing...
           </div>
         )}
       </div>
