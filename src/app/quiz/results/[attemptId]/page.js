@@ -10,6 +10,7 @@ export default function QuizResultsPage() {
   const [attempt, setAttempt] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [expandedExplanations, setExpandedExplanations] = useState([]);
   
   const { theme } = useTheme();
   const { backgroundColor } = useAnimation();
@@ -245,6 +246,73 @@ export default function QuizResultsPage() {
                     );
                   })}
                 </div>
+
+                {/* Explanation and Source - Collapsible */}
+                {(question.explanation || question.source) && (
+                  <div className="ml-11 mt-4">
+                    <button
+                      onClick={() => {
+                        const newExpanded = [...expandedExplanations];
+                        newExpanded[qIdx] = !newExpanded[qIdx];
+                        setExpandedExplanations(newExpanded);
+                      }}
+                      className={`text-sm font-semibold px-4 py-2 rounded-lg transition-all ${
+                        theme === 'light'
+                          ? 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+                          : 'bg-blue-900/30 text-blue-300 hover:bg-blue-900/50'
+                      }`}
+                    >
+                      {expandedExplanations[qIdx] ? '▼' : '▶'} {expandedExplanations[qIdx] ? 'Hide' : 'Show'} Details
+                    </button>
+
+                    {expandedExplanations[qIdx] && (
+                      <div className="mt-3 space-y-3 animate-fade-in-up">
+                        {question.explanation && (
+                          <div className={`p-4 rounded-lg ${
+                            theme === 'light'
+                              ? 'bg-blue-50 border border-blue-200'
+                              : 'bg-blue-950/30 border border-blue-800/30'
+                          }`}>
+                            <p className={`font-semibold mb-2 ${
+                              theme === 'light' ? 'text-blue-800' : 'text-blue-300'
+                            }`}>
+                              Explanation:
+                            </p>
+                            <p className={`text-sm ${
+                              theme === 'light' ? 'text-blue-900' : 'text-blue-200'
+                            }`}>
+                              {question.explanation}
+                            </p>
+                          </div>
+                        )}
+
+                        {question.source && (
+                          <div className={`p-4 rounded-lg ${
+                            theme === 'light'
+                              ? 'bg-gray-50 border border-gray-200'
+                              : 'bg-gray-800/30 border border-gray-700/30'
+                          }`}>
+                            <p className={`font-semibold mb-2 ${
+                              theme === 'light' ? 'text-gray-800' : 'text-gray-300'
+                            }`}>
+                              Source:
+                            </p>
+                            <p className={`text-xs font-mono mb-2 ${
+                              theme === 'light' ? 'text-gray-600' : 'text-gray-400'
+                            }`}>
+                              {question.source.fileName}
+                            </p>
+                            <p className={`text-sm ${
+                              theme === 'light' ? 'text-gray-700' : 'text-gray-300'
+                            }`}>
+                              {question.source.chunkText}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             );
           })}
