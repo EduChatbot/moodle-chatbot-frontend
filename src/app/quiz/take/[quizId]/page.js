@@ -97,6 +97,22 @@ export default function TakeQuizPage() {
       
       const data = await response.json();
       setResult(data);
+      
+      // Fetch full attempt details to get explanation and source
+      const attemptResponse = await fetch(`${apiUrl}/quiz/attempt/${data.attemptId}`, {
+        headers: {
+          'Authorization': `Bearer ${moodleToken}`
+        }
+      });
+      
+      if (attemptResponse.ok) {
+        const attemptData = await attemptResponse.json();
+        // Update quiz with full question details including explanation and source
+        setQuiz({
+          ...quiz,
+          questions: attemptData.questions
+        });
+      }
     } catch (err) {
       console.error("Error submitting quiz:", err);
       alert(`Failed to submit quiz: ${err.message}`);
@@ -233,10 +249,26 @@ export default function TakeQuizPage() {
                           )}
                           
                           {q.source && (
-                            <div className={`p-2 rounded text-xs ${
-                              theme === 'light' ? 'bg-gray-100 text-gray-700' : 'bg-gray-800/50 text-gray-300'
+                            <div className={`p-3 rounded-lg ${
+                              theme === 'light' ? 'bg-gray-50 border border-gray-200' : 'bg-gray-800/30 border border-gray-700/30'
                             }`}>
-                              <span className="font-semibold">Source:</span> {q.source}
+                              <p className={`text-sm font-semibold mb-1 ${
+                                theme === 'light' ? 'text-gray-800' : 'text-gray-300'
+                              }`}>
+                                Source:
+                              </p>
+                              <p className={`text-xs font-mono mb-2 ${
+                                theme === 'light' ? 'text-gray-600' : 'text-gray-400'
+                              }`}>
+                                {q.source.fileName || q.source}
+                              </p>
+                              {q.source.chunkText && (
+                                <p className={`text-sm ${
+                                  theme === 'light' ? 'text-gray-700' : 'text-gray-300'
+                                }`}>
+                                  {q.source.chunkText}
+                                </p>
+                              )}
                             </div>
                           )}
                         </div>

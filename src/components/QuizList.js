@@ -174,7 +174,7 @@ export default function QuizList() {
     
     let url = `${apiUrl}/quiz/generate/${courseId}?num_questions=${numQuestions}`;
     if (quizMode === 'material' && selectedMaterials.length > 0) {
-      const materialIdsParam = selectedMaterials.map(id => `materialIds=${id}`).join('&');
+      const materialIdsParam = selectedMaterials.map(id => `material_ids=${id}`).join('&');
       url += `&${materialIdsParam}`;
     } else if (quizMode === 'topic') {
       url += `&topic=${encodeURIComponent(topicInput.trim())}`;
