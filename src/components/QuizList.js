@@ -14,7 +14,7 @@ export default function QuizList() {
   const [generatingQuiz, setGeneratingQuiz] = useState(false);
   const [materials, setMaterials] = useState([]);
   const [quizMode, setQuizMode] = useState('all');
-  const [selectedMaterial, setSelectedMaterial] = useState('');
+  const [selectedMaterials, setSelectedMaterials] = useState([]);
   const [topicInput, setTopicInput] = useState('');
   const [showGenerator, setShowGenerator] = useState(false);
   
@@ -160,8 +160,8 @@ export default function QuizList() {
   };
 
   const handleGenerateQuiz = async (numQuestions = 5) => {
-    if (quizMode === 'material' && !selectedMaterial) {
-      alert('Please select a material');
+    if (quizMode === 'material' && selectedMaterials.length === 0) {
+      alert('Please select at least one material');
       return;
     }
     if (quizMode === 'topic' && !topicInput.trim()) {
@@ -173,8 +173,9 @@ export default function QuizList() {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     
     let url = `${apiUrl}/quiz/generate/${courseId}?num_questions=${numQuestions}`;
-    if (quizMode === 'material') {
-      url += `&materialId=${selectedMaterial}`;
+    if (quizMode === 'material' && selectedMaterials.length > 0) {
+      const materialIdsParam = selectedMaterials.map(id => `materialIds=${id}`).join('&');
+      url += `&${materialIdsParam}`;
     } else if (quizMode === 'topic') {
       url += `&topic=${encodeURIComponent(topicInput.trim())}`;
     }
@@ -371,7 +372,7 @@ export default function QuizList() {
                   <button
                     onClick={() => {
                       setQuizMode('all');
-                      setSelectedMaterial('');
+                      setSelectedMaterials([]);
                       setTopicInput('');
                     }}
                     className={`p-4 rounded-lg font-montserrat transition-all ${
@@ -400,17 +401,17 @@ export default function QuizList() {
                     }`}
                   >
                     <div className={`font-semibold ${theme === 'light' ? 'text-gray-800' : 'text-white'}`}>
-                      Specific Material
+                      Select Materials
                     </div>
                     <div className={`text-xs ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
-                      One file only
+                      Choose one or more
                     </div>
                   </button>
                   
                   <button
                     onClick={() => {
                       setQuizMode('topic');
-                      setSelectedMaterial('');
+                      setSelectedMaterials([]);
                     }}
                     className={`p-4 rounded-lg font-montserrat transition-all ${
                       quizMode === 'topic'
@@ -434,24 +435,60 @@ export default function QuizList() {
                   <label className={`block font-montserrat font-semibold mb-2 ${
                     theme === 'light' ? 'text-gray-700' : 'text-gray-200'
                   }`}>
-                    Select Material:
+                    Select Materials ({selectedMaterials.length} selected):
                   </label>
-                  <select
-                    value={selectedMaterial}
-                    onChange={(e) => setSelectedMaterial(e.target.value)}
-                    className={`w-full p-3 rounded-lg font-inter ${
-                      theme === 'light'
-                        ? 'bg-white/80 text-gray-800 border border-gray-300'
-                        : 'bg-gray-800/80 text-white border border-gray-600'
-                    }`}
-                  >
-                    <option value="">Choose a material...</option>
-                    {materials.map((mat) => (
-                      <option key={mat.id} value={mat.id}>
-                        {mat.name} {mat.section ? `(${mat.section})` : ''}
-                      </option>
-                    ))}
-                  </select>
+                  <div className={`max-h-96 overflow-y-auto rounded-lg border p-4 ${
+                    theme === 'light' ? 'bg-white/80 border-gray-300' : 'bg-gray-800/80 border-gray-600'
+                  }`}>
+                    {(() => {
+                      const sections = {};
+                      materials.forEach(mat => {
+                        const section = mat.section || 'Other Materials';
+                        if (!sections[section]) sections[section] = [];
+                        sections[section].push(mat);
+                      });
+                      
+                      return Object.entries(sections).map(([section, mats]) => (
+                        <div key={section} className="mb-4 last:mb-0">
+                          <div className={`font-montserrat font-bold mb-2 pb-1 border-b ${
+                            theme === 'light' ? 'text-gray-700 border-gray-300' : 'text-gray-200 border-gray-600'
+                          }`}>
+                            {section}
+                          </div>
+                          <div className="space-y-2">
+                            {mats.map(mat => (
+                              <label
+                                key={mat.id}
+                                className={`flex items-center space-x-3 p-2 rounded cursor-pointer transition-all ${
+                                  selectedMaterials.includes(mat.id)
+                                    ? (theme === 'light' ? 'bg-blue-100' : 'bg-blue-900/30')
+                                    : 'hover:bg-gray-100 dark:hover:bg-gray-700/30'
+                                }`}
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={selectedMaterials.includes(mat.id)}
+                                  onChange={(e) => {
+                                    if (e.target.checked) {
+                                      setSelectedMaterials([...selectedMaterials, mat.id]);
+                                    } else {
+                                      setSelectedMaterials(selectedMaterials.filter(id => id !== mat.id));
+                                    }
+                                  }}
+                                  className="w-4 h-4 rounded border-gray-300"
+                                />
+                                <span className={`font-inter text-sm ${
+                                  theme === 'light' ? 'text-gray-800' : 'text-gray-200'
+                                }`}>
+                                  {mat.name}
+                                </span>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                      ));
+                    })()}
+                  </div>
                 </div>
               )}
               
