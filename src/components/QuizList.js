@@ -575,7 +575,7 @@ export default function QuizList() {
                         <h4 className={`font-montserrat text-xl font-bold mb-2 ${
                           theme === 'light' ? 'text-gray-800' : 'text-white'
                         }`}>
-                          {quiz.title}
+                          {quiz.quizTitle || quiz.title || `Quiz #${quiz.quizId}`}
                         </h4>
                         <p className={`text-sm ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
                           Created: {new Date(quiz.createdAt).toLocaleDateString()}
