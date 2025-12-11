@@ -172,20 +172,26 @@ export default function QuizList() {
     setGeneratingQuiz(true);
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     
-    let url = `${apiUrl}/quiz/generate/${courseId}?num_questions=${numQuestions}`;
+    const url = `${apiUrl}/quiz/generate/${courseId}`;
+    
+    const body = {
+      numQuestions: numQuestions
+    };
+    
     if (quizMode === 'material' && selectedMaterials.length > 0) {
-      const materialIdsParam = selectedMaterials.map(id => `material_ids=${id}`).join('&');
-      url += `&${materialIdsParam}`;
+      body.materialIds = selectedMaterials;
     } else if (quizMode === 'topic') {
-      url += `&topic=${encodeURIComponent(topicInput.trim())}`;
+      body.topic = topicInput.trim();
     }
     
     try {
       const response = await fetch(url, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${moodleToken}`
-        }
+          'Authorization': `Bearer ${moodleToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
       });
       
       console.log('Generate response status:', response.status);
