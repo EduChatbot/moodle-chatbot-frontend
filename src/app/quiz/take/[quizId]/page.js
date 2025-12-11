@@ -12,6 +12,7 @@ export default function TakeQuizPage() {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [expandedExplanations, setExpandedExplanations] = useState([]);
   
   const { theme } = useTheme();
   const { backgroundColor } = useAnimation();
@@ -193,6 +194,55 @@ export default function TakeQuizPage() {
                       );
                     })}
                   </div>
+                  
+                  {/* Explanation - Collapsible */}
+                  {(q.explanation || q.source) && (
+                    <div className="mt-3">
+                      <button
+                        onClick={() => {
+                          const newExpanded = [...expandedExplanations];
+                          newExpanded[idx] = !newExpanded[idx];
+                          setExpandedExplanations(newExpanded);
+                        }}
+                        className={`w-full text-left px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
+                          theme === 'light' 
+                            ? 'bg-blue-100 hover:bg-blue-200 text-blue-800' 
+                            : 'bg-blue-900/30 hover:bg-blue-900/50 text-blue-300'
+                        }`}
+                      >
+                        {expandedExplanations[idx] ? '▼' : '▶'} Show Explanation & Source
+                      </button>
+                      
+                      {expandedExplanations[idx] && (
+                        <div className="mt-2 space-y-2 animate-fade-in-up">
+                          {q.explanation && (
+                            <div className={`p-3 rounded-lg ${
+                              theme === 'light' ? 'bg-blue-50 border border-blue-200' : 'bg-blue-900/20 border border-blue-700/30'
+                            }`}>
+                              <p className={`text-sm font-semibold mb-1 ${
+                                theme === 'light' ? 'text-blue-800' : 'text-blue-300'
+                              }`}>
+                                Explanation:
+                              </p>
+                              <p className={`text-sm ${
+                                theme === 'light' ? 'text-blue-700' : 'text-blue-200'
+                              }`}>
+                                {q.explanation}
+                              </p>
+                            </div>
+                          )}
+                          
+                          {q.source && (
+                            <div className={`p-2 rounded text-xs ${
+                              theme === 'light' ? 'bg-gray-100 text-gray-700' : 'bg-gray-800/50 text-gray-300'
+                            }`}>
+                              <span className="font-semibold">Source:</span> {q.source}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -213,6 +263,7 @@ export default function TakeQuizPage() {
                   }
                   setResult(null);
                   setAnswers(new Array(quiz.questions.length).fill(null));
+                  setExpandedExplanations([]);
                 }}
                 className="glass-card px-8 py-3 font-montserrat font-semibold hover:scale-105 transition-all"
               >
