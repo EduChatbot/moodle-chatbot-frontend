@@ -48,10 +48,13 @@ export default function QuizList() {
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       
       const data = await response.json();
-      const materialsArray = data.materials || [];
+      const materialsArray = data.materials || data || [];
+      // Filter to only show materials that have been processed (have dbId)
+      const processedMaterials = materialsArray.filter(mat => mat.dbId !== null && mat.dbId !== undefined);
       console.log('[QuizList] Fetched materials:', materialsArray);
-      console.log('[QuizList] First material structure:', materialsArray[0]);
-      setMaterials(materialsArray);
+      console.log('[QuizList] Processed materials (with dbId):', processedMaterials);
+      console.log('[QuizList] First material structure:', processedMaterials[0]);
+      setMaterials(processedMaterials);
     } catch (err) {
       console.error("Error fetching materials:", err);
     }
@@ -184,8 +187,8 @@ export default function QuizList() {
     
     if (quizMode === 'material' && selectedMaterials.length > 0) {
       body.materialIds = selectedMaterials;
-      console.log('[QuizList] Sending materialIds:', selectedMaterials);
-      console.log('[QuizList] Selected materials details:', materials.filter(m => selectedMaterials.includes(m.id)));
+      console.log('[QuizList] Sending materialIds (dbIds):', selectedMaterials);
+      console.log('[QuizList] Selected materials details:', materials.filter(m => selectedMaterials.includes(m.dbId)));
     } else if (quizMode === 'topic') {
       body.topic = topicInput.trim();
     }
@@ -470,21 +473,21 @@ export default function QuizList() {
                           <div className="space-y-2">
                             {mats.map(mat => (
                               <label
-                                key={mat.id}
+                                key={mat.dbId}
                                 className={`flex items-center space-x-3 p-2 rounded cursor-pointer transition-all ${
-                                  selectedMaterials.includes(mat.id)
+                                  selectedMaterials.includes(mat.dbId)
                                     ? (theme === 'light' ? 'bg-blue-100' : 'bg-blue-900/30')
                                     : 'hover:bg-gray-100 dark:hover:bg-gray-700/30'
                                 }`}
                               >
                                 <input
                                   type="checkbox"
-                                  checked={selectedMaterials.includes(mat.id)}
+                                  checked={selectedMaterials.includes(mat.dbId)}
                                   onChange={(e) => {
                                     if (e.target.checked) {
-                                      setSelectedMaterials([...selectedMaterials, mat.id]);
+                                      setSelectedMaterials([...selectedMaterials, mat.dbId]);
                                     } else {
-                                      setSelectedMaterials(selectedMaterials.filter(id => id !== mat.id));
+                                      setSelectedMaterials(selectedMaterials.filter(id => id !== mat.dbId));
                                     }
                                   }}
                                   className="w-4 h-4 rounded border-gray-300"
@@ -497,7 +500,7 @@ export default function QuizList() {
                                 <span className={`font-mono text-xs ${
                                   theme === 'light' ? 'text-gray-500' : 'text-gray-500'
                                 }`}>
-                                  ID: {mat.id}
+                                  DB ID: {mat.dbId}
                                 </span>
                               </label>
                             ))}
