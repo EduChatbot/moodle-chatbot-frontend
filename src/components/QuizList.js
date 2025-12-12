@@ -506,11 +506,6 @@ export default function QuizList() {
                                 }`}>
                                   {mat.name}
                                 </span>
-                                <span className={`font-mono text-xs ${
-                                  theme === 'light' ? 'text-gray-500' : 'text-gray-500'
-                                }`}>
-                                  DB ID: {mat.dbId}
-                                </span>
                               </label>
                             ))}
                           </div>
