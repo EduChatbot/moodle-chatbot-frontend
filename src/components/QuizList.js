@@ -95,9 +95,10 @@ export default function QuizList() {
   const groupQuizzesByTopic = (quizzes) => {
     const grouped = {};
     quizzes.forEach(quiz => {
-      const topic = quiz.topic || quiz.materialId ? `Material #${quiz.materialId}` : 'General';
-      if (!grouped[topic]) grouped[topic] = [];
-      grouped[topic].push(quiz);
+      let groupName = quiz.section || 'General';
+      
+      if (!grouped[groupName]) grouped[groupName] = [];
+      grouped[groupName].push(quiz);
     });
     return grouped;
   };
