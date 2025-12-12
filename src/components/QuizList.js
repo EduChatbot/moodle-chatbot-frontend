@@ -49,6 +49,8 @@ export default function QuizList() {
       
       const data = await response.json();
       const materialsArray = data.materials || [];
+      console.log('[QuizList] Fetched materials:', materialsArray);
+      console.log('[QuizList] First material structure:', materialsArray[0]);
       setMaterials(materialsArray);
     } catch (err) {
       console.error("Error fetching materials:", err);
@@ -175,11 +177,15 @@ export default function QuizList() {
     const url = `${apiUrl}/quiz/generate/${courseId}`;
     
     const body = {
-      numQuestions: numQuestions
+      numQuestions: numQuestions,
+      materialIds: null,
+      topic: null
     };
     
     if (quizMode === 'material' && selectedMaterials.length > 0) {
       body.materialIds = selectedMaterials;
+      console.log('[QuizList] Sending materialIds:', selectedMaterials);
+      console.log('[QuizList] Selected materials details:', materials.filter(m => selectedMaterials.includes(m.id)));
     } else if (quizMode === 'topic') {
       body.topic = topicInput.trim();
     }
@@ -483,10 +489,15 @@ export default function QuizList() {
                                   }}
                                   className="w-4 h-4 rounded border-gray-300"
                                 />
-                                <span className={`font-inter text-sm ${
+                                <span className={`font-inter text-sm flex-1 ${
                                   theme === 'light' ? 'text-gray-800' : 'text-gray-200'
                                 }`}>
                                   {mat.name}
+                                </span>
+                                <span className={`font-mono text-xs ${
+                                  theme === 'light' ? 'text-gray-500' : 'text-gray-500'
+                                }`}>
+                                  ID: {mat.id}
                                 </span>
                               </label>
                             ))}
