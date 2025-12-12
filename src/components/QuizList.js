@@ -39,7 +39,7 @@ export default function QuizList() {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     
     try {
-      const response = await fetch(`${apiUrl}/course/materials?courseId=${courseId}`, {
+      const response = await fetch(`${apiUrl}/course/materials/by-section/${courseId}`, {
         headers: {
           'Authorization': `Bearer ${moodleToken}`
         }
@@ -48,13 +48,22 @@ export default function QuizList() {
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       
       const data = await response.json();
-      const materialsArray = data.materials || data || [];
-      // Filter to only show materials that have been processed (have dbId)
-      const processedMaterials = materialsArray.filter(mat => mat.dbId !== null && mat.dbId !== undefined);
-      console.log('[QuizList] Fetched materials:', materialsArray);
-      console.log('[QuizList] Processed materials (with dbId):', processedMaterials);
-      console.log('[QuizList] First material structure:', processedMaterials[0]);
-      setMaterials(processedMaterials);
+      const materialsArray = [];
+      Object.entries(data.sections || {}).forEach(([sectionName, materials]) => {
+        materials.forEach(mat => {
+          materialsArray.push({
+            id: mat.id,        
+            name: mat.fileName,
+            section: sectionName,
+            type: mat.fileType
+          });
+        });
+      });
+      
+      console.log('[QuizList] Fetched materials by section:', data);
+      console.log('[QuizList] Transformed materials:', materialsArray);
+      console.log('[QuizList] First material structure:', materialsArray[0]);
+      setMaterials(materialsArray);
     } catch (err) {
       console.error("Error fetching materials:", err);
     }
