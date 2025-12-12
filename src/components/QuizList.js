@@ -196,8 +196,6 @@ export default function QuizList() {
     
     if (quizMode === 'material' && selectedMaterials.length > 0) {
       body.materialIds = selectedMaterials;
-      console.log('[QuizList] Sending materialIds (dbIds):', selectedMaterials);
-      console.log('[QuizList] Selected materials details:', materials.filter(m => selectedMaterials.includes(m.dbId)));
     } else if (quizMode === 'topic') {
       body.topic = topicInput.trim();
     }
@@ -482,21 +480,21 @@ export default function QuizList() {
                           <div className="space-y-2">
                             {mats.map(mat => (
                               <label
-                                key={mat.dbId}
+                                key={mat.id}
                                 className={`flex items-center space-x-3 p-2 rounded cursor-pointer transition-all ${
-                                  selectedMaterials.includes(mat.dbId)
+                                  selectedMaterials.includes(mat.id)
                                     ? (theme === 'light' ? 'bg-blue-100' : 'bg-blue-900/30')
                                     : 'hover:bg-gray-100 dark:hover:bg-gray-700/30'
                                 }`}
                               >
                                 <input
                                   type="checkbox"
-                                  checked={selectedMaterials.includes(mat.dbId)}
+                                  checked={selectedMaterials.includes(mat.id)}
                                   onChange={(e) => {
                                     if (e.target.checked) {
-                                      setSelectedMaterials([...selectedMaterials, mat.dbId]);
+                                      setSelectedMaterials([...selectedMaterials, mat.id]);
                                     } else {
-                                      setSelectedMaterials(selectedMaterials.filter(id => id !== mat.dbId));
+                                      setSelectedMaterials(selectedMaterials.filter(id => id !== mat.id));
                                     }
                                   }}
                                   className="w-4 h-4 rounded border-gray-300"
