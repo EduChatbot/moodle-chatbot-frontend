@@ -17,6 +17,7 @@ export default function Dashboard() {
   const [error, setError] = useState(null);
   const [viewMode, setViewMode] = useState('general');
   const [uniqueQuizCount, setUniqueQuizCount] = useState(0);
+  const [courseQuizStats, setCourseQuizStats] = useState({ attempts: 0, unique: 0 });
   
   const { theme } = useTheme();
   const { moodleToken, courseId, courseName } = useMoodle();
@@ -102,6 +103,20 @@ export default function Dashboard() {
       }
     } catch (err) {
       console.warn("Learning progress unavailable:", err);
+    }
+
+    try {
+      const quizStatsRes = await fetch(`${apiUrl}/dashboard/course/${courseId}/quiz-stats`, { headers });
+      if (quizStatsRes.ok) {
+        const quizData = await quizStatsRes.json();
+        setCourseQuizStats({
+          attempts: quizData.totalAttempts || 0,
+          unique: quizData.uniqueQuizzesTaken || 0
+        });
+      }
+    } catch (err) {
+      console.warn("Course quiz stats unavailable:", err);
+      setCourseQuizStats({ attempts: 0, unique: 0 });
     }
   };
 
@@ -216,8 +231,7 @@ export default function Dashboard() {
                     textColor={textColor}
                     subtextColor={subtextColor}
                     lightSubtextColor={lightSubtextColor}
-                    progress={progress}
-                    uniqueQuizCount={uniqueQuizCount}
+                    courseQuizStats={courseQuizStats}
                   />
                 )}
 
@@ -480,7 +494,7 @@ function ActivityChart({ activity, theme, textColor, subtextColor }) {
   );
 }
 
-function CourseStatsCard({ courseStats, learningProgress, courseId, theme, textColor, subtextColor, lightSubtextColor, progress, uniqueQuizCount }) {
+function CourseStatsCard({ courseStats, learningProgress, courseId, theme, textColor, subtextColor, lightSubtextColor, courseQuizStats }) {
   return (
     <div className="glass-card p-8 mb-8">
       <h2 className={`font-montserrat text-2xl font-bold mb-6 ${textColor}`}>
@@ -502,13 +516,13 @@ function CourseStatsCard({ courseStats, learningProgress, courseId, theme, textC
         <div className="glass-card p-4">
           <p className={`text-sm ${subtextColor}`}>Quiz Attempts</p>
           <p className={`text-3xl font-bold ${theme === 'light' ? 'text-purple-600' : 'text-purple-400'}`}>
-            {progress?.totalQuizzesTaken || 0}
+            {courseQuizStats.attempts}
           </p>
         </div>
         <div className="glass-card p-4">
           <p className={`text-sm ${subtextColor}`}>Unique Quizzes</p>
           <p className={`text-3xl font-bold ${theme === 'light' ? 'text-orange-600' : 'text-orange-400'}`}>
-            {uniqueQuizCount || 0}
+            {courseQuizStats.unique}
           </p>
         </div>
       </div>
