@@ -271,16 +271,19 @@ export default function QuizList() {
           <div className="glass-card p-6 mb-8 grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="text-center">
               <p className={`text-3xl font-bold ${
-                history.totalQuizzesTaken >= 10
-                  ? (theme === 'light' ? 'text-green-600' : 'text-green-400')
-                  : history.totalQuizzesTaken >= 5
-                  ? (theme === 'light' ? 'text-orange-600' : 'text-orange-400')
-                  : (theme === 'light' ? 'text-red-600' : 'text-red-400')
+                (() => {
+                  const uniqueQuizzes = history.attempts ? new Set(history.attempts.map(a => a.quizId)).size : 0;
+                  return uniqueQuizzes >= 10
+                    ? (theme === 'light' ? 'text-green-600' : 'text-green-400')
+                    : uniqueQuizzes >= 5
+                    ? (theme === 'light' ? 'text-orange-600' : 'text-orange-400')
+                    : (theme === 'light' ? 'text-red-600' : 'text-red-400');
+                })()
               }`}>
-                {history.totalQuizzesTaken}
+                {history.attempts ? new Set(history.attempts.map(a => a.quizId)).size : 0}
               </p>
               <p className={`text-sm ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
-                Quizzes Taken
+                Unique Quizzes
               </p>
             </div>
             <div className="text-center">

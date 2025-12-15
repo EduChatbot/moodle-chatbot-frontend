@@ -16,6 +16,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [viewMode, setViewMode] = useState('general');
+  const [uniqueQuizCount, setUniqueQuizCount] = useState(0);
   
   const { theme } = useTheme();
   const { moodleToken, courseId, courseName } = useMoodle();
@@ -51,7 +52,28 @@ export default function Dashboard() {
 
   const fetchUserProgress = async (apiUrl, headers) => {
     const res = await fetch(`${apiUrl}/dashboard/progress`, { headers });
-    if (res.ok) setProgress(await res.json());
+    if (res.ok) {
+      const data = await res.json();
+      setProgress(data);
+      
+      if (data.totalQuizzesTaken > 0) {
+        fetchUniqueQuizCount(apiUrl, headers);
+      }
+    }
+  };
+
+  const fetchUniqueQuizCount = async (apiUrl, headers) => {
+    try {
+      const res = await fetch(`${apiUrl}/quiz/attempts`, { headers });
+      if (res.ok) {
+        const attempts = await res.json();
+        const uniqueQuizIds = new Set(attempts.map(a => a.quizId));
+        setUniqueQuizCount(uniqueQuizIds.size);
+      }
+    } catch (err) {
+      console.warn("Could not fetch unique quiz count:", err);
+      setUniqueQuizCount(0);
+    }
   };
 
   const fetchUserActivity = async (apiUrl, headers) => {
@@ -145,7 +167,7 @@ export default function Dashboard() {
               subtextColor={subtextColor}
             />
 
-            <StatsGrid progress={progress} theme={theme} subtextColor={subtextColor} />
+            <StatsGrid progress={progress} theme={theme} subtextColor={subtextColor} uniqueQuizCount={uniqueQuizCount} />
 
             {progress.totalQuizzesTaken > 0 && (
               <QuizPerformance 
@@ -190,6 +212,8 @@ export default function Dashboard() {
                     textColor={textColor}
                     subtextColor={subtextColor}
                     lightSubtextColor={lightSubtextColor}
+                    progress={progress}
+                    uniqueQuizCount={uniqueQuizCount}
                   />
                 )}
 
@@ -322,7 +346,7 @@ function UserInfoCard({ progress, courseName, theme, textColor, subtextColor }) 
   );
 }
 
-function StatsGrid({ progress, theme, subtextColor }) {
+function StatsGrid({ progress, theme, subtextColor, uniqueQuizCount }) {
   const getColor = (value, thresholds) => {
     if (value >= thresholds.high) return theme === 'light' ? 'text-green-600' : 'text-green-400';
     if (value >= thresholds.medium) return theme === 'light' ? 'text-orange-600' : 'text-orange-400';
@@ -333,11 +357,12 @@ function StatsGrid({ progress, theme, subtextColor }) {
     { value: progress.totalConversations, label: 'Total Conversations', color: getColor(progress.totalConversations, {high: 50, medium: 20}) },
     { value: progress.recentConversations, label: 'Recent Activity', color: getColor(progress.recentConversations, {high: 10, medium: 5}) },
     { value: progress.coursesExplored, label: 'Courses Explored', color: getColor(progress.coursesExplored, {high: 3, medium: 1}) },
-    { value: progress.totalQuizzesTaken || 0, label: 'Quizzes Taken', color: getColor(progress.totalQuizzesTaken || 0, {high: 10, medium: 5}) },
+    { value: progress.totalQuizzesTaken || 0, label: 'Total Quiz Attempts', color: getColor(progress.totalQuizzesTaken || 0, {high: 20, medium: 10}) },
+    { value: uniqueQuizCount || 0, label: 'Unique Quizzes', color: getColor(uniqueQuizCount || 0, {high: 10, medium: 5}) },
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
       {stats.map((stat, idx) => (
         <div key={idx} className="glass-card p-4 hover:scale-105 transition-all">
           <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
@@ -451,13 +476,13 @@ function ActivityChart({ activity, theme, textColor, subtextColor }) {
   );
 }
 
-function CourseStatsCard({ courseStats, learningProgress, courseId, theme, textColor, subtextColor, lightSubtextColor }) {
+function CourseStatsCard({ courseStats, learningProgress, courseId, theme, textColor, subtextColor, lightSubtextColor, progress, uniqueQuizCount }) {
   return (
     <div className="glass-card p-8 mb-8">
       <h2 className={`font-montserrat text-2xl font-bold mb-6 ${textColor}`}>
         {courseStats.courseName}
       </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <div className="glass-card p-4">
           <p className={`text-sm ${subtextColor}`}>Questions Asked</p>
           <p className={`text-3xl font-bold ${theme === 'light' ? 'text-blue-600' : 'text-blue-400'}`}>
@@ -468,6 +493,18 @@ function CourseStatsCard({ courseStats, learningProgress, courseId, theme, textC
           <p className={`text-sm ${subtextColor}`}>Total Materials</p>
           <p className={`text-3xl font-bold ${theme === 'light' ? 'text-green-600' : 'text-green-400'}`}>
             {courseStats.materialsCount}
+          </p>
+        </div>
+        <div className="glass-card p-4">
+          <p className={`text-sm ${subtextColor}`}>Quiz Attempts</p>
+          <p className={`text-3xl font-bold ${theme === 'light' ? 'text-purple-600' : 'text-purple-400'}`}>
+            {progress?.totalQuizzesTaken || 0}
+          </p>
+        </div>
+        <div className="glass-card p-4">
+          <p className={`text-sm ${subtextColor}`}>Unique Quizzes</p>
+          <p className={`text-3xl font-bold ${theme === 'light' ? 'text-orange-600' : 'text-orange-400'}`}>
+            {uniqueQuizCount || 0}
           </p>
         </div>
       </div>
