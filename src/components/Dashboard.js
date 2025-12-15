@@ -15,6 +15,7 @@ export default function Dashboard() {
   const [learningProgress, setLearningProgress] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [viewMode, setViewMode] = useState('general');
   
   const { theme } = useTheme();
   const { moodleToken, courseId, courseName } = useMoodle();
@@ -126,71 +127,93 @@ export default function Dashboard() {
       <section className="max-w-6xl mx-auto pt-8">
         <Header theme={theme} subtextColor={subtextColor} />
         
-        <UserInfoCard 
-          progress={progress} 
-          courseName={courseName} 
-          theme={theme} 
+        <ViewModeSelector 
+          viewMode={viewMode} 
+          setViewMode={setViewMode} 
+          hasCourseData={!!courseId}
+          theme={theme}
           textColor={textColor}
-          subtextColor={subtextColor}
         />
 
-        <StatsGrid progress={progress} theme={theme} subtextColor={subtextColor} />
+        {viewMode === 'general' ? (
+          <>
+            <UserInfoCard 
+              progress={progress} 
+              courseName={courseName} 
+              theme={theme} 
+              textColor={textColor}
+              subtextColor={subtextColor}
+            />
 
-        {progress.totalQuizzesTaken > 0 && (
-          <QuizPerformance 
-            progress={progress}
-            learningProgress={learningProgress}
-            theme={theme}
-            textColor={textColor}
-            subtextColor={subtextColor}
-            getScoreLabel={getScoreLabel}
-            getScoreColor={getScoreColor}
-          />
+            <StatsGrid progress={progress} theme={theme} subtextColor={subtextColor} />
+
+            {progress.totalQuizzesTaken > 0 && (
+              <QuizPerformance 
+                progress={progress}
+                learningProgress={learningProgress}
+                theme={theme}
+                textColor={textColor}
+                subtextColor={subtextColor}
+                getScoreLabel={getScoreLabel}
+                getScoreColor={getScoreColor}
+              />
+            )}
+
+            <ActivitySummary 
+              progress={progress} 
+              theme={theme} 
+              textColor={textColor}
+              subtextColor={subtextColor}
+            />
+
+            {activity?.activityByDate && (
+              <ActivityChart 
+                activity={activity} 
+                theme={theme} 
+                textColor={textColor}
+                subtextColor={subtextColor}
+              />
+            )}
+
+            <QuickActions router={router} theme={theme} textColor={textColor} subtextColor={subtextColor} />
+          </>
+        ) : (
+          <>
+            {courseId ? (
+              <>
+                {courseStats && (
+                  <CourseStatsCard 
+                    courseStats={courseStats}
+                    learningProgress={learningProgress}
+                    courseId={courseId}
+                    theme={theme}
+                    textColor={textColor}
+                    subtextColor={subtextColor}
+                    lightSubtextColor={lightSubtextColor}
+                  />
+                )}
+
+                {courseId && !courseStats && !learningProgress && (
+                  <LoadingRecommendations theme={theme} textColor={textColor} subtextColor={subtextColor} />
+                )}
+
+                {learningProgress && (
+                  <LearningProgressCard 
+                    learningProgress={learningProgress}
+                    theme={theme}
+                    textColor={textColor}
+                    subtextColor={subtextColor}
+                    lightSubtextColor={lightSubtextColor}
+                  />
+                )}
+
+                <QuickActions router={router} theme={theme} textColor={textColor} subtextColor={subtextColor} />
+              </>
+            ) : (
+              <NoCourseSelected theme={theme} textColor={textColor} subtextColor={subtextColor} />
+            )}
+          </>
         )}
-
-        <ActivitySummary 
-          progress={progress} 
-          theme={theme} 
-          textColor={textColor}
-          subtextColor={subtextColor}
-        />
-
-        {activity?.activityByDate && (
-          <ActivityChart 
-            activity={activity} 
-            theme={theme} 
-            textColor={textColor}
-            subtextColor={subtextColor}
-          />
-        )}
-
-        {courseStats && (
-          <CourseStatsCard 
-            courseStats={courseStats}
-            learningProgress={learningProgress}
-            courseId={courseId}
-            theme={theme}
-            textColor={textColor}
-            subtextColor={subtextColor}
-            lightSubtextColor={lightSubtextColor}
-          />
-        )}
-
-        {courseId && !courseStats && !learningProgress && (
-          <LoadingRecommendations theme={theme} textColor={textColor} subtextColor={subtextColor} />
-        )}
-
-        {learningProgress && (
-          <LearningProgressCard 
-            learningProgress={learningProgress}
-            theme={theme}
-            textColor={textColor}
-            subtextColor={subtextColor}
-            lightSubtextColor={lightSubtextColor}
-          />
-        )}
-
-        <QuickActions router={router} theme={theme} textColor={textColor} subtextColor={subtextColor} />
       </section>
     </div>
   );
@@ -210,7 +233,7 @@ function BackButton({ router, theme }) {
 
 function Header({ theme, subtextColor }) {
   return (
-    <div className="text-center mb-12">
+    <div className="text-center mb-8">
       <h1 className={`font-playfair text-5xl md:text-6xl font-bold mb-4 ${
         theme === 'light' ? 'text-gray-800' : 'text-white'
       }`}>
@@ -218,6 +241,56 @@ function Header({ theme, subtextColor }) {
       </h1>
       <p className={`font-inter text-lg ${subtextColor}`}>
         Track your progress and activity
+      </p>
+    </div>
+  );
+}
+
+function ViewModeSelector({ viewMode, setViewMode, hasCourseData, theme, textColor }) {
+  return (
+    <div className="glass-card p-2 mb-8 flex gap-2 max-w-md mx-auto">
+      <button
+        onClick={() => setViewMode('general')}
+        className={`flex-1 px-6 py-3 rounded-lg font-montserrat font-semibold transition-all ${
+          viewMode === 'general'
+            ? theme === 'light'
+              ? 'bg-blue-600 text-white'
+              : 'bg-blue-500 text-white'
+            : `${textColor} hover:bg-white/10`
+        }`}
+      >
+        General Stats
+      </button>
+      <button
+        onClick={() => setViewMode('course')}
+        disabled={!hasCourseData}
+        className={`flex-1 px-6 py-3 rounded-lg font-montserrat font-semibold transition-all ${
+          viewMode === 'course'
+            ? theme === 'light'
+              ? 'bg-blue-600 text-white'
+              : 'bg-blue-500 text-white'
+            : hasCourseData
+              ? `${textColor} hover:bg-white/10`
+              : 'text-gray-500 cursor-not-allowed opacity-50'
+        }`}
+      >
+        Course Stats
+      </button>
+    </div>
+  );
+}
+
+function NoCourseSelected({ theme, textColor, subtextColor }) {
+  return (
+    <div className="glass-card p-12 text-center">
+      <h2 className={`font-montserrat text-2xl font-bold mb-4 ${textColor}`}>
+        No Course Selected
+      </h2>
+      <p className={`${subtextColor} mb-6`}>
+        Please select a course to view detailed course statistics and recommendations.
+      </p>
+      <p className={`text-sm ${subtextColor}`}>
+        You can select a course from the home page or courses page.
       </p>
     </div>
   );
