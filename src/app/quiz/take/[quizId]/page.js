@@ -311,7 +311,7 @@ export default function TakeQuizPage() {
   return (
     <div className={`min-h-screen ${getPageBackground()} py-16 px-4`}>
       <button 
-        onClick={() => router.push('/')}
+        onClick={() => router.push('/quiz')}
         className="glass-card fixed top-6 left-6 z-10 px-6 py-3 font-montserrat font-semibold hover:scale-105 transition-all"
         style={{ color: theme === 'light' ? '#1f2937' : 'white' }}
       >
