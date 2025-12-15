@@ -64,11 +64,15 @@ export default function Dashboard() {
 
   const fetchUniqueQuizCount = async (apiUrl, headers) => {
     try {
-      const res = await fetch(`${apiUrl}/quiz/attempts`, { headers });
+      const res = await fetch(`${apiUrl}/quiz/history`, { headers });
       if (res.ok) {
-        const attempts = await res.json();
-        const uniqueQuizIds = new Set(attempts.map(a => a.quizId));
-        setUniqueQuizCount(uniqueQuizIds.size);
+        const data = await res.json();
+        if (data.attempts && data.attempts.length > 0) {
+          const uniqueQuizIds = new Set(data.attempts.map(a => a.quizId));
+          setUniqueQuizCount(uniqueQuizIds.size);
+        } else {
+          setUniqueQuizCount(0);
+        }
       }
     } catch (err) {
       console.warn("Could not fetch unique quiz count:", err);
