@@ -688,7 +688,7 @@ function LearningProgressCard({ learningProgress, theme, textColor, subtextColor
       {learningProgress.materialsProgress?.length > 0 && (
         <div className="mt-6">
           <h3 className={`font-montserrat text-lg font-bold mb-4 ${textColor}`}>
-            Materials to Focus On
+            Materials to Master
           </h3>
           <div className="space-y-2">
             {learningProgress.materialsProgress
