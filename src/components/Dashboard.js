@@ -575,8 +575,8 @@ function MaterialsRecommendations({ learningProgress, courseId, theme, textColor
 }
 
 function MaterialCard({ material, theme, textColor, lightSubtextColor }) {
-  const hasQuestions = (material.questionsCount || 0) > 0;
-  const coverage = hasQuestions ? (material.coveragePercentage || 0) : 0;
+  const coverage = material.coveragePercentage || 0;
+  
   
   const colorClass = coverage >= 70
     ? (theme === 'light' ? 'text-green-600' : 'text-green-400')
