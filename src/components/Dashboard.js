@@ -8,6 +8,10 @@ import { useMoodle } from "@/contexts/MoodleContext";
 
 const SCORE_THRESHOLD = { EXCELLENT: 80, GOOD: 60 };
 
+/**
+ * Dashboard component displaying user learning progress and statistics
+ * Supports two view modes: general stats (all courses) and course-specific stats
+ */
 export default function Dashboard() {
   const [progress, setProgress] = useState(null);
   const [activity, setActivity] = useState(null);
@@ -32,6 +36,9 @@ export default function Dashboard() {
     fetchAllData();
   }, [moodleToken, courseId]);
 
+  /**
+   * Fetches all dashboard data from API
+   */
   const fetchAllData = async () => {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     const headers = { 'Authorization': `Bearer ${moodleToken}` };

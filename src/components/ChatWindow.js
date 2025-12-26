@@ -8,6 +8,10 @@ import { useMoodle } from "@/contexts/MoodleContext";
 import Message from "@/components/Message";
 import MessageInput from "@/components/MessageInput";
 
+/**
+ * ChatWindow component - Interactive AI chat interface for course materials.
+ * Handles conversation with AI assistant and displays responses with source materials.
+ */
 export default function ChatWindow({ 
   course = { name: "Default Course" }, 
   isExpanded = false 

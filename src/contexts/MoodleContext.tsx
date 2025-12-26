@@ -11,6 +11,10 @@ interface MoodleContextType {
 
 const MoodleContext = createContext<MoodleContextType | undefined>(undefined);
 
+/**
+ * Moodle authentication context provider
+ * Manages Moodle token, course ID, and course name with localStorage persistence
+ */
 export function MoodleProvider({ children }: { children: ReactNode }) {
   const [moodleToken, setMoodleToken] = useState<string | null>(null);
   const [courseId, setCourseId] = useState<string | null>(null);
@@ -28,13 +32,10 @@ export function MoodleProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  /**
+   * Updates Moodle authentication data and persists to localStorage
+   */
   const setMoodleData = (token: string | null, courseId: string | null, courseName: string | null) => {
-    console.log('[MoodleContext] setMoodleData called:', {
-      token: token ? `${token.substring(0, 10)}...` : null,
-      courseId,
-      courseName
-    });
-    
     setMoodleToken(token);
     setCourseId(courseId);
     setCourseName(courseName);
@@ -57,8 +58,6 @@ export function MoodleProvider({ children }: { children: ReactNode }) {
       } else {
         localStorage.removeItem('moodle_coursename');
       }
-      
-      console.log('[MoodleContext] Data saved to localStorage');
     }
   };
 

@@ -6,6 +6,10 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { useAnimation } from "@/contexts/AnimationContext";
 import { useMoodle } from "@/contexts/MoodleContext";
 
+/**
+ * QuizList component - Manages quiz generation, history, and statistics.
+ * Allows users to generate custom quizzes from materials or topics and view quiz history.
+ */
 export default function QuizList() {
   const [quizzes, setQuizzes] = useState([]);
   const [history, setHistory] = useState(null);
@@ -59,10 +63,6 @@ export default function QuizList() {
           });
         });
       });
-      
-      console.log('[QuizList] Fetched materials by section:', data);
-      console.log('[QuizList] Transformed materials:', materialsArray);
-      console.log('[QuizList] First material structure:', materialsArray[0]);
       setMaterials(materialsArray);
     } catch (err) {
       console.error("Error fetching materials:", err);
@@ -210,8 +210,6 @@ export default function QuizList() {
         },
         body: JSON.stringify(body)
       });
-      
-      console.log('Generate response status:', response.status);
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));

@@ -6,6 +6,10 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { useAnimation } from "@/contexts/AnimationContext";
 import { useMoodle } from "@/contexts/MoodleContext";
 
+/**
+ * CoursesList component - Displays course materials with navigation.
+ * Shows all materials from the current course with clickable links to open resources.
+ */
 function CoursesList() {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -151,12 +155,7 @@ function CoursesList() {
               : course.url || course.link || "#";
             
             const handleClick = () => {
-              console.log('[MATERIAL CLICK] Course object:', course);
-              console.log('[MATERIAL CLICK] Material URL:', materialUrl);
-              console.log('[MATERIAL CLICK] Course type:', course.type);
-              
               if (materialUrl && materialUrl !== "#") {
-                console.log('[MATERIAL CLICK] Opening URL:', materialUrl);
                 window.open(materialUrl, '_blank', 'noopener,noreferrer');
               } else {
                 console.error('[MATERIAL CLICK] No valid URL found');
