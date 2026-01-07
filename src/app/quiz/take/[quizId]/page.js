@@ -329,30 +329,30 @@ export default function TakeQuizPage() {
                   )}
 
                   {/* Rating and Feedback Section */}
-                  <div className="mt-3">
-                    <div className={`p-3 rounded-lg border ${
+                  <div className="mt-2">
+                    <div className={`p-2 rounded-lg border ${
                       theme === 'light'
-                        ? 'bg-amber-50 border-amber-200'
-                        : 'bg-amber-900/20 border-amber-800/30'
+                        ? 'bg-amber-50/50 border-amber-200/50'
+                        : 'bg-amber-900/10 border-amber-800/20'
                     }`}>
-                      <p className={`text-xs font-semibold mb-2 ${
-                        theme === 'light' ? 'text-gray-700' : 'text-gray-300'
+                      <p className={`text-[10px] font-semibold mb-1 ${
+                        theme === 'light' ? 'text-gray-600' : 'text-gray-400'
                       }`}>
                         Rate this question:
                       </p>
-                      <div className="flex items-center gap-2 mb-2">
+                      <div className="flex items-center gap-1 mb-1">
                         {[1, 2, 3, 4, 5].map((star) => (
                           <button
                             key={star}
                             onClick={() => handleQuestionRating(idx, q.id, star)}
                             disabled={submittingFeedback[idx]}
-                            className="text-2xl hover:scale-110 transition-transform disabled:opacity-50"
+                            className="text-xl hover:scale-110 transition-transform disabled:opacity-50"
                           >
                             {questionRatings[idx] >= star ? '⭐' : '☆'}
                           </button>
                         ))}
-                        <span className={`text-xs ml-1 ${
-                          theme === 'light' ? 'text-gray-600' : 'text-gray-400'
+                        <span className={`text-[9px] ml-1 ${
+                          theme === 'light' ? 'text-gray-500' : 'text-gray-500'
                         }`}>
                           {questionRatings[idx] === 1 && '(Very Poor)'}
                           {questionRatings[idx] === 2 && '(Poor)'}
@@ -365,32 +365,32 @@ export default function TakeQuizPage() {
                       {!showFeedbackInput[idx] ? (
                         <button
                           onClick={() => setShowFeedbackInput(prev => ({ ...prev, [idx]: true }))}
-                          className={`text-xs px-2 py-1 rounded transition-all ${
+                          className={`text-[9px] px-2 py-0.5 rounded transition-all ${
                             theme === 'light'
-                              ? 'bg-gray-200 hover:bg-gray-300 text-gray-700'
-                              : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                              ? 'bg-gray-200 hover:bg-gray-300 text-gray-600'
+                              : 'bg-gray-700 hover:bg-gray-600 text-gray-400'
                           }`}
                         >
                           + Add feedback
                         </button>
                       ) : (
-                        <div className="space-y-2 animate-fade-in-up">
+                        <div className="space-y-1 animate-fade-in-up mt-1">
                           <textarea
                             value={feedbackTexts[idx] || ''}
                             onChange={(e) => setFeedbackTexts(prev => ({ ...prev, [idx]: e.target.value }))}
                             placeholder="Share your thoughts..."
                             rows={2}
-                            className={`w-full p-2 rounded border text-xs ${
+                            className={`w-full p-1.5 rounded border text-[10px] ${
                               theme === 'light'
-                                ? 'bg-white border-gray-300 text-gray-800'
-                                : 'bg-gray-800 border-gray-600 text-gray-200'
+                                ? 'bg-white border-gray-300 text-gray-700'
+                                : 'bg-gray-800 border-gray-600 text-gray-300'
                             }`}
                           />
-                          <div className="flex gap-2">
+                          <div className="flex gap-1">
                             <button
                               onClick={() => handleFeedbackSubmit(idx, q.id)}
                               disabled={submittingFeedback[idx]}
-                              className={`text-xs px-2 py-1 rounded font-semibold transition-all disabled:opacity-50 ${
+                              className={`text-[9px] px-2 py-0.5 rounded font-semibold transition-all disabled:opacity-50 ${
                                 theme === 'light'
                                   ? 'bg-blue-500 hover:bg-blue-600 text-white'
                                   : 'bg-blue-600 hover:bg-blue-700 text-white'
@@ -400,10 +400,10 @@ export default function TakeQuizPage() {
                             </button>
                             <button
                               onClick={() => setShowFeedbackInput(prev => ({ ...prev, [idx]: false }))}
-                              className={`text-xs px-2 py-1 rounded transition-all ${
+                              className={`text-[9px] px-2 py-0.5 rounded transition-all ${
                                 theme === 'light'
-                                  ? 'bg-gray-200 hover:bg-gray-300 text-gray-700'
-                                  : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                                  ? 'bg-gray-200 hover:bg-gray-300 text-gray-600'
+                                  : 'bg-gray-700 hover:bg-gray-600 text-gray-400'
                               }`}
                             >
                               Cancel

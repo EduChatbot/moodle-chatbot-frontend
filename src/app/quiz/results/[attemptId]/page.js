@@ -372,30 +372,30 @@ export default function QuizResultsPage() {
                 )}
 
                 {/* Rating and Feedback Section */}
-                <div className="ml-11 mt-4">
-                  <div className={`p-4 rounded-lg border ${
+                <div className="ml-11 mt-3">
+                  <div className={`p-3 rounded-lg border ${
                     theme === 'light'
-                      ? 'bg-amber-50 border-amber-200'
-                      : 'bg-amber-900/20 border-amber-800/30'
+                      ? 'bg-amber-50/50 border-amber-200/50'
+                      : 'bg-amber-900/10 border-amber-800/20'
                   }`}>
-                    <p className={`text-sm font-semibold mb-2 ${
-                      theme === 'light' ? 'text-gray-700' : 'text-gray-300'
+                    <p className={`text-xs font-semibold mb-2 ${
+                      theme === 'light' ? 'text-gray-600' : 'text-gray-400'
                     }`}>
                       Rate this question:
                     </p>
-                    <div className="flex items-center gap-2 mb-3">
+                    <div className="flex items-center gap-1 mb-2">
                       {[1, 2, 3, 4, 5].map((star) => (
                         <button
                           key={star}
                           onClick={() => handleQuestionRating(qIdx, question.id, star)}
                           disabled={submittingFeedback[qIdx]}
-                          className="text-3xl hover:scale-110 transition-transform disabled:opacity-50"
+                          className="text-2xl hover:scale-110 transition-transform disabled:opacity-50"
                         >
                           {questionRatings[qIdx] >= star ? '⭐' : '☆'}
                         </button>
                       ))}
-                      <span className={`text-xs ml-2 ${
-                        theme === 'light' ? 'text-gray-600' : 'text-gray-400'
+                      <span className={`text-[10px] ml-2 ${
+                        theme === 'light' ? 'text-gray-500' : 'text-gray-500'
                       }`}>
                         {questionRatings[qIdx] === 1 && '(Very Poor)'}
                         {questionRatings[qIdx] === 2 && '(Poor)'}
@@ -408,32 +408,32 @@ export default function QuizResultsPage() {
                     {!showFeedbackInput[qIdx] ? (
                       <button
                         onClick={() => setShowFeedbackInput(prev => ({ ...prev, [qIdx]: true }))}
-                        className={`text-xs px-3 py-1 rounded transition-all ${
+                        className={`text-[10px] px-2 py-1 rounded transition-all ${
                           theme === 'light'
-                            ? 'bg-gray-200 hover:bg-gray-300 text-gray-700'
-                            : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                            ? 'bg-gray-200 hover:bg-gray-300 text-gray-600'
+                            : 'bg-gray-700 hover:bg-gray-600 text-gray-400'
                         }`}
                       >
                         + Add feedback
                       </button>
                     ) : (
-                      <div className="space-y-2 animate-fade-in-up">
+                      <div className="space-y-1.5 animate-fade-in-up mt-2">
                         <textarea
                           value={feedbackTexts[qIdx] || ''}
                           onChange={(e) => setFeedbackTexts(prev => ({ ...prev, [qIdx]: e.target.value }))}
                           placeholder="Share your thoughts about this question..."
-                          rows={3}
-                          className={`w-full p-2 rounded border text-sm ${
+                          rows={2}
+                          className={`w-full p-2 rounded border text-xs ${
                             theme === 'light'
-                              ? 'bg-white border-gray-300 text-gray-800'
-                              : 'bg-gray-800 border-gray-600 text-gray-200'
+                              ? 'bg-white border-gray-300 text-gray-700'
+                              : 'bg-gray-800 border-gray-600 text-gray-300'
                           }`}
                         />
-                        <div className="flex gap-2">
+                        <div className="flex gap-1.5">
                           <button
                             onClick={() => handleFeedbackSubmit(qIdx, question.id)}
                             disabled={submittingFeedback[qIdx]}
-                            className={`text-xs px-3 py-1 rounded font-semibold transition-all disabled:opacity-50 ${
+                            className={`text-[10px] px-2 py-1 rounded font-semibold transition-all disabled:opacity-50 ${
                               theme === 'light'
                                 ? 'bg-blue-500 hover:bg-blue-600 text-white'
                                 : 'bg-blue-600 hover:bg-blue-700 text-white'
@@ -443,10 +443,10 @@ export default function QuizResultsPage() {
                           </button>
                           <button
                             onClick={() => setShowFeedbackInput(prev => ({ ...prev, [qIdx]: false }))}
-                            className={`text-xs px-3 py-1 rounded transition-all ${
+                            className={`text-[10px] px-2 py-1 rounded transition-all ${
                               theme === 'light'
-                                ? 'bg-gray-200 hover:bg-gray-300 text-gray-700'
-                                : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                                ? 'bg-gray-200 hover:bg-gray-300 text-gray-600'
+                                : 'bg-gray-700 hover:bg-gray-600 text-gray-400'
                             }`}
                           >
                             Cancel
