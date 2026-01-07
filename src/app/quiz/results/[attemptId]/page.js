@@ -11,6 +11,10 @@ export default function QuizResultsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [expandedExplanations, setExpandedExplanations] = useState([]);
+  const [questionRatings, setQuestionRatings] = useState({});
+  const [showFeedbackInput, setShowFeedbackInput] = useState({});
+  const [feedbackTexts, setFeedbackTexts] = useState({});
+  const [submittingFeedback, setSubmittingFeedback] = useState({});
   
   const { theme } = useTheme();
   const { backgroundColor } = useAnimation();
@@ -57,6 +61,58 @@ export default function QuizResultsPage() {
       setError(err.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleQuestionRating = async (questionId, rating) => {
+    setQuestionRatings(prev => ({ ...prev, [questionId]: rating }));
+    
+    // Auto-submit rating
+    await submitQuestionFeedback(questionId, rating, feedbackTexts[questionId] || null);
+  };
+
+  const handleFeedbackSubmit = async (questionId) => {
+    const rating = questionRatings[questionId];
+    const feedback = feedbackTexts[questionId];
+    
+    if (!rating) {
+      alert('Please select a rating first');
+      return;
+    }
+    
+    await submitQuestionFeedback(questionId, rating, feedback);
+  };
+
+  const submitQuestionFeedback = async (questionId, rating, feedback) => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    
+    setSubmittingFeedback(prev => ({ ...prev, [questionId]: true }));
+    
+    try {
+      const response = await fetch(`${apiUrl}/feedback/quiz-question`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${moodleToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          questionId: questionId,
+          grade: rating,
+          feedback: feedback || null
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.detail || 'Failed to submit feedback');
+      }
+
+      console.log('Feedback submitted successfully for question', questionId);
+    } catch (err) {
+      console.error('Error submitting feedback:', err);
+      alert(`Failed to submit feedback: ${err.message}`);
+    } finally {
+      setSubmittingFeedback(prev => ({ ...prev, [questionId]: false }));
     }
   };
 
@@ -313,6 +369,90 @@ export default function QuizResultsPage() {
                     )}
                   </div>
                 )}
+
+                {/* Rating and Feedback Section */}
+                <div className="ml-11 mt-4">
+                  <div className={`p-4 rounded-lg border ${
+                    theme === 'light'
+                      ? 'bg-amber-50 border-amber-200'
+                      : 'bg-amber-900/20 border-amber-800/30'
+                  }`}>
+                    <p className={`text-sm font-semibold mb-2 ${
+                      theme === 'light' ? 'text-gray-700' : 'text-gray-300'
+                    }`}>
+                      Rate this question:
+                    </p>
+                    <div className="flex items-center gap-2 mb-3">
+                      {[1, 2, 3].map((star) => (
+                        <button
+                          key={star}
+                          onClick={() => handleQuestionRating(question.id, star)}
+                          disabled={submittingFeedback[question.id]}
+                          className="text-3xl hover:scale-110 transition-transform disabled:opacity-50"
+                        >
+                          {questionRatings[question.id] >= star ? '⭐' : '☆'}
+                        </button>
+                      ))}
+                      <span className={`text-xs ml-2 ${
+                        theme === 'light' ? 'text-gray-600' : 'text-gray-400'
+                      }`}>
+                        {questionRatings[question.id] === 1 && '(Poor)'}
+                        {questionRatings[question.id] === 2 && '(Average)'}
+                        {questionRatings[question.id] === 3 && '(Good)'}
+                      </span>
+                    </div>
+                    
+                    {!showFeedbackInput[question.id] ? (
+                      <button
+                        onClick={() => setShowFeedbackInput(prev => ({ ...prev, [question.id]: true }))}
+                        className={`text-xs px-3 py-1 rounded transition-all ${
+                          theme === 'light'
+                            ? 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                            : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                        }`}
+                      >
+                        + Add feedback
+                      </button>
+                    ) : (
+                      <div className="space-y-2 animate-fade-in-up">
+                        <textarea
+                          value={feedbackTexts[question.id] || ''}
+                          onChange={(e) => setFeedbackTexts(prev => ({ ...prev, [question.id]: e.target.value }))}
+                          placeholder="Share your thoughts about this question..."
+                          rows={3}
+                          className={`w-full p-2 rounded border text-sm ${
+                            theme === 'light'
+                              ? 'bg-white border-gray-300 text-gray-800'
+                              : 'bg-gray-800 border-gray-600 text-gray-200'
+                          }`}
+                        />
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleFeedbackSubmit(question.id)}
+                            disabled={submittingFeedback[question.id]}
+                            className={`text-xs px-3 py-1 rounded font-semibold transition-all disabled:opacity-50 ${
+                              theme === 'light'
+                                ? 'bg-blue-500 hover:bg-blue-600 text-white'
+                                : 'bg-blue-600 hover:bg-blue-700 text-white'
+                            }`}
+                          >
+                            {submittingFeedback[question.id] ? 'Submitting...' : 'Submit'}
+                          </button>
+                          <button
+                            onClick={() => setShowFeedbackInput(prev => ({ ...prev, [question.id]: false }))}
+                            className={`text-xs px-3 py-1 rounded transition-all ${
+                              theme === 'light'
+                                ? 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                                : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                            }`}
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             );
           })}

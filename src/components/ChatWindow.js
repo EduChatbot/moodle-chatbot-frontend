@@ -29,7 +29,7 @@ export default function ChatWindow({
   });
 
   const [messages, setMessages] = useState([
-    { text: "Hello! How can I help you with your learning journey?", fromUser: false }
+    { text: "Hello! How can I help you with your learning journey?", fromUser: false, conversationId: null }
   ]);
   const [loading, setLoading] = useState(false);
   const [tokenChecked, setTokenChecked] = useState(false);
@@ -40,7 +40,8 @@ export default function ChatWindow({
         setMessages([
           { 
             text: "Note: You're not authenticated via Moodle. To access personalized content, please open this chat from within Moodle.\n\nI'll try to answer your questions, but backend may require authentication.", 
-            fromUser: false 
+            fromUser: false,
+            conversationId: null
           }
         ]);
       }
@@ -58,7 +59,7 @@ export default function ChatWindow({
 
   const handleSend = async (text) => {
 
-    const userMessage = { text, fromUser: true };
+    const userMessage = { text, fromUser: true, conversationId: null };
     setMessages(prev => [...prev, userMessage]);
     
     setLoading(true);
@@ -102,6 +103,7 @@ export default function ChatWindow({
 
       let botText = "No server response";
       let sources = null;
+      let conversationId = null;
       
       if (typeof data === "string") {
         botText = data;
@@ -110,12 +112,14 @@ export default function ChatWindow({
       } else if (data && typeof data === 'object') {
         botText = data.response || data.message || data.text || JSON.stringify(data);
         sources = data.sources || null;
+        conversationId = data.conversationId || data.conversation_id || null;
       }
 
       const botMessage = { 
         text: botText,
         fromUser: false,
-        sources: sources
+        sources: sources,
+        conversationId: conversationId
       };
       setMessages(prev => [...prev, botMessage]);
       
@@ -124,7 +128,8 @@ export default function ChatWindow({
       const apiUrl = process.env.NEXT_PUBLIC_API_URL;
       const errorMessage = { 
         text: `Error: ${error.message}. Check if backend is running on ${apiUrl}`, 
-        fromUser: false 
+        fromUser: false,
+        conversationId: null
       };
       setMessages(prev => [...prev, errorMessage]);
     } finally {
@@ -205,7 +210,14 @@ export default function ChatWindow({
                       mb-4 p-4 rounded-xl overflow-y-auto ${getChatAreaStyles()}
                       animate-scale-in delay-300 duration-slower ease-smooth`}>
         {messages.map((msg, i) => (
-          <Message key={i} text={msg.text} fromUser={msg.fromUser} sources={msg.sources} />
+          <Message 
+            key={i} 
+            text={msg.text} 
+            fromUser={msg.fromUser} 
+            sources={msg.sources}
+            conversationId={msg.conversationId}
+            moodleToken={moodleToken}
+          />
         ))}
         {loading && (
           <div className={`p-3 italic text-center rounded-lg my-2 glass-card animate-pulse ${

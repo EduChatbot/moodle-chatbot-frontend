@@ -3,10 +3,71 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { useAnimation } from '@/contexts/AnimationContext';
 import ReactMarkdown from 'react-markdown';
 
-export default function Message({ text, fromUser = false, sources = null }) {
+export default function Message({ text, fromUser = false, sources = null, conversationId = null, moodleToken = null }) {
   const { theme } = useTheme();
   const { backgroundColor } = useAnimation();
   const [showSources, setShowSources] = useState(false);
+  const [rating, setRating] = useState(null);
+  const [showFeedbackInput, setShowFeedbackInput] = useState(false);
+  const [feedbackText, setFeedbackText] = useState('');
+  const [submittingFeedback, setSubmittingFeedback] = useState(false);
+  const [rating, setRating] = useState(null);
+  const [showFeedbackInput, setShowFeedbackInput] = useState(false);
+  const [feedbackText, setFeedbackText] = useState('');
+  const [submittingFeedback, setSubmittingFeedback] = useState(false);
+  
+  const handleRating = async (selectedRating) => {
+    setRating(selectedRating);
+    
+    // Auto-submit rating
+    await submitFeedback(selectedRating, feedbackText || null);
+  };
+
+  const handleFeedbackSubmit = async () => {
+    if (!rating) {
+      alert('Please select a rating first');
+      return;
+    }
+    
+    await submitFeedback(rating, feedbackText);
+  };
+
+  const submitFeedback = async (selectedRating, feedback) => {
+    if (!conversationId || !moodleToken) {
+      console.warn('Cannot submit feedback: missing conversationId or token');
+      return;
+    }
+
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    setSubmittingFeedback(true);
+    
+    try {
+      const response = await fetch(`${apiUrl}/feedback/conversation`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${moodleToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          conversationId: conversationId,
+          grade: selectedRating,
+          feedback: feedback || null
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.detail || 'Failed to submit feedback');
+      }
+
+      console.log('Conversation feedback submitted successfully');
+    } catch (err) {
+      console.error('Error submitting conversation feedback:', err);
+      alert(`Failed to submit feedback: ${err.message}`);
+    } finally {
+      setSubmittingFeedback(false);
+    }
+  };
   
   const getColorScheme = () => {
     switch(backgroundColor) {
@@ -127,6 +188,92 @@ export default function Message({ text, fromUser = false, sources = null }) {
               ))}
             </div>
           )}
+        </div>
+      )}
+
+      {/* Rating and Feedback - only for bot messages */}
+      {!fromUser && conversationId && (
+        <div className="max-w-[75%] mt-2">
+          <div className={`glass-card p-3 rounded-lg border ${
+            theme === 'light'
+              ? 'bg-amber-50 border-amber-200'
+              : 'bg-amber-900/20 border-amber-800/30'
+          }`}>
+            <p className={`text-xs font-semibold mb-2 ${
+              theme === 'light' ? 'text-gray-700' : 'text-gray-300'
+            }`}>
+              Rate this response:
+            </p>
+            <div className="flex items-center gap-2 mb-2">
+              {[1, 2, 3].map((star) => (
+                <button
+                  key={star}
+                  onClick={() => handleRating(star)}
+                  disabled={submittingFeedback}
+                  className="text-2xl hover:scale-110 transition-transform disabled:opacity-50"
+                >
+                  {rating >= star ? '⭐' : '☆'}
+                </button>
+              ))}
+              <span className={`text-xs ml-1 ${
+                theme === 'light' ? 'text-gray-600' : 'text-gray-400'
+              }`}>
+                {rating === 1 && '(Poor)'}
+                {rating === 2 && '(Average)'}
+                {rating === 3 && '(Good)'}
+              </span>
+            </div>
+            
+            {!showFeedbackInput ? (
+              <button
+                onClick={() => setShowFeedbackInput(true)}
+                className={`text-xs px-2 py-1 rounded transition-all ${
+                  theme === 'light'
+                    ? 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                    : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                }`}
+              >
+                + Add feedback
+              </button>
+            ) : (
+              <div className="space-y-2 animate-fade-in-up">
+                <textarea
+                  value={feedbackText}
+                  onChange={(e) => setFeedbackText(e.target.value)}
+                  placeholder="Share your thoughts..."
+                  rows={2}
+                  className={`w-full p-2 rounded border text-xs ${
+                    theme === 'light'
+                      ? 'bg-white border-gray-300 text-gray-800'
+                      : 'bg-gray-800 border-gray-600 text-gray-200'
+                  }`}
+                />
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleFeedbackSubmit}
+                    disabled={submittingFeedback}
+                    className={`text-xs px-2 py-1 rounded font-semibold transition-all disabled:opacity-50 ${
+                      theme === 'light'
+                        ? 'bg-blue-500 hover:bg-blue-600 text-white'
+                        : 'bg-blue-600 hover:bg-blue-700 text-white'
+                    }`}
+                  >
+                    {submittingFeedback ? 'Submitting...' : 'Submit'}
+                  </button>
+                  <button
+                    onClick={() => setShowFeedbackInput(false)}
+                    className={`text-xs px-2 py-1 rounded transition-all ${
+                      theme === 'light'
+                        ? 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                        : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                    }`}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>
