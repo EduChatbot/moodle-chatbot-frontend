@@ -188,7 +188,7 @@ export default function Message({ text, fromUser = false, sources = null, conver
       )}
 
       {/* Rating and Feedback - only for bot messages */}
-      {!fromUser && conversationId && (
+      {!fromUser && (
         <div className="max-w-[75%] mt-2">
           <div className={`glass-card p-3 rounded-lg border ${
             theme === 'light'
@@ -205,8 +205,9 @@ export default function Message({ text, fromUser = false, sources = null, conver
                 <button
                   key={star}
                   onClick={() => handleRating(star)}
-                  disabled={submittingFeedback}
+                  disabled={submittingFeedback || !conversationId}
                   className="text-2xl hover:scale-110 transition-transform disabled:opacity-50"
+                  title={!conversationId ? 'Rating not available for this message' : ''}
                 >
                   {rating >= star ? '⭐' : '☆'}
                 </button>
@@ -220,7 +221,15 @@ export default function Message({ text, fromUser = false, sources = null, conver
               </span>
             </div>
             
-            {!showFeedbackInput ? (
+            {!conversationId && (
+              <p className={`text-xs italic ${
+                theme === 'light' ? 'text-gray-500' : 'text-gray-500'
+              }`}>
+                Feedback not available for this message
+              </p>
+            )}
+            
+            {conversationId && !showFeedbackInput ? (
               <button
                 onClick={() => setShowFeedbackInput(true)}
                 className={`text-xs px-2 py-1 rounded transition-all ${
@@ -231,7 +240,7 @@ export default function Message({ text, fromUser = false, sources = null, conver
               >
                 + Add feedback
               </button>
-            ) : (
+            ) : conversationId ? (
               <div className="space-y-2 animate-fade-in-up">
                 <textarea
                   value={feedbackText}
@@ -268,7 +277,7 @@ export default function Message({ text, fromUser = false, sources = null, conver
                   </button>
                 </div>
               </div>
-            )}
+            ) : null}
           </div>
         </div>
       )}

@@ -120,29 +120,29 @@ export default function TakeQuizPage() {
     }
   };
 
-  const handleQuestionRating = async (questionId, rating) => {
-    setQuestionRatings(prev => ({ ...prev, [questionId]: rating }));
+  const handleQuestionRating = async (questionIndex, questionId, rating) => {
+    setQuestionRatings(prev => ({ ...prev, [questionIndex]: rating }));
     
     // Auto-submit rating
-    await submitQuestionFeedback(questionId, rating, feedbackTexts[questionId] || null);
+    await submitQuestionFeedback(questionIndex, questionId, rating, feedbackTexts[questionIndex] || null);
   };
 
-  const handleFeedbackSubmit = async (questionId) => {
-    const rating = questionRatings[questionId];
-    const feedback = feedbackTexts[questionId];
+  const handleFeedbackSubmit = async (questionIndex, questionId) => {
+    const rating = questionRatings[questionIndex];
+    const feedback = feedbackTexts[questionIndex];
     
     if (!rating) {
       alert('Please select a rating first');
       return;
     }
     
-    await submitQuestionFeedback(questionId, rating, feedback);
+    await submitQuestionFeedback(questionIndex, questionId, rating, feedback);
   };
 
-  const submitQuestionFeedback = async (questionId, rating, feedback) => {
+  const submitQuestionFeedback = async (questionIndex, questionId, rating, feedback) => {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     
-    setSubmittingFeedback(prev => ({ ...prev, [questionId]: true }));
+    setSubmittingFeedback(prev => ({ ...prev, [questionIndex]: true }));
     
     try {
       const response = await fetch(`${apiUrl}/feedback/quiz-question`, {
@@ -168,7 +168,7 @@ export default function TakeQuizPage() {
       console.error('Error submitting feedback:', err);
       alert(`Failed to submit feedback: ${err.message}`);
     } finally {
-      setSubmittingFeedback(prev => ({ ...prev, [questionId]: false }));
+      setSubmittingFeedback(prev => ({ ...prev, [questionIndex]: false }));
     }
   };
 
@@ -343,25 +343,25 @@ export default function TakeQuizPage() {
                         {[1, 2, 3].map((star) => (
                           <button
                             key={star}
-                            onClick={() => handleQuestionRating(q.id, star)}
-                            disabled={submittingFeedback[q.id]}
+                            onClick={() => handleQuestionRating(idx, q.id, star)}
+                            disabled={submittingFeedback[idx]}
                             className="text-2xl hover:scale-110 transition-transform disabled:opacity-50"
                           >
-                            {questionRatings[q.id] >= star ? '⭐' : '☆'}
+                            {questionRatings[idx] >= star ? '⭐' : '☆'}
                           </button>
                         ))}
                         <span className={`text-xs ml-1 ${
                           theme === 'light' ? 'text-gray-600' : 'text-gray-400'
                         }`}>
-                          {questionRatings[q.id] === 1 && '(Poor)'}
-                          {questionRatings[q.id] === 2 && '(Average)'}
-                          {questionRatings[q.id] === 3 && '(Good)'}
+                          {questionRatings[idx] === 1 && '(Poor)'}
+                          {questionRatings[idx] === 2 && '(Average)'}
+                          {questionRatings[idx] === 3 && '(Good)'}
                         </span>
                       </div>
                       
-                      {!showFeedbackInput[q.id] ? (
+                      {!showFeedbackInput[idx] ? (
                         <button
-                          onClick={() => setShowFeedbackInput(prev => ({ ...prev, [q.id]: true }))}
+                          onClick={() => setShowFeedbackInput(prev => ({ ...prev, [idx]: true }))}
                           className={`text-xs px-2 py-1 rounded transition-all ${
                             theme === 'light'
                               ? 'bg-gray-200 hover:bg-gray-300 text-gray-700'
@@ -373,8 +373,8 @@ export default function TakeQuizPage() {
                       ) : (
                         <div className="space-y-2 animate-fade-in-up">
                           <textarea
-                            value={feedbackTexts[q.id] || ''}
-                            onChange={(e) => setFeedbackTexts(prev => ({ ...prev, [q.id]: e.target.value }))}
+                            value={feedbackTexts[idx] || ''}
+                            onChange={(e) => setFeedbackTexts(prev => ({ ...prev, [idx]: e.target.value }))}
                             placeholder="Share your thoughts..."
                             rows={2}
                             className={`w-full p-2 rounded border text-xs ${
@@ -385,18 +385,18 @@ export default function TakeQuizPage() {
                           />
                           <div className="flex gap-2">
                             <button
-                              onClick={() => handleFeedbackSubmit(q.id)}
-                              disabled={submittingFeedback[q.id]}
+                              onClick={() => handleFeedbackSubmit(idx, q.id)}
+                              disabled={submittingFeedback[idx]}
                               className={`text-xs px-2 py-1 rounded font-semibold transition-all disabled:opacity-50 ${
                                 theme === 'light'
                                   ? 'bg-blue-500 hover:bg-blue-600 text-white'
                                   : 'bg-blue-600 hover:bg-blue-700 text-white'
                               }`}
                             >
-                              {submittingFeedback[q.id] ? 'Submitting...' : 'Submit'}
+                              {submittingFeedback[idx] ? 'Submitting...' : 'Submit'}
                             </button>
                             <button
-                              onClick={() => setShowFeedbackInput(prev => ({ ...prev, [q.id]: false }))}
+                              onClick={() => setShowFeedbackInput(prev => ({ ...prev, [idx]: false }))}
                               className={`text-xs px-2 py-1 rounded transition-all ${
                                 theme === 'light'
                                   ? 'bg-gray-200 hover:bg-gray-300 text-gray-700'
