@@ -163,6 +163,8 @@ export default function TakeQuizPage() {
       }
 
       console.log('Feedback submitted successfully for question', questionId);
+      // Hide feedback input after successful submission
+      setShowFeedbackInput(prev => ({ ...prev, [questionIndex]: false }));
     } catch (err) {
       console.error('Error submitting feedback:', err);
       alert(`Failed to submit feedback: ${err.message}`);

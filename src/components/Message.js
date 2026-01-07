@@ -56,6 +56,8 @@ export default function Message({ text, fromUser = false, sources = null, conver
       }
 
       console.log('Conversation feedback submitted successfully');
+      // Hide feedback input after successful submission
+      setShowFeedbackInput(false);
     } catch (err) {
       console.error('Error submitting conversation feedback:', err);
       alert(`Failed to submit feedback: ${err.message}`);
