@@ -145,14 +145,13 @@ export default function TakeQuizPage() {
     setSubmittingFeedback(prev => ({ ...prev, [questionIndex]: true }));
     
     try {
-      const response = await fetch(`${apiUrl}/feedback/quiz-question`, {
+      const response = await fetch(`${apiUrl}/feedback/quiz-question/${questionId}`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${moodleToken}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          questionId: questionId,
           grade: rating,
           feedback: feedback || null
         })
@@ -340,7 +339,7 @@ export default function TakeQuizPage() {
                         Rate this question:
                       </p>
                       <div className="flex items-center gap-2 mb-2">
-                        {[1, 2, 3].map((star) => (
+                        {[1, 2, 3, 4, 5].map((star) => (
                           <button
                             key={star}
                             onClick={() => handleQuestionRating(idx, q.id, star)}
@@ -353,9 +352,11 @@ export default function TakeQuizPage() {
                         <span className={`text-xs ml-1 ${
                           theme === 'light' ? 'text-gray-600' : 'text-gray-400'
                         }`}>
-                          {questionRatings[idx] === 1 && '(Poor)'}
-                          {questionRatings[idx] === 2 && '(Average)'}
-                          {questionRatings[idx] === 3 && '(Good)'}
+                          {questionRatings[idx] === 1 && '(Very Poor)'}
+                          {questionRatings[idx] === 2 && '(Poor)'}
+                          {questionRatings[idx] === 3 && '(Average)'}
+                          {questionRatings[idx] === 4 && '(Good)'}
+                          {questionRatings[idx] === 5 && '(Excellent)'}
                         </span>
                       </div>
                       

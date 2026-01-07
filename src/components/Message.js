@@ -38,14 +38,13 @@ export default function Message({ text, fromUser = false, sources = null, conver
     setSubmittingFeedback(true);
     
     try {
-      const response = await fetch(`${apiUrl}/feedback/conversation`, {
+      const response = await fetch(`${apiUrl}/feedback/conversation/${conversationId}`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${moodleToken}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          conversationId: conversationId,
           grade: selectedRating,
           feedback: feedback || null
         })
@@ -201,7 +200,7 @@ export default function Message({ text, fromUser = false, sources = null, conver
               Rate this response:
             </p>
             <div className="flex items-center gap-2 mb-2">
-              {[1, 2, 3].map((star) => (
+              {[1, 2, 3, 4, 5].map((star) => (
                 <button
                   key={star}
                   onClick={() => handleRating(star)}
@@ -215,9 +214,11 @@ export default function Message({ text, fromUser = false, sources = null, conver
               <span className={`text-xs ml-1 ${
                 theme === 'light' ? 'text-gray-600' : 'text-gray-400'
               }`}>
-                {rating === 1 && '(Poor)'}
-                {rating === 2 && '(Average)'}
-                {rating === 3 && '(Good)'}
+                {rating === 1 && '(Very Poor)'}
+                {rating === 2 && '(Poor)'}
+                {rating === 3 && '(Average)'}
+                {rating === 4 && '(Good)'}
+                {rating === 5 && '(Excellent)'}
               </span>
             </div>
             
