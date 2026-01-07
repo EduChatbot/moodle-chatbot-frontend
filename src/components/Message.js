@@ -11,10 +11,6 @@ export default function Message({ text, fromUser = false, sources = null, conver
   const [showFeedbackInput, setShowFeedbackInput] = useState(false);
   const [feedbackText, setFeedbackText] = useState('');
   const [submittingFeedback, setSubmittingFeedback] = useState(false);
-  const [rating, setRating] = useState(null);
-  const [showFeedbackInput, setShowFeedbackInput] = useState(false);
-  const [feedbackText, setFeedbackText] = useState('');
-  const [submittingFeedback, setSubmittingFeedback] = useState(false);
   
   const handleRating = async (selectedRating) => {
     setRating(selectedRating);
