@@ -19,7 +19,8 @@ export default function ChatWindow({
   const { theme } = useTheme();
   const { backgroundColor } = useAnimation();
   const { moodleToken, courseId } = useMoodle();
-  const router = useRouter();
+  const router = useRouter()
+  const [mode, setMode] = useState('quick');
 
   const [sessionId] = useState(() => {
     if (typeof window !== 'undefined' && window.crypto && window.crypto.randomUUID) {
@@ -66,17 +67,13 @@ export default function ChatWindow({
     
     try {
       const history = getHistory();
-      
       const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-
       const headers = { 
         "Content-Type": "application/json"
       };
-      
       if (moodleToken) {
         headers["Authorization"] = `Bearer ${moodleToken}`;
       }
-      
       const response = await fetch(`${apiUrl}/chat`, {
         method: "POST",
         headers: headers,
@@ -84,7 +81,8 @@ export default function ChatWindow({
           message: text,
           history: history,
           courseId: courseId,
-          sessionId: sessionId
+          sessionId: sessionId,
+          mode: mode
         })
       });
 
@@ -184,6 +182,36 @@ export default function ChatWindow({
   return (
     <div className={`${isExpanded ? 'w-full h-full' : 'max-w-4xl w-full mx-auto my-5'} 
                     ${getContainerStyles()} rounded-2xl p-6 shadow-2xl animate-fade-in-up duration-slow`}>
+      {/* Tryb czatu: przełącznik */}
+      <div className="flex gap-2 mb-4 justify-center">
+        {/* Quick Answer Mode */}
+        <button
+          className={`px-4 py-2 rounded-lg font-semibold border transition-all duration-200 ${mode === 'quick' ? 'bg-blue-600 text-white border-blue-700 shadow' : 'bg-gray-200 text-gray-700 border-gray-300 hover:bg-blue-100'} `}
+          onClick={() => setMode('quick')}
+          disabled={mode === 'quick'}
+          title="Quick Answer: For students who want a precise, fact-based answer to a specific question. No unnecessary explanations if the question is simple."
+        >
+          Quick Answer
+        </button>
+        {/* Deep Understanding Mode */}
+        <button
+          className={`px-4 py-2 rounded-lg font-semibold border transition-all duration-200 ${mode === 'deep' ? 'bg-green-600 text-white border-green-700 shadow' : 'bg-gray-200 text-gray-700 border-gray-300 hover:bg-green-100'} `}
+          onClick={() => setMode('deep')}
+          disabled={mode === 'deep'}
+          title="Deep Understanding: Socratic tutor mode. The bot asks guiding questions and helps you find logical errors. Ideal for exploring concepts in depth."
+        >
+          Deep Understanding
+        </button>
+        {/* Exam Coach Mode */}
+        <button
+          className={`px-4 py-2 rounded-lg font-semibold border transition-all duration-200 ${mode === 'coach' ? 'bg-purple-600 text-white border-purple-700 shadow' : 'bg-gray-200 text-gray-700 border-gray-300 hover:bg-purple-100'} `}
+          onClick={() => setMode('coach')}
+          disabled={mode === 'coach'}
+          title="Exam Coach: Focuses on what matters for passing exams. Helps with mnemonics, highlights key topics, and explains step by step."
+        >
+          Exam Coach
+        </button>
+      </div>
       {!isExpanded && (
         <div className="flex justify-between items-center mb-4 animate-fade-in-down delay-200">
           <h2 className={`font-montserrat text-2xl font-bold ${
