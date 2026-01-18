@@ -23,7 +23,7 @@ export default function ChatWindow({
   
   // Stany dla trybów
   const [mode, setMode] = useState('quick'); // Styl rozmowy (Quick/Deep/Coach)
-  const [domainMode, setDomainMode] = useState('humanist'); // Profil wiedzy (Humanistyczny/Ścisły)
+  const [domainMode, setDomainMode] = useState('humanities'); // Knowledge profile (Humanities/Science)
 
   const [sessionId] = useState(() => {
     if (typeof window !== 'undefined' && window.crypto && window.crypto.randomUUID) {
@@ -187,33 +187,38 @@ export default function ChatWindow({
   return (
     <div className={`${isExpanded ? 'w-full h-full' : 'max-w-4xl w-full mx-auto my-5'} 
                       ${getContainerStyles()} rounded-2xl p-6 shadow-2xl animate-fade-in-up duration-slow`}>
-      
-      {/* --- NOWA SEKCJA: WYBÓR DOMENY (HUMANISTA / ŚCISŁOWIEC) --- */}
+
+      {/* --- SUBJECT SELECTION --- */}
+      <div className="mb-1 text-center">
+        <span className="font-semibold text-base text-gray-700 dark:text-gray-200">Subject:</span>
+      </div>
       <div className="flex gap-3 mb-3 justify-center pb-3 border-b border-gray-200/20">
         <button
-          onClick={() => setDomainMode('humanist')}
+          onClick={() => setDomainMode('humanities')}
           className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
-            domainMode === 'humanist'
+            domainMode === 'humanities'
               ? 'bg-indigo-100 text-indigo-700 border border-indigo-300 shadow-sm ring-1 ring-indigo-300'
               : 'bg-white/50 text-gray-500 border border-gray-200 hover:bg-gray-100'
           }`}
         >
-          🎭 Humanistyczny
+          Humanities
         </button>
         <button
-          onClick={() => setDomainMode('scientific')}
+          onClick={() => setDomainMode('science')}
           className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
-            domainMode === 'scientific'
+            domainMode === 'science'
               ? 'bg-teal-100 text-teal-700 border border-teal-300 shadow-sm ring-1 ring-teal-300'
               : 'bg-white/50 text-gray-500 border border-gray-200 hover:bg-gray-100'
           }`}
         >
-          🧪 Ścisły
+          Science
         </button>
       </div>
-      {/* ----------------------------------------------------------- */}
 
-      {/* Tryb czatu: przełącznik (Quick/Deep/Coach) */}
+      {/* --- MODE SELECTION --- */}
+      <div className="mb-1 text-center">
+        <span className="font-semibold text-base text-gray-700 dark:text-gray-200">Mode:</span>
+      </div>
       <div className="flex gap-2 mb-4 justify-center">
         {/* Quick Answer Mode */}
         <button
