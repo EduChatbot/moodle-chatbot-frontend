@@ -205,7 +205,7 @@ export default function AboutPage() {
                            className={`font-space transition-colors text-lg ${
                              theme === 'light' ? 'text-emerald-600 hover:text-emerald-700' : 'text-emerald-300 hover:text-emerald-200'
                            }`}>
-                            github.com/your-repo →
+                            https://github.com/EduTechBots/Learning-module-with-conversational-educational-system →
                         </a>
                     </div>
                 </div>
@@ -215,7 +215,7 @@ export default function AboutPage() {
                     <h3 className={`font-montserrat text-2xl font-bold mb-3 ${
                       theme === 'light' ? 'text-gray-800' : 'text-white'
                     }`}>
-                        💬 Get In Touch
+                        Get In Touch
                     </h3>
                     <p className={`font-inter text-base max-w-2xl mx-auto ${
                       theme === 'light' ? 'text-gray-600' : 'text-gray-300'
