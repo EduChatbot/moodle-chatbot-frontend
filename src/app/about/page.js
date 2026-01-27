@@ -99,7 +99,7 @@ export default function AboutPage() {
                             }`}>
                                 Anna Ostrowska
                             </h4>
-                            <a href="mailto:anna.ostrowska@example.com" 
+                            <a href="mailto:anna.ostrowska3006@gmail.com" 
                                className={`font-inter text-sm transition-colors block mb-2 ${
                                  theme === 'light' 
                                    ? backgroundColor === 'cream'
@@ -111,7 +111,7 @@ export default function AboutPage() {
                                }`}>
                                 📧 Email
                             </a>
-                            <a href="https://github.com/anna-ostrowska" 
+                            <a href="https://github.com/annaostrowska03" 
                                className={`font-inter text-sm transition-colors block ${
                                  theme === 'light'
                                    ? backgroundColor === 'cream'
@@ -132,7 +132,7 @@ export default function AboutPage() {
                             }`}>
                                 Gabriela Majstrak
                             </h4>
-                            <a href="mailto:gabriela.majstrak@example.com" 
+                            <a href="mailto:gabriela.majstrak@wp.pl" 
                                className={`font-inter text-sm transition-colors block mb-2 ${
                                  theme === 'light'
                                    ? backgroundColor === 'cream'
@@ -144,7 +144,7 @@ export default function AboutPage() {
                                }`}>
                                 📧 Email
                             </a>
-                            <a href="https://github.com/gabriela-majstrak" 
+                            <a href="https://github.com/GabrielaMajstrak" 
                                className={`font-inter text-sm transition-colors block ${
                                  theme === 'light'
                                    ? backgroundColor === 'cream'
@@ -165,7 +165,7 @@ export default function AboutPage() {
                             }`}>
                                 Jan Opala
                             </h4>
-                            <a href="mailto:jan.opala@example.com" 
+                            <a href="mailto:01180728@pw.edu.pl"
                                className={`font-inter text-sm transition-colors block mb-2 ${
                                  theme === 'light'
                                    ? backgroundColor === 'cream'
@@ -177,7 +177,7 @@ export default function AboutPage() {
                                }`}>
                                 📧 Email
                             </a>
-                            <a href="https://github.com/jan-opala" 
+                            <a href="https://github.com/JanOpala" 
                                className={`font-inter text-sm transition-colors block ${
                                  theme === 'light'
                                    ? backgroundColor === 'cream'
@@ -201,11 +201,11 @@ export default function AboutPage() {
                         }`}>
                             <strong className="font-montserrat text-xl">Project Repository</strong>
                         </p>
-                        <a href="https://github.com/your-repo" 
+                        <a href="https://github.com/EduTechBots/Learning-module-with-conversational-educational-system" 
                            className={`font-space transition-colors text-lg ${
                              theme === 'light' ? 'text-emerald-600 hover:text-emerald-700' : 'text-emerald-300 hover:text-emerald-200'
                            }`}>
-                            github.com/your-repo →
+                            https://github.com/EduTechBots/Learning-module-with-conversational-educational-system →
                         </a>
                     </div>
                 </div>
@@ -215,7 +215,7 @@ export default function AboutPage() {
                     <h3 className={`font-montserrat text-2xl font-bold mb-3 ${
                       theme === 'light' ? 'text-gray-800' : 'text-white'
                     }`}>
-                        💬 Get In Touch
+                        Get In Touch
                     </h3>
                     <p className={`font-inter text-base max-w-2xl mx-auto ${
                       theme === 'light' ? 'text-gray-600' : 'text-gray-300'
