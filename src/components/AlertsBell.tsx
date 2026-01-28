@@ -18,11 +18,13 @@ type UserAlertsResponse = {
 };
 
 function getApiBase(): string {
-  const base =
+  const origin =
     (process.env.NEXT_PUBLIC_API_URL as string | undefined) ??
-    "http://localhost:8000/api/v1";
-  return base.replace(/\/$/, "");
+    "http://localhost:8000";
+  const clean = origin.replace(/\/$/, "");
+  return clean.endsWith("/api/v1") ? clean : `${clean}/api/v1`;
 }
+
 
 function getMoodleToken(): string | null {
   if (typeof window === "undefined") return null;
