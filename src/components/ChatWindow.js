@@ -24,6 +24,7 @@ export default function ChatWindow({
   // Stany dla trybów
   const [mode, setMode] = useState('quick'); // Styl rozmowy (Quick/Deep/Coach)
   const [domainMode, setDomainMode] = useState('humanities'); // Knowledge profile (Humanities/Science)
+  const [judgeEnabled, setJudgeEnabled] = useState(false);
 
   const [sessionId] = useState(() => {
     if (typeof window !== 'undefined' && window.crypto && window.crypto.randomUUID) {
@@ -87,7 +88,8 @@ export default function ChatWindow({
           courseId: courseId ? courseId.toString() : null,
           sessionId: sessionId,
           mode: mode,          // Quick/Deep/Coach
-          domain_mode: domainMode // humanist/scientific
+          domain_mode: domainMode, // humanist/scientific
+          judgeEnabled: judgeEnabled,
         })
       });
 
@@ -248,6 +250,17 @@ export default function ChatWindow({
           Exam Coach
         </button>
       </div>
+      <div className="flex justify-center mb-4">
+        <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+          <input
+            type="checkbox"
+            checked={judgeEnabled}
+            onChange={(e) => setJudgeEnabled(e.target.checked)}
+          />
+          Enhanced performance (experimental)
+        </label>
+      </div>
+
 
       {!isExpanded && (
         <div className="flex justify-between items-center mb-4 animate-fade-in-down delay-200">
