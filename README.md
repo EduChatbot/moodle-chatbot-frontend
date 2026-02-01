@@ -1,8 +1,6 @@
 # Learning module with conversational educational system - Frontend Module
 
-This repository contains the Bachelor's Engineering Thesis project titled: **"Learning module with conversational educational system"**, developed at the **Faculty of Mathematics and Information Science (MiNI)** of **Warsaw University of Technology**.
-
-The system is a modular, RAG-based (Retrieval-Augmented Generation) assistant designed to enhance the digital learning experience within the Moodle LMS by bridging the gap between traditional Learning Management Systems and modern Generative AI.
+This repository contains the Frontend Module for the Bachelor's Engineering Thesis: **"Learning module with conversational educational system"**.
 
 ---
 
@@ -10,93 +8,43 @@ The system is a modular, RAG-based (Retrieval-Augmented Generation) assistant de
 * **University:** Warsaw University of Technology (Politechnika Warszawska)
 * **Faculty:** Faculty of Mathematics and Information Science (MiNI)
 * **Supervisor:** dr inż. Anna Wróblewska
-* **Thesis Type:** Bachelor's Engineering Thesis (Praca Inżynierska)
-
-## Authors
-* Anna Ostrowska
-* Gabriela Majstrak
-* Jan Opala
+* **Authors:** Anna Ostrowska, Gabriela Majstrak, Jan Opala
 
 ---
 
-## Features
 
-- **AI Chat Assistant**: Ask questions about course materials and get intelligent responses
-- **Quiz Generation**: Create custom quizzes from course materials using AI
-- **Learning Analytics**: Track your progress with detailed statistics and recommendations
-- **Dark/Light Theme**: Comfortable viewing in any lighting condition
-- **Animated UI**: Modern interface with customizable animations
+## Key Features
 
-## Prerequisites
+### 1. Chat Interface
+A real-time chat window allowing students to interact with course-specific knowledge. It supports different learning modes.
 
-- Node.js 20+ and npm
-- Backend API running (see backend repository)
-- Moodle instance with the Learning Assistant plugin installed
+### 2. Automated Quiz Module
+An interface for taking and reviewing AI-generated quizzes. It includes an immediate feedback mechanisms, and detailed result analysis to help students identify knowledge gaps.
 
-## Environment Setup
+### 3. Learning Progress Dashboard
+Comprehensive analytics providing insights into material coverage, quiz performance, and interaction history. It utilizes interactive charts to motivate students and track their educational journey.
 
-Create a `.env.local` file in the root directory:
+### 4. Advanced UI Personalization
+Supports different backgrounds, color, and animations toggle.
 
-```bash
-NEXT_PUBLIC_API_URL=http://localhost:8000
-```
+---
 
-Replace `http://localhost:8000` with your backend API URL.
+## Getting Started
 
-## Installation
-
-Install dependencies:
-
+### Local Development
+1. Install dependencies:
 ```bash
 npm install
 ```
+2. Configure your environment: Create a .env.local file with the NEXT_PUBLIC_API_URL pointing to the system Backend.
 
-## Development
-
-Run the development server:
+3. Start the development server:
 
 ```bash
 npm run dev
-```
+ ```
+The application will be accessible at http://localhost:3000.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser.
+---
 
-## Production Build
-
-Build the application:
-
-```bash
-npm run build
-npm start
-```
-
-## Project Structure
-
-```
-src/
-├── app/                    # Next.js app router pages
-│   ├── chat/              # Chat interface
-│   ├── quiz/              # Quiz center and quiz taking
-│   ├── dashboard/         # Learning analytics dashboard
-│   └── courses/           # Course browser
-├── components/            # React components
-│   ├── ChatWindow.js      # Main chat component
-│   ├── QuizList.js        # Quiz management
-│   ├── Dashboard.js       # Analytics dashboard
-│   └── ...                # UI components
-└── contexts/              # React contexts
-    ├── MoodleContext.tsx  # Moodle authentication
-    ├── ThemeContext.tsx   # Theme management
-    └── AnimationContext.tsx # Animation preferences
-```
-
-## Integration with Moodle
-
-This frontend integrates with Moodle via parameters:
-
-```
-/?token=<MOODLE_TOKEN>&courseId=<COURSE_ID>&courseName=<COURSE_NAME>
-```
-
-These parameters are automatically passed from the Moodle plugin.
-
+*Developed as the primary visual component of the diploma process at Warsaw University of Technology.*
