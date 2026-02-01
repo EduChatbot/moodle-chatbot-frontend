@@ -83,10 +83,3 @@ This frontend integrates with Moodle via parameters:
 
 These parameters are automatically passed from the Moodle plugin.
 
-## Technologies
-
-- **Next.js 16** - React framework with App Router
-- **React 19** - UI library
-- **Tailwind CSS 4** - Utility-first CSS
-- **Three.js & GSAP** - 3D graphics and animations
-- **React Markdown** - Markdown rendering for AI responses
